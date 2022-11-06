@@ -25,7 +25,7 @@ app.get('/download', function(req, res){
   });
 
 app.get('/download/poker.apk',function(req,res){
-    const file = `${__dirname}/app-poker-release.apk`;
+    const file = `${__dirname}/apl/app-poker-release.apk`;
     res.download(file);
 })  
 
