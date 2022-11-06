@@ -1,17 +1,22 @@
 import express from "express";
-import bodyParser from "body-parser"
-import { v4 as uuidv4 } from 'uuid';
-
 const router=express.Router();
 const users=[];
+
 // All routes in here are starting with /users
-router.get("/",(req,res)=>{
-    res.send(users);
-    res.send("Hello this is Auth route")
+
+router.post("/login",(req,res)=>{
+    const firebaseToken=req.body.token;
+    console.log(req.body);
+    res.send({
+        "message":"Log in Successfully"
+    })
 });
+
 router.get("/getdata",(req,res)=>{
     res.send("Hello this is Auth route")
 });
+
+
 router.get("/:id",(req,res)=>{
     const{id}=req.params;
     const foundUser=users.find((user)=>user.id===id);
