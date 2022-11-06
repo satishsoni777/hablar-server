@@ -3,10 +3,13 @@ import bodyParser from "body-parser"
 import userRoutes from './src/routes/auth.js';
 import path from 'path';
 
+
 const __dirname = path.resolve();
 const app=express();
 
-const PORT= 8080;
+var PORT = process.env.PORT|| 8080;
+
+app.set('port', PORT);
 
 app.use(bodyParser.json());
 
