@@ -1,29 +1,33 @@
-import { Schema,mongoose } from "mongoose";
-const Schema = mongoose.Schema;
-const UserData = new Schema({
+import { mongoose } from "mongoose";
+
+const AuthData = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        require:true,
     },
-    email: {
+    email_id: {
         type: String,
-        required: true,
+        require:true
     },
     gender: {
         type: String,
-        required: true,
+        require:true
     },
     state: {
         type: String,
-        required: true,
+        require:true
     },
     country: {
         type: String,
-        required: true,
+        require:true
     },
     pin: {
         type: Number,
-        required: true,
+        require:true,
+        min: [10, 'Too few eggs'],
+        max: 12
     },
-})
-module.exports = mongoose.model("UserData", UserData);
+},);
+export const Users = mongoose.model("AuthData", AuthData);
+
+

@@ -1,6 +1,6 @@
 import express from 'express'
 import { inserOneData } from '../db/mongoose_db.js';
-
+import { Users } from '../models/users.js';
 const router = express.Router();
 
 router.post("/user_profile", function (req, res) {
@@ -8,30 +8,33 @@ router.post("/user_profile", function (req, res) {
     inserOneData(req.body).then((e) => {
         console.log(e);
     });
+    res.send({});
 
-    // if(e){
-
-    // }
-    // else
-    // res.send({
-    //     "succes":"not bad"
-    // })
+ 
 });
-router.post("/create_user", function (req, res) {
-    console.log("Getting request")
+router.post("/sign_up", function (req, res) {
+    
     try {
-        inserOneData(req.body).then((v) => {
+        var users = Users({
+            name:res.body.name,
+            email_id:res.body.email_id
+        });
+        inserOneData(users).then((v) => {
             res.send({
-                "succes": "not bad"
+                "succes": "not bad",
+                "message":v
             })
         }).catch((e) => {
+            res.statusCode=401;
             res.send({
-                "failed": "bad"
+                "failed": "bad",
+                "error":e
             })
         });
     }
     catch (e) {
-        res.send({ "failed": "bad" })
+        res.statusCode=501; 
+        res.send({ failed: "bad",error:e })
     }
 
 });

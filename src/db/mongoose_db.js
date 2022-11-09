@@ -1,23 +1,28 @@
-import { MongoClient } from "mongodb";
-var dboObject, dbm;
-export default async function connectMd() {
-  MongoClient.connect('mongodb://localhost:/teasyDb', { useNewUrlParser: true, }, function (err, db) {
-    if (err) {
-      console.log("Not Connected", err)
-    }
-    else {
-      dboObject = db.db("teasyDb");
-      dbm = db;
-      console.log("Connected")
-    }
+import mongoose from "mongoose";
+import {Config} from '../config/default.js'
 
-  });
+export default async function connectMd() {
+  await mongoose.connect(Config.dbUrl).then(() => {
+    console.log("Connected")
+  }).catch((e) => { console.log("Not Connected", e) });
+
 }
 export async function inserOneData(data) {
-   dboObject.collection("users_profile").insertOne(data, function (err, res) {
-    if (err) throw err;
-    dbm.close();
-  });
+
+  try {
+    const result = await data.save();
+    if(result){
+      console.log(result);
+    }
+  }
+  catch (e) {
+    console.log(e);
+    throw e;
+  }
+  // mongoose.collection("users_profile").insertOne(data, function (err, res) {
+  //   if (err) throw err;
+  //   mongoose.close();
+  // });
 }
 
 

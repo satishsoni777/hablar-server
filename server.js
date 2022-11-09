@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import express  from "express";
 import bodyParser from "body-parser"
 import auth from './src/routes/auth.js';
@@ -20,11 +21,13 @@ app.set('port', PORT);
 
   
 app.use(bodyParser.json());
-
+app.use(express.json())
 app.use("/auth",auth) 
 app.use("/",callHistory);
 app.use('/',utils);
 app.use('/users',users);
+
+
 
 
 
