@@ -13,7 +13,7 @@ router.get('/download/link',function(req,res){
 
 router.get('/download', function(req, res){
     const file = `${__dirname}/apk/app-cash-release.apk`;
-    res.download(file); // Set disposition and send it.
+    res.download(file);
   });
 
   router.get('/download/poker.apk',function(req,res){

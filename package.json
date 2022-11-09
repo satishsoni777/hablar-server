@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "build:staging": "NODE_ENV=stg npm run build",
+    "build:production": "NODE_ENV=prod npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -13,9 +15,14 @@
   "description": "",
   "dependencies": {
     "express": "^4.18.2",
+    "mongodb": "^4.11.0",
     "mongoose": "^6.7.1",
     "nodemon": "^2.0.20",
     "uuid": "^9.0.0",
     "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "typescript": "^4.8.4"
   }
 }

@@ -3,7 +3,7 @@ const router=express.Router();
 
 router.get('/call_history',function(req,res){
     res.send({
-      message:"Greate API is Under Dev."
+      message:"Greate, API is Under Dev."
     })
 });
 

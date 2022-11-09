@@ -2,7 +2,6 @@
 // import bodyParser from "body-parser"
 // import userRoutes from './src/routes/auth.js';
 // import path from 'path';
-// import http from 'http';
 // // import callHistory from './src/routes/call_history';
 // import { readFile } from "fs/promises";
 
@@ -45,8 +44,5 @@
 //     res.send("Hi how are you")
 // });
 
+// export default app;
 
-
-// http.createServer(app).listen(app.get('port'), function (req,res) {
-//     console.log('AgoraSignServer starts at ' + app.get('port'));
-// });
