@@ -6,7 +6,8 @@ const userScheme = new mongoose.Schema({
     },
     email_id: {
         type: String,
-        require:true
+        require:true,
+        lowercase:true,
     },
     gender: {
         type: String,

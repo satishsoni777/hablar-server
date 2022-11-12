@@ -1,1 +1,3 @@
-const CREATEUSER="create/user";
+export const Endpoints ={
+     createUser:"/create/user"
+}

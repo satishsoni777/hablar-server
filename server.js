@@ -6,6 +6,7 @@ import callHistory from './src/routes/call_history.js'
 import utils from './src/utils/util.js'
 import connectMd from './src/db/mongoose_db.js';
 import users from './src/routes/user.js'
+import rtcBuilder from './src/rtc/rtc_builder.js';
 
 import path from 'path';
 import http from 'http';
@@ -15,20 +16,18 @@ const __dirname = path.resolve();
 const app=express();
 
 
-const PORT = process.env.PORT|| 8080;
+const PORT = process.env.PORT|| 8082;
 
 app.set('port', PORT);
 
-  
 app.use(bodyParser.json());
 app.use(express.json())
+
 app.use("/auth",auth) 
 app.use("/",callHistory);
 app.use('/',utils);
 app.use('/users',users);
-
-
-
+app.use("/rtcBuilder",rtcBuilder)
 
 
 app.get("/",(req,res)=>{

@@ -14,6 +14,8 @@
   "keywords": [],
   "description": "",
   "dependencies": {
+    "agora-access-token": "^2.0.4",
+    "axios": "^1.1.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.11.0",

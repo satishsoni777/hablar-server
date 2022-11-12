@@ -2,7 +2,6 @@ import express from "express";
 import jwt from 'jsonwebtoken';
 const router = express.Router();
 
-// All routes in here are starting with /users
 
 router.post("/sign_in", (req, res) => {
     try {
@@ -29,6 +28,10 @@ router.post("/sign_up", (req, res) => {
     res.status(200).send({})
 });
 
+router.post("forget_password", (req, res) => {
+    res.send({});
+});
+
 
 
 router.patch("/:id", (req, res) => {
@@ -36,7 +39,6 @@ router.patch("/:id", (req, res) => {
     console.log(id);
     res.send("Yes nice man")
 })
-
 
 
 
