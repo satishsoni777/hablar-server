@@ -7,4 +7,11 @@ router.get('/call_history',function(req,res){
     })
 });
 
+
+router.get('',function(req,res){
+  res.send({
+    message:"Greate, API is Under Dev."
+  })
+});
+
 export default router;
