@@ -20,7 +20,7 @@ const router=express.Router();
 //     const file = `${__dirname}/apk/app-poker-release.apk`;
 //     res.download(file);
 // })
-router.get("hello",function (req,res){
+router.get("/hello",function (req,res){
     res.send({
         message:"Hello Duniya"
     })
