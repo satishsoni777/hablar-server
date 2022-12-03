@@ -4,7 +4,7 @@ import bodyParser from "body-parser"
 import auth from './src/routes/auth.js';
 import callHistory from './src/routes/call_history.js'
 import utils from './src/utils/util.js'
-import connectMd from './src/db/mongoose_db.js';
+// import connectMd from './src/db/mongoose_db.js';
 import users from './src/routes/user.js'
 import rtcBuilder from './src/rtc/rtc_builder.js';
 
