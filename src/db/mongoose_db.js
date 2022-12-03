@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {Config} from '../config/default.js'
 
 export default async function connectMd() {
+  console.log("OT adad");
   await mongoose.connect(Config.dbUrl).then(() => {
     console.log("Connected")
   }).catch((e) => { console.log("Not Connected", e) });
@@ -24,5 +25,6 @@ export async function inserOneData(data) {
   //   mongoose.close();
   // });
 }
+
 
 

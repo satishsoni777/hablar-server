@@ -1,6 +1,6 @@
 import { mongoose } from "mongoose";
 
-const AuthData = new mongoose.Schema({
+const authData = new mongoose.Schema({
     name: {
         type: String,
         require:true,
@@ -28,6 +28,6 @@ const AuthData = new mongoose.Schema({
         max: 12
     },
 },);
-export const Users = mongoose.model("AuthData", AuthData);
+export const UsersData = mongoose.model("authData", authData);
 
 

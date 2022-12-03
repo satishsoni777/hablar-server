@@ -1,5 +1,7 @@
 import express from "express";
 import jwt from 'jsonwebtoken';
+import { inserOneData } from '../db/mongoose_db.js';
+import { UsersData } from '../models/auth.js';
 const router = express.Router();
 
 
@@ -24,9 +26,22 @@ router.post("/sign_in", (req, res) => {
     }
 });
 
+router.post("login", (req, res) => {
+    var userData=UsersData({
+        name:req.body.name,
+        email_id:req.body.email_id
+    });
+    inserOneData(userData);
+    res.status(200).send({
+        message: "Data saved",
+
+    })
+});
+
 router.post("/sign_up", (req, res) => {
     res.status(200).send({})
 });
+
 
 router.post("forget_password", (req, res) => {
     res.send({});

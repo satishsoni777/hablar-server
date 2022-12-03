@@ -16,7 +16,7 @@ const __dirname = path.resolve();
 const app=express();
 
 
-const PORT = process.env.PORT|| 8082;
+const PORT = process.env.PORT|| 8080;
 
 app.set('port', PORT);
 
