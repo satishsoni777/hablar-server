@@ -43,5 +43,5 @@ http.createServer(app).listen(app.get('port'), function () {
 });
 
 var initApp = function () {
-    connectMd();
+    // connectMd();
 }
