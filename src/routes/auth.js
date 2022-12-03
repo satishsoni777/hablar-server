@@ -1,50 +1,60 @@
 import express from "express";
-import bodyParser from "body-parser"
-import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
+import { inserOneData } from '../db/mongoose_db.js';
+import { UsersData } from '../models/auth.js';
+const router = express.Router();
 
-const router=express.Router();
-const users=[];
-// All routes in here are starting with /users
-router.get("/",(req,res)=>{
-    res.send(users);
-    res.send("Hello this is Auth route")
-});
-router.get("/getdata",(req,res)=>{
-    res.send("Hello this is Auth route")
-});
-router.get("/:id",(req,res)=>{
-    const{id}=req.params;
-    const foundUser=users.find((user)=>user.id===id);
-    if(!foundUser){
-        res.statusCode=401;
+
+router.post("/sign_in", (req, res) => {
+    try {
+        const token = jwt.sign({
+            mobile: req.body.mobile,
+            password: req.body.password
+        }, "this is my sercet code", { expiresIn: '24h' },)
+        if (!token) {
+            res.status(401).send({
+                error: "try later,"
+            })
+        }
         res.send({
-            "status":"failure",
-            "message":"sorry  could not found the data"
-        });
+            message: "Log in Successfully",
+            token: token
+        })
     }
-    else
-    res.send(foundUser);
+    catch (e) {
+        res.status(401).send(e);
+    }
 });
 
-router.patch("/:id",(req,res)=>{
-    const id=req.params.id;
-    console.log(id);    
-    const user=users.find((user)=>user.id===id)
+router.post("login", (req, res) => {
+    var userData=UsersData({
+        name:req.body.name,
+        email_id:req.body.email_id
+    });
+    inserOneData(userData);
+    res.status(200).send({
+        message: "Data saved",
+
+    })
+});
+
+router.post("/sign_up", (req, res) => {
+    res.status(200).send({})
+});
+
+
+router.post("forget_password", (req, res) => {
+    res.send({});
+});
+
+
+
+router.patch("/:id", (req, res) => {
+    const id = req.params.id;
+    console.log(id);
     res.send("Yes nice man")
 })
 
-router.delete("/:id",(req,res)=>{
-    const {id}=req.params;
-    users=users.filter((user)=>user.i!=id);
-})
-
-router.post('/save-data',(req,res)=>{
-    const body=req.body;
-    const usrerId=uuidv4();
-    console.log(req.body);
-    users.push({...body,id:usrerId});
-    res.send("Success data saved to the db")
-})
 
 
 export default router;
