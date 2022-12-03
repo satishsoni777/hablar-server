@@ -17,6 +17,7 @@ const app=express();
 
 
 const PORT = process.env.PORT|| 8080;
+const hostname="0.0.0.0";
 
 app.set('port', PORT);
 
@@ -37,7 +38,7 @@ app.get("/",(req,res)=>{
 
 
 
-http.createServer(app).listen(app.get('port'), function () {
+http.createServer(app,hostname).listen(app.get('port'), function () {
     initApp();
     console.log('Listening at port ' + app.get('port'));
 });
