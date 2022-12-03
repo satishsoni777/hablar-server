@@ -15,12 +15,14 @@ const __dirname = path.resolve();
 
 const app=express();
 
+const router=express.Router();
 
 const PORT = process.env.PORT|| 8080;
 const hostname="0.0.0.0";
 
 app.set('port', PORT);
 
+app.use("/.netlifly/functions/api",router);
 app.use(bodyParser.json());
 app.use(express.json())
 
@@ -36,6 +38,11 @@ app.get("/",(req,res)=>{
     res.send("Hi how are you")
 });
 
+router.get("/test",function(req,res){
+    res.status(200).send({
+        message:"succes"
+    })
+});
 
 
 http.createServer(app,hostname).listen(app.get('port'), function () {
