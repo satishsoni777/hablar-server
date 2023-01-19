@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {Config} from '../config/default.js'
 
 export default async function connectMd() {
-  console.log("OT adad");
+  console.log("Moongo connectMd");
   await mongoose.connect(Config.dbUrl).then(() => {
     console.log("Connected")
   }).catch((e) => { console.log("Not Connected", e) });
