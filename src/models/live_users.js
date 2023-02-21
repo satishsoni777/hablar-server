@@ -1,6 +1,6 @@
 import { mongoose } from "mongoose";
 
-const authData = new mongoose.Schema({
+const liveUsers = new mongoose.Schema({
     name: {
         type: String,
         require: true,
@@ -9,10 +9,7 @@ const authData = new mongoose.Schema({
         type: Number,
         require: true
     },
-    email_id: {
-        type: String,
-        require: true
-    },
+
     gender: {
         type: String,
         require: true
@@ -36,6 +33,6 @@ const authData = new mongoose.Schema({
         max: 12
     },
 },);
-export const UsersData = mongoose.model("authData", authData);
+export const LiveUsers = mongoose.model("liveUsers", liveUsers);
 
 

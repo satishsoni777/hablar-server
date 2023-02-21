@@ -1,29 +1,62 @@
+import { stringify } from "querystring";
 import { Server } from "socket.io";
-import {printDateTime} from './src/utils/date_util.js'
+import { printDateTime } from './src/utils/date_util.js'
 
 
-
+const liveUsers=new Map();
 async function connectSocketIo(httpServer) {
     const io = new Server(httpServer, {
-        path:"/socket.io"
+        path: "/socket.io",
+        serveClient: true,
+        pingInterval: 10000,
+        pingTimeout: 5000,
+        cookie: false
+
     },
-
     )
-    io.engine.on("connection", (rawSocket) => {
-        io.emit(JSON.stringify({
-            "status": "connected",
-            "error": false
-        }));
-        console.log("connection message", rawSocket.data);
+    io.on("connection", (socket) => {
+      console.log(socket);
+       
+      liveUsers["email_id"]=socket.id;
+       
+       console.log(`Socket io Connected `,liveUsers)
 
-        rawSocket.on("message", (message) => {
-
-            console.log("IO message", message, printDateTime());
-
+        socket.on("message", (message) => {
+            console.log("IO message", message.textMessageFromClient, printDateTime());
+            socket.emit("callData", { "test-data": "sd" })
         });
-        rawSocket.on("close", (close) => {
-            console.log("close", close);
+        socket.on("joinChannel",(data)=>{
+            console.log("joined",socket);
+            liveUsers[data.email_id]=socket.id;
+            console.log(liveUsers);
         })
+
+
+        socket.on("voiceMessageFromClient", (data) => {
+            console.log(data.email_id);
+            // eslint-disable-next-line no-undef
+            // const d = Buffer.from(JSON.stringify(data.voiceMessageFromClient));
+            const socketId=liveUsers[data.email_id];
+            console.log("voiceMessageFromClient Socket ",socketId);
+            io.to(socketId).emit("voiceMessageToClient",data.voiceMessageFromClient);
+        });
+
+
+        socket.on("textMessageFromClient", (data) => {
+            console.log("test event data", data);
+        });
+
+        socket.on("textMessageToClient", (data) => {
+            console.log("test event data", data);
+        });
+
+
+       
+        socket.on("disconnect", (close) => {
+            console.log(`close ${socket.id}`);
+        })
+
+
         // if you need the certificate details (it is no longer available once the handshake is completed)
     });
 }
