@@ -1,33 +1,41 @@
 
-import  { mongoose } from "mongoose"
+import { mongoose } from "mongoose"
 
-
-const meeting = mongoose.model(
+const myDB = mongoose.connection.useDb('users');
+const meeting = myDB.model(
     "Meeting",
     mongoose.Schema({
         socketId: {
             type: String,
-            required: true,
+            required: false,
         },
         meetingId: {
             type: String,
-            required: true
+            required: false
         },
         UserId: {
             type: String,
-            require: true
+            require: false
         },
         joined: {
             type: Boolean,
-            require: true
+            require: false
         },
         name: {
             type: Boolean,
-            require: true
+            require: false
         },
         isAlive: {
             type: Boolean,
-            required: true
+            required: false
+        },
+        hostName: {
+            type: String,
+            required: false,
+        },
+        hostId: {
+            type: String,
+            require: false,
         }
 
 
@@ -39,6 +47,7 @@ const meeting = mongoose.model(
     )
 );
 
+
 // eslint-disable-next-line no-undef
 
-export {meeting}
+export { meeting }

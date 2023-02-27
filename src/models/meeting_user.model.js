@@ -1,7 +1,7 @@
 
 import mongoose from "mongoose"
-
-const meetingUsers = mongoose.model(
+const myDB = mongoose.connection.useDb('users');
+const MeetingUser = myDB.model(
     "MeetingUser",
     mongoose.Schema({
         hostId: {
@@ -35,4 +35,4 @@ const meetingUsers = mongoose.model(
         }
     )
 );
-export  {meetingUsers};
+export  {MeetingUser};

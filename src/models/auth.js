@@ -36,6 +36,7 @@ const authData = new mongoose.Schema({
         max: 12
     },
 },);
-export const UsersData = mongoose.model("authData", authData);
+const myDB = mongoose.connection.useDb('users');
+export const UsersData = myDB.model("AuthData", authData);
 
 

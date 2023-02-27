@@ -1,4 +1,4 @@
-import { startMeeting, getAllMeetingUsers } from "../service/meeting.service.js";
+import {meetingServices} from "../service/meeting.service.js";
 // eslint-disable-next-line no-undef
  const startMeetingController = (req, res, next) =>{
     const { hostId, hostName } = req.body;
@@ -7,7 +7,7 @@ import { startMeeting, getAllMeetingUsers } from "../service/meeting.service.js"
         hostName: hostName,
         startTime: Date.now()
     }
-    startMeeting(model, (error, result) => {
+    meetingServices.startMeeting(model, (error, result) => {
         if (error) {
             return next(error);
         }
@@ -19,7 +19,7 @@ import { startMeeting, getAllMeetingUsers } from "../service/meeting.service.js"
 }
 const checkMeetingExistsController = (req, res, next)=> {
     const { meetingId } = req.query;
-    this.checkMeetingExists(meetingId, (error, result) => {
+    meetingServices.checkMeetingExists(meetingId, (error, result) => {
         if (error)
             return next(error);
         return res.status(200).send({
@@ -30,14 +30,22 @@ const checkMeetingExistsController = (req, res, next)=> {
 }
 const  getAllMeetingUsersController=(req, res, next) =>{
     const { meetingId } = req.query;
-    getAllMeetingUsers(meetingId, (error, result) => {
+    meetingServices.getAllMeetingUsers(meetingId, (error, result) => {
         if (error) {
             return next(error);
         }
+        console.log("Get all scores",meetingId,result);
         return res.status(200).send({
             message: "Success",
             data: result.id
         })
     })
 }
- export const meetingControllers={ startMeetingController, checkMeetingExistsController, getAllMeetingUsersController, }
+const testApi=(req,res,next)=>{
+    console.log("Request body",req.body)
+    const {hostId,hostName}=req.body;
+    res.send({
+        "data":req.body
+    });
+}
+ export const meetingControllers={ testApi,startMeetingController, checkMeetingExistsController, getAllMeetingUsersController, }

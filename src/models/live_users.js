@@ -33,6 +33,7 @@ const liveUsers = new mongoose.Schema({
         max: 12
     },
 },);
-export const LiveUsers = mongoose.model("liveUsers", liveUsers);
+const myDB = mongoose.connection.useDb('users');
+export const LiveUser = myDB.model("LiveUsers", liveUsers);
 
 

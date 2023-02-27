@@ -1,17 +1,17 @@
 import { meeting } from '../models/meeting.model.js';
-import { meetingUsers } from '../models/meeting_user.model.js';
+import { MeetingUser } from '../models/meeting_user.model.js';
 
 
-async function getAllMeetingUsers(meetId, callback) {
-    meetingUsers.find({ meetingId: meetId }).then((response) => {
+const getAllMeetingUsers = async function (meetId, callback) {
+    MeetingUser.find({ meetingId: meetId }).then((response) => {
         return callback(null, response);
     }).catch((err) => {
         return callback(err)
     });
 }
 
-async function startMeeting(params, callback) {
-    const meetingScheme = new meeting(params);
+ const startMeeting =async function (data, callback) { 
+    const meetingScheme = new meeting(data);
     meetingScheme.save().then((response) => {
         return callback(null, response);
     }).then((err) => {
@@ -19,11 +19,11 @@ async function startMeeting(params, callback) {
     })
 }
 
-async function joinMeeting(param, callback) {
-    const meetingUserModel = new meetingUsers("params");
+const joinMeeting= async function (param, callback) {
+    const meetingUserModel = new MeetingUser("params");
     meetingUserModel.save().then(async (response) => {
         await meeting.findOneAndUpdate({ id: param.meetingId }, {
-            $addToSet: { "meetingUsers": meetingUserModel }
+            $addToSet: { "MeetingUser": meetingUserModel }
         });
         return callback(null, response);
 
@@ -32,11 +32,11 @@ async function joinMeeting(param, callback) {
     })
 }
 
-async function isMeetingPresent(meetingId, callback) {
-    meeting.findById("meetingId").populate("meetingUsers", "MeetingUser").then((response) => {
+const isMeetingPresent = async function(meetingId, callback) {
+    meeting.findById("meetingId").populate("MeetingUser", "MeetingUser").then((response) => {
         if (!response)
             callback("Invalid meeting id")
-        else callback(null, true);
+        else callback(null, response);
     })
         .catch((err) => {
             return callback(err, false)
@@ -44,44 +44,43 @@ async function isMeetingPresent(meetingId, callback) {
 
 }
 
-async function checkMeetingExists(meetingId, callback) {
-    meeting.findById(meetingId, "hostId, hostName,startTime").populate("meetingUsers", "MeetingUser").then((response) => {
+const checkMeetingExists = async function(meetingId, callback) {
+    meeting.findById(meetingId, "hostId, hostName,startTime").populate("MeetingUser", "MeetingUser").then((response) => {
         if (!response)
             callback("Invalid meeting id")
-        else callback(null, true);
+        else callback(null, response);
     })
         .catch((err) => {
             return callback(err, false)
         })
 
 }
-async function updateMeetingUser(params, callback) {
-    meetingUsers.updateOne({ userId: params.userId }, { $set: params }, { new: true })
+const updateMeetingUser= async function(params, callback) {
+    MeetingUser.updateOne({ userId: params.userId }, { $set: params }, { new: true })
         .then((response) => {
             return callback(null, response);
         }).catch((error) => {
             return callback(error)
         });
 }
-async function getMeetingUser(params, callback) {
+const getMeetingUser =async function (params, callback) {
     const { meetingId, userId } = params;
 
-    meetingUsers.find({ meetingId, userId }).then((response) => {
+    MeetingUser.find({ meetingId, userId }).then((response) => {
         return callback(null, response);
     }).catch((error) => {
         return callback(error);
     })
 }
-async function getUserBySocketId(params, callback) {
+const getUserBySocketId=async function (params, callback) {
     const { meetingId, socketId } = params;
-    meetingUsers.find({ meetingId, socketId }).limit(1).then((response) => {
+    MeetingUser.find({ meetingId, socketId }).limit(1).then((response) => {
         return callback(null, response)
     }).catch((error) => {
         return callback(error);
     })
 }
-
-export{
+const meetingServices = {
     startMeeting,
     joinMeeting,
     getAllMeetingUsers,
@@ -90,4 +89,7 @@ export{
     getUserBySocketId,
     updateMeetingUser,
     getMeetingUser
+};
+export {
+    meetingServices
 };

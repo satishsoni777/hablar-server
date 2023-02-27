@@ -10,7 +10,8 @@ import rtcBuilder from './src/rtc/rtc_builder.js';
 import path from 'path';
 import http from 'http';
 import { connectSocketIo } from './server-io.js';
-import { meetingControllers } from "./src/controller/meeting_controller.js";
+import meetingControllerRoutes from "./src/routes/meeting_controller_routes.js";
+// import  meetingControllers  from "./src/controller/meeting_controller.js";
 // import { readFileSync } from "fs";
 
 // import firebase from 'firebase-functions';
@@ -33,10 +34,10 @@ app.use('/', utils);
 app.use('/users', users);
 app.use("/rtcBuilder", rtcBuilder)
 
-
-app.post("/meeting/start", meetingControllers.startMeetingController);
-app.get("meeting/join", meetingControllers.checkMeetingExistsController);
-app.get("meeting/get", meetingControllers.getAllMeetingUsersController);
+app.use("/meeting",meetingControllerRoutes);
+// app.post("/meeting/start", meetingControllers.startMeetingController);
+// app.get("/meeting/join", meetingControllers.checkMeetingExistsController);
+// app.get("/meeting/get", meetingControllers.getAllMeetingUsersController);
 
 app.get("/", (req, res) => {
     console.log("Test")
@@ -52,7 +53,6 @@ const commonServer = http.createServer(app, {
 commonServer.listen(PORT, () => {
     connectMd();
     connectSocketIo(commonServer);
-    // connectToWebsocket(commonServer);
 
     console.log("Listening at port", PORT);
 })
