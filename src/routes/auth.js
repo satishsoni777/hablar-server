@@ -1,6 +1,5 @@
 import express from "express";
 import jwt from 'jsonwebtoken';
-import { inserOneData } from '../db/mongoose_db.js';
 import { UsersData } from '../models/auth.js';
 const router = express.Router();
 
@@ -31,7 +30,6 @@ router.post("login", (req, res) => {
         name:req.body.name,
         email_id:req.body.email_id
     });
-    inserOneData(userData);
     res.status(200).send({
         message: "Data saved",
 

@@ -2,32 +2,37 @@ import { mongoose } from "mongoose";
 const userScheme = new mongoose.Schema({
     name: {
         type: String,
-        require:true,
+        required:false,
     },
     email_id: {
         type: String,
-        require:true,
         lowercase:true,
+        unique: true,
+        required:false
     },
     gender: {
         type: String,
-        require:true
+        required:false
     },
     state: {
         type: String,
-        require:true
+        required:false
     },
     country: {
         type: String,
-        require:true
+        required:false
     },
     pin: {
         type: Number,
-        require:true,
-        min: [10, 'Too few eggs'],
-        max: 12
+        required:false,
     },
+    mobile:{
+        type: Number,
+        required:false,
+        unique: true,
+    }
 },);
-export const Users = mongoose.model("Users", userScheme);
+const db=mongoose.connection.useDb("users");
+export const Users = db.model("Users", userScheme);
 
 

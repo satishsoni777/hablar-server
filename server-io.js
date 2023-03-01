@@ -14,11 +14,10 @@ async function connectSocketIo(httpServer) {
     },
     )
     io.on("connection", (socket) => {
-      console.log(socket);
        const meetingId=socket.handshake.query.id;
 
        meetingServer.listenMessage(meetingId,socket,httpServer)
-
+       
       liveUsers["email_id"]=socket.id;
        
        console.log(`Socket io Connected `,liveUsers)

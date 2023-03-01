@@ -41,11 +41,5 @@ const  getAllMeetingUsersController=(req, res, next) =>{
         })
     })
 }
-const testApi=(req,res,next)=>{
-    console.log("Request body",req.body)
-    const {hostId,hostName}=req.body;
-    res.send({
-        "data":req.body
-    });
-}
- export const meetingControllers={ testApi,startMeetingController, checkMeetingExistsController, getAllMeetingUsersController, }
+
+ export const meetingControllers={startMeetingController, checkMeetingExistsController, getAllMeetingUsersController, }

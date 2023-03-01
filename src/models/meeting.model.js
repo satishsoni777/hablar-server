@@ -3,7 +3,7 @@ import { mongoose } from "mongoose"
 
 const myDB = mongoose.connection.useDb('users');
 const meeting = myDB.model(
-    "Meeting",
+    "meeting",
     mongoose.Schema({
         socketId: {
             type: String,

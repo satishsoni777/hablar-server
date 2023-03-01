@@ -13,6 +13,7 @@ const parseMessage = (message) => {
 }
 
 const listenMessage = (meetingId, socket, meetingServer) => {
+    console.log("listenMessage",meetingId)
     socket.on("message", (message) => handleMessage(meetingId, socket, meetingServer));
 }
 function handleMessage(meetingId, socket, message, meetingServer) {
