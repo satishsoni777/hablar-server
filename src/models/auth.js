@@ -36,7 +36,7 @@ const authData = new mongoose.Schema({
         max: 12
     },
 },);
-const myDB = mongoose.connection.useDb('users');
+const myDB = mongoose.connection.useDb('webrtc');
 export const UsersData = myDB.model("AuthData", authData);
 
 

@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose"
-const myDB = mongoose.connection.useDb('users');
+const myDB = mongoose.connection.useDb('webrtc');
 const MeetingUser = myDB.model(
     "MeetingUser",
     mongoose.Schema({

@@ -1,7 +1,7 @@
 
 import { mongoose } from "mongoose"
 
-const myDB = mongoose.connection.useDb('users');
+const myDB = mongoose.connection.useDb("webrtc");
 const meeting = myDB.model(
     "meeting",
     mongoose.Schema({
@@ -13,7 +13,7 @@ const meeting = myDB.model(
             type: String,
             required: false
         },
-        UserId: {
+        userId: {
             type: String,
             require: false
         },
@@ -37,10 +37,7 @@ const meeting = myDB.model(
             type: String,
             require: false,
         }
-
-
     },
-
         {
             timestaps: true
         }

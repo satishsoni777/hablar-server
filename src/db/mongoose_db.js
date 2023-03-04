@@ -4,6 +4,7 @@ class MongoDb {
 
   constructor() {
   }
+
   static mongoConnection;
 
   static instance = new MongoDb();
@@ -16,7 +17,7 @@ class MongoDb {
       throw e;
     });
   }
-
 }
+
 export { MongoDb };
 
