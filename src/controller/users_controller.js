@@ -22,7 +22,13 @@ const getAllUsers = async (req, res,) => {
             })
         }
         else
-            return res.send(JSON.stringify(users));
+            return res.status(200).send({
+                success:true,
+                users:users
+            });
     });
 }
-export const UserController = { getAllUsers }
+const getUserDetails=(req,res,next)=>{
+    
+}
+export const UserController = { getAllUsers, getUserDetails }

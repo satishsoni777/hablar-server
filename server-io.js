@@ -2,10 +2,8 @@ import { Server } from "socket.io";
 import { printDateTime } from './src/utils/date_util.js'
 import {meetingServer} from "./meeting_server.js";
 
-const liveUsers=new Map();
 async function connectSocketIo(httpServer) {
     const io = new Server(httpServer, {
-        path: "/socket.io",
         serveClient: true,
         pingInterval: 10000,
         pingTimeout: 5000,
@@ -14,16 +12,20 @@ async function connectSocketIo(httpServer) {
     },
     )
     io.on("connection", (socket) => {
+        
+        console.log("socket connection")
+
        const meetingId=socket.handshake.query.id;
 
+       console.log("asasa",meetingId)
+       
        meetingServer.listenMessage(meetingId,socket,httpServer)
        
-      liveUsers["email_id"]=socket.id;
        
-       console.log(`Socket io Connected `,liveUsers)
+       console.log(`Socket io Connected `)
 
         socket.on("message", (message) => {
-            console.log("IO message", message.textMessageFromClient, printDateTime());
+            console.log("IO message", message, printDateTime());
             socket.emit("callData", { "test-data": "sd" })
         });
         socket.on("joinChannel",(data)=>{

@@ -8,6 +8,10 @@ const MeetingUser = myDB.model(
             type: String,
             required: true,
         },
+        emailId: {
+            type: String,
+            required: false
+        },
         hostName: {
             type: String,
             required: true
@@ -16,12 +20,16 @@ const MeetingUser = myDB.model(
             type: Date,
             require: true
         },
-        meetingUsers: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "MeetingUser"
-            }
-        ],
+        // meetingUsers: [
+        //     {
+        //         type: mongoose.Schema.Types.ObjectId,
+        //         ref: "MeetingUser"
+        //     }
+        // ],
+        roomId: {
+            type: String,
+            required: false,
+        }
 
     },
         {
@@ -35,4 +43,4 @@ const MeetingUser = myDB.model(
         }
     )
 );
-export  {MeetingUser};
+export { MeetingUser };

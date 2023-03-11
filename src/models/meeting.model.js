@@ -1,50 +1,53 @@
 
 import { mongoose } from "mongoose"
 
-const myDB = mongoose.connection.useDb("webrtc");
-const meeting = myDB.model(
-    "meeting",
-    mongoose.Schema({
-        socketId: {
-            type: String,
-            required: false,
-        },
-        meetingId: {
-            type: String,
-            required: false
-        },
-        userId: {
-            type: String,
-            require: false
-        },
-        joined: {
-            type: Boolean,
-            require: false
-        },
-        name: {
-            type: Boolean,
-            require: false
-        },
-        isAlive: {
-            type: Boolean,
-            required: false
-        },
-        hostName: {
-            type: String,
-            required: false,
-        },
-        hostId: {
-            type: String,
-            require: false,
-        }
+const meetingSchema = new mongoose.Schema({
+    socketId: {
+        type: String,
+        required: false,
     },
-        {
-            timestaps: true
+    meetingId: {
+        type: String,
+        required: false
+    },
+    userId: {
+        type: String,
+        require: false
+    },
+    joined: {
+        type: Boolean,
+        require: false
+    },
+    name: {
+        type: Boolean,
+        require: false
+    },
+    isAlive: {
+        type: Boolean,
+        required: false
+    },
+    hostName: {
+        type: String,
+        required: false,
+    },
+    hostId: {
+        type: String,
+        require: false,
+    }
+},
+    {
+        timestaps: true
+    },
+    {
+        toJSON: {
+            transform: function (doc, ret) {
+                ret.id = ret._id.toString(),
+                    delete ret._id;
+                delete ret.__v;
+            }
         }
-    )
+    }
 );
 
-
-// eslint-disable-next-line no-undef
-
-export { meeting }
+const db = mongoose.connection.useDb("webrtc");
+export const Meeting = db.model("Meeting", meetingSchema);

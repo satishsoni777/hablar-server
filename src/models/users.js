@@ -1,12 +1,11 @@
 import { mongoose } from "mongoose";
-import { v4 as uuidv4, } from 'uuid';
 const userScheme = new mongoose.Schema({
     created: {
         type: String,
         default: new Date().toISOString(),
     },
-    type: {
-        type:String,
+    authType: {
+        type: String,
     },
     name: {
         type: String,
@@ -39,18 +38,29 @@ const userScheme = new mongoose.Schema({
         type: Number,
         required: false,
         unique: false,
-        default:null
+        default: null
     },
-    uid:{
-        type:String,
+    uid: {
+        type: String,
     },
-    token:{
-        type:String
+    token: {
+        type: String
     },
-    password:{
-        type:String,
+    password: {
+        type: String,
+    },
+
+}, {
+    toJSON: {
+        transform: function (doc, ret) {
+            ret.id = ret._id.toString(),
+                delete ret.__id;
+            delete ret.__v;
+        }
     }
-},);
+}
+);
+
 const db = mongoose.connection.useDb("webrtc");
 export const Users = db.model("Users", userScheme);
 

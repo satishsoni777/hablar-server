@@ -13,7 +13,7 @@ const parseMessage = (message) => {
 }
 
 const listenMessage = (meetingId, socket, meetingServer) => {
-    console.log("listenMessage",meetingId)
+    console.log("listenMessage", meetingId)
     socket.on("message", (message) => handleMessage(meetingId, socket, meetingServer));
 }
 function handleMessage(meetingId, socket, message, meetingServer) {
@@ -22,11 +22,12 @@ function handleMessage(meetingId, socket, message, meetingServer) {
     if (typeof message == "string") {
         payload = parseMessage(message);
     }
-    {
+    else {
         payload = message;
     }
+
     switch (payload.type) {
-        case MeetingPayloadEnum.JOINED_MEETING:
+        case MeetingPayloadEnum.JOIN_MEETING:
             meetingHelper.joinMeeting(meetingId, socket, meetingServer, payload,);
             break;
         case MeetingPayloadEnum.CONNECTION_REQUEST:

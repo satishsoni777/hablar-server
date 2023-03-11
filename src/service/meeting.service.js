@@ -1,6 +1,7 @@
 import { error } from 'console';
-import { meeting } from '../models/meeting.model.js';
+import { Meeting } from '../models/meeting.model.js';
 import { MeetingUser } from '../models/meeting_user.model.js';
+import { Rooms } from '../models/rooms.js';
 
 
 const getAllMeetingUsers = async function (meetId, callback) {
@@ -17,7 +18,7 @@ const getAllMeetingUsers = async function (meetId, callback) {
 }
 
 const startMeeting = async function (data, callback) {
-    const meetingScheme = new meeting(data);
+    const meetingScheme = new Meeting(data);
     meetingScheme.save().then((response) => {
         return callback(null, response);
     }).then((err) => {
@@ -26,20 +27,25 @@ const startMeeting = async function (data, callback) {
 }
 
 const joinMeeting = async function (param, callback) {
-    const meetingUserModel = new MeetingUser("params");
-    meetingUserModel.save().then(async (response) => {
-        await meeting.findOneAndUpdate({ id: param.meetingId }, {
-            $addToSet: { "MeetingUser": meetingUserModel }
+    const room = new Rooms(param);
+    console.log(room);
+    const { roomId } = param.roomId;
+    const filter = { roomId: roomId };
+    const update = room.joinedUsers.push(room);
+    try {
+        const doc = await Rooms.findOneAndUpdate(filter, update, {
+            new: true,
+            upsert: true
         });
-        return callback(null, response);
-
-    }).then((err) => {
-        return callback(null, err)
-    })
+        return callback(null, doc)
+    }
+    catch (err) {
+        return callback(err, null);
+    }
 }
 
 const isMeetingPresent = async function (meetingId, callback) {
-    meeting.findById("meetingId").populate("MeetingUser", "MeetingUser").then((response) => {
+    Meeting.findById("meetingId").populate("MeetingUser", "MeetingUser").then((response) => {
         if (!response)
             callback("Invalid meeting id")
         else callback(null, response);
@@ -51,8 +57,8 @@ const isMeetingPresent = async function (meetingId, callback) {
 }
 
 const checkMeetingExists = async function (meetingId, callback) {
-    console.log("Check meeting exists",meetingId);
-    meeting.findById(meetingId, "hostId, hostName,startTime").then((response) => {
+    console.log("Check meeting exists", meetingId);
+    Meeting.findById(meetingId, "hostId, hostName,startTime").then((response) => {
         if (!response) {
             callback("Invalid meeting id")
         }

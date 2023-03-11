@@ -1,9 +1,7 @@
 import { Users } from '../models/users.js';
 import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
-import Jwt from 'jsonwebtoken';
-import { Config } from '../config/default.js'
-// eslint-disable-next-line no-undef
+import { JwtToken } from "../utils/jwt_token.js";
 const SignUp = async (req, res,) => {
     var isEmailExist = false;
     try {
@@ -15,7 +13,7 @@ const SignUp = async (req, res,) => {
                 return res.send({
                     success: false,
                     error: {
-                        message: "Email id already registered"
+                        message: "Email id is already registered."
                     }
                 })
             }
@@ -62,6 +60,7 @@ const SignUp = async (req, res,) => {
         return res.send({ failed: "bad request", error: e })
     }
 }
+
 const findUserByEmail = async (email) => {
     const user = await Users.findOne({
         email_id: email,
@@ -72,14 +71,14 @@ const findUserByEmail = async (email) => {
     return false;
 };
 const SignIn = async (req, res, isNewUser) => {
-
     const filter = { email_id: req.body.email_id };
     const update = { created: new Date().toISOString(), uid: uuidv4() };
     const user = await Users.findOneAndUpdate(filter, update);
-    const token = Jwt.sign(
-        { user_id: user._id, email: user.email_id },
-        process.env.TOKE_KEY || Config.TOKEN_KEY
-    );
+    console.log(user);
+    const token = await JwtToken.getToken({
+        email_id: user.email_id,
+        id: user.id
+    }, res);
     user.token = token;
     user.save();
     if (isNewUser || false) {
@@ -89,29 +88,26 @@ const SignIn = async (req, res, isNewUser) => {
             pin: user.pin,
             name: user.nam,
             type: user.type,
-            uid: user.uid
+            uid: user.uid,
         };
-        return res.send({
+        return res.status(200).send({
             success: true,
             token: user.token,
-            user: data
+            createdAt: new Date().toISOString(),
         })
     }
-    return res.send({
+    return res.status(200).send({
         success: true,
         token: user.token,
     })
 }
-const createPassword = (req, rs, next) => {
-    const token = req.headers.token;
+
+const createPassword = (req, res, next) => {
     const { email_id, type, password } = req.body;
 }
 
-const validatedToken = async (req, res, next) => {
-    const isTokenValid = await Jwt.verify(req.headers.authentication_token, process.env.TOKE_KEY || Config.TOKEN_KEY, function (err, decode) {
-        console.log(err);
-    });
-    return false;
+const validatedToken = (req, res, next) => {
+    return JwtToken.validateToken(req, res, next)
 }
 
 
