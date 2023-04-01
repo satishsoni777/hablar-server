@@ -1,8 +1,6 @@
 import { Rooms } from "../models/rooms.js";
 import { meetingServices } from "../service/meeting.service.js";
 import { nanoid } from 'nanoid';
-import { Users } from "../models/users.js";
-import { rmSync } from "fs";
 
 // eslint-disable-next-line no-undef
 const startMeetingController = (req, res, next) => {
@@ -84,7 +82,7 @@ const createRoomController = async (req, res, next) => {
 }
 
 const joinMeetingController = (req, res, next) => {
-    meetingServices.joinMeeting(req.body, (error, result) => {
+    meetingServices.joinMeeting(req, (error, result) => {
         if (error) {
             return next(error);
         }
@@ -94,17 +92,28 @@ const joinMeetingController = (req, res, next) => {
             data: {
                 emailId: req.body.emailId,
                 createdAt: result.createdAt,
-                roomId: req.body.roomId
+                roomId: result.roomId,
             }
         })
     });
 }
+const leaveMeetingController=async(req,res,next)=>{
+    console.log("asdfgasd");
+    meetingServices.leaveRoom(req.body,(error,result)=>{
+        if(error){
+            return next(error);
+        }
+        return res.status(200).send(result);
+    })
+}
 
 const meetingControllers = {
     createRoomController,
-    joinMeetingController, startMeetingController,
+    joinMeetingController, 
+    startMeetingController,
     checkMeetingExistsController,
     getAllMeetingUsersController,
+    leaveMeetingController
 }
 
 export { meetingControllers }

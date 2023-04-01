@@ -7,5 +7,6 @@ router.post('/start', meetingControllers.startMeetingController);
 router.post("/joinRoom", meetingControllers.joinMeetingController)
 router.get("/get", meetingControllers.getAllMeetingUsersController);
 router.post("/createRoom", meetingControllers.createRoomController);
+router.post("/leaveRoom",meetingControllers.leaveMeetingController);
 
 export default router;

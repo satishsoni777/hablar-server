@@ -26,22 +26,53 @@ const startMeeting = async function (data, callback) {
     })
 }
 
-const joinMeeting = async function (param, callback) {
-    const room = new Rooms(param);
-    console.log(room);
-    const { roomId } = param.roomId;
-    const filter = { roomId: roomId };
-    const update = room.joinedUsers.push(room);
+const joinMeeting = async function (req, callback) {
+    console.log(req.query);
+    const filter = { countryCode: req.body.countryCode, stateCode: req.body.stateCode };
+    const user = await Rooms.findOne(filter)
+    if (!user && req.query.roomId == null) {
+        return createRoom(req.body, callback);
+    }
+    else {
+        const roomId = req.query.roomId;
+        return joinRoomWithRoomId({ roomId: roomId, data: req.body }, callback);
+    }
+}
+
+const createRoom = async function (params, callback) {
     try {
-        const doc = await Rooms.findOneAndUpdate(filter, update, {
-            new: true,
-            upsert: true
+        console.log("### createRoom ####");
+        const room = new Rooms(params);
+        room.joinedUsers.push(room);
+        room.save().then((result) => {
+            return callback(null, result);
+        }).catch((error) => {
+            return callback(error, null);
         });
-        return callback(null, doc)
     }
     catch (err) {
         return callback(err, null);
     }
+}
+
+const joinRoomWithRoomId = async function (params, callback) {
+    const { roomId, data } = params;
+    const filter = { roomId: roomId };
+    const newUser = Rooms(data.body);
+    console.log(newUser);
+    Rooms.findOne(filter).then((r) => {
+        r.joinedUsers.push(newUser);
+        r.save().then((r) => {
+            return callback(null, r);
+        }).catch((e) => {
+            return callback(e, null)
+        });
+        // room.updateOne(update).then((r) => {
+        //     return callback(null, r);
+        // }).catch((e) => {
+        //     return (e, null);
+        // });
+    });
 }
 
 const isMeetingPresent = async function (meetingId, callback) {
@@ -94,6 +125,17 @@ const getUserBySocketId = async function (params, callback) {
         return callback(error);
     })
 }
+
+const leaveRoom = async function (params, callback) {
+    const { emailId, roomId } = params;
+    const filter = { roomId: roomId, emailId: emailId };
+    Rooms.deleteOne(filter).then((result) => {
+        return callback(null, result);
+    }).catch((error) => {
+        return callback(error, null);
+    });
+
+}
 const meetingServices = {
     startMeeting,
     joinMeeting,
@@ -102,7 +144,8 @@ const meetingServices = {
     checkMeetingExists,
     getUserBySocketId,
     updateMeetingUser,
-    getMeetingUser
+    getMeetingUser,
+    leaveRoom
 };
 export {
     meetingServices

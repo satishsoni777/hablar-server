@@ -2,11 +2,18 @@ import { Users } from '../models/users.js';
 import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
 import { JwtToken } from "../utils/jwt_token.js";
+
+
 const SignUp = async (req, res,) => {
+    console.log(req.body);
+    var { emailId, mobileNumber, authType } = req.body;
+    authType = authType.toUpperCase();
     var isEmailExist = false;
+    console.log(authType);
+    var users = new Users(req.body);
     try {
-        if (req.body.type.toLowerCase() == AuthType.GMAIL) {
-            isEmailExist = await findUserByEmail(req.body.email_id);
+        if (authType == AuthType.GMAIL) {
+            isEmailExist = await findUserByEmail(req.body.emailId);
             console.log(isEmailExist);
             if (isEmailExist) {
                 res.statusCode = 409;
@@ -18,10 +25,13 @@ const SignUp = async (req, res,) => {
                 })
             }
         }
-        else if (req.body.type.toLowerCase() == AuthType.MOBILE_OTP) {
 
+        else if (authType == AuthType.MOBILE_OTP) {
+            users.userId = mobileNumber;
         }
-        var users = new Users(req.body);
+        if (authType == AuthType.GMAIL) {
+            users.userId = emailId.substring(0, emailId.indexOf("@"));
+        }
         users.save().then((d) => {
             res.statusCode = 200;
             return res.send({
@@ -34,12 +44,12 @@ const SignUp = async (req, res,) => {
                 if (e.keyPattern.mobile == 1) {
                     errorMessage = "Mobile number already registered";
                 }
-                else if (e.keyPattern.email_id == 1) {
+                else if (e.keyPattern.emailId == 1) {
                     errorMessage = "Email id already registered";
                 }
                 res.statusCode = 409;
                 return res.send({
-                    "success": "Failed",
+                    "success": false,
                     "user": req.body,
                     "error": {
                         "message": errorMessage
@@ -49,7 +59,7 @@ const SignUp = async (req, res,) => {
             else {
                 res.statusCode = 400;
                 return res.send({
-                    "succes": "Failed",
+                    "success": false,
                     "message": e
                 })
             }
@@ -63,7 +73,7 @@ const SignUp = async (req, res,) => {
 
 const findUserByEmail = async (email) => {
     const user = await Users.findOne({
-        email_id: email,
+        emailId: email,
     });
     if (user) {
         return true;
@@ -71,19 +81,20 @@ const findUserByEmail = async (email) => {
     return false;
 };
 const SignIn = async (req, res, isNewUser) => {
-    const filter = { email_id: req.body.email_id };
+    const { emailId, mobileNumber, authType } = req.body;
+    const filter = { emailId: emailId };
     const update = { created: new Date().toISOString(), uid: uuidv4() };
     const user = await Users.findOneAndUpdate(filter, update);
-    console.log(user);
+
     const token = await JwtToken.getToken({
-        email_id: user.email_id,
+        emailId: user.emailId,
         id: user.id
     }, res);
     user.token = token;
     user.save();
-    if (isNewUser || false) {
+    if (isNewUser) {
         const data = {
-            email_id: user.email_id,
+            emailId: user.emailId,
             state: user.state,
             pin: user.pin,
             name: user.nam,
@@ -103,7 +114,7 @@ const SignIn = async (req, res, isNewUser) => {
 }
 
 const createPassword = (req, res, next) => {
-    const { email_id, type, password } = req.body;
+    const { emailId, type, password } = req.body;
 }
 
 const validatedToken = (req, res, next) => {

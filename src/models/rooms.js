@@ -23,9 +23,17 @@ const roomsSchema = new mongoose.Schema({
         type: String,
         default: new Date().toISOString()
     },
+    stateCode:{
+        type:String,
+        required:false
+    },
+    countryCode:{
+        type:String,
+        required:true
+    },
     joinedUsers: [{
-        type: mongoose.Schema.ObjectId,
-        ref: "rooms"
+        type: new mongoose.Schema,
+        ref: "rooms",
     }]
 
 }, {

@@ -1,5 +1,5 @@
-export const AuthType={
-GMAIL:"gmail",
-FACEBOOK:"facebook",
-MOBILE_OTP:"mobile_otp",
+export const AuthType = {
+    GMAIL: "GMAIL",
+    FACEBOOK: "FACEBOOK",
+    MOBILE_OTP: "MOBILE-OTP",
 }

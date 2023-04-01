@@ -9,7 +9,7 @@ const authData = new mongoose.Schema({
         type: Number,
         require: true
     },
-    email_id: {
+    emailId: {
         type: String,
         require: true
     },

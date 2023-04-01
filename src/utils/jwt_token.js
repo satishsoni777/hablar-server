@@ -3,10 +3,10 @@ import Jwt from 'jsonwebtoken';
 import { Config } from '../config/default.js'
 
 const getToken = async (params, res, next) => {
-    const { id, email_id } = params;
+    const { id, emailId } = params;
     console.log(params);
     const token = Jwt.sign(
-        { id: id, email_id: email_id },
+        { id: id, emailId: emailId },
         process.env.TOKE_KEY || Config.TOKEN_KEY,
         {
             expiresIn: "24h",
@@ -16,7 +16,7 @@ const getToken = async (params, res, next) => {
 }
 const validateToken = async (req, res, next) => {
     const { token } = req.body;
-    await Jwt.verify(token, process.env.TOKE_KEY || Config.TOKEN_KEY, function (err, decode) {
+     Jwt.verify(token, process.env.TOKE_KEY || Config.TOKEN_KEY, function (err, decode) {
         if (err) {
             if (err.name.toString() == "TokenExpiredError") {
                 res.status(401).send({
@@ -38,7 +38,7 @@ const validateToken = async (req, res, next) => {
                 success: true,
                 "data": {
                     id:decode.id,
-                    email_id:decode.email_id,
+                    emailId:decode.emailId,
                     createdAt:decode.iat,
                     exp:decode.exp,
                 }

@@ -7,24 +7,31 @@ const userScheme = new mongoose.Schema({
     authType: {
         type: String,
     },
+    userId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     name: {
         type: String,
         required: false,
+        default: null,
     },
-    email_id: {
+    emailId: {
         type: String,
-        lowercase: true,
         required: false,
         unique: false,
         match: /.+\@.+\..+/,
     },
     gender: {
         type: String,
-        required: false
+        required: false,
+        default: null,
     },
     state: {
         type: String,
-        required: false
+        required: false,
+        default: null,
     },
     country: {
         type: String,
@@ -33,18 +40,19 @@ const userScheme = new mongoose.Schema({
     pin: {
         type: Number,
         required: false,
+        default: null,
     },
-    mobile: {
-        type: Number,
+    mobileNumber: {
+        type: String,
         required: false,
-        unique: false,
-        default: null
+        default: null,
     },
     uid: {
         type: String,
     },
     token: {
-        type: String
+        type: String,
+        default: null,
     },
     password: {
         type: String,

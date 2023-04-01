@@ -30,16 +30,16 @@ async function connectSocketIo(httpServer) {
         });
         socket.on("joinChannel",(data)=>{
             console.log("joined",socket);
-            liveUsers[data.email_id]=socket.id;
+            liveUsers[data.emailId]=socket.id;
             console.log(liveUsers);
         })
 
 
         socket.on("voiceMessageFromClient", (data) => {
-            console.log(data.email_id);
+            console.log(data.emailId);
             // eslint-disable-next-line no-undef
             // const d = Buffer.from(JSON.stringify(data.voiceMessageFromClient));
-            const socketId=liveUsers[data.email_id];
+            const socketId=liveUsers[data.emailId];
             console.log("voiceMessageFromClient Socket ",socketId);
             io.to(socketId).emit("voiceMessageToClient",data.voiceMessageFromClient);
         });
