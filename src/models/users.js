@@ -1,4 +1,6 @@
+
 import { mongoose } from "mongoose";
+
 const userScheme = new mongoose.Schema({
     created: {
         type: String,
@@ -9,7 +11,7 @@ const userScheme = new mongoose.Schema({
     },
     userId: {
         type: String,
-        required: true,
+        required: false,
         unique: true,
     },
     name: {
@@ -57,6 +59,10 @@ const userScheme = new mongoose.Schema({
     password: {
         type: String,
     },
+    rating:{
+        type:Number,
+        default:1,
+    }
 
 }, {
     toJSON: {
@@ -70,6 +76,7 @@ const userScheme = new mongoose.Schema({
 );
 
 const db = mongoose.connection.useDb("webrtc");
-export const Users = db.model("Users", userScheme);
+export const Users = db.model("users", userScheme);
+
 
 

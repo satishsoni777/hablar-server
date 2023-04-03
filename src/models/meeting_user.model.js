@@ -20,12 +20,6 @@ const MeetingUser = myDB.model(
             type: Date,
             require: true
         },
-        // meetingUsers: [
-        //     {
-        //         type: mongoose.Schema.Types.ObjectId,
-        //         ref: "MeetingUser"
-        //     }
-        // ],
         roomId: {
             type: String,
             required: false,

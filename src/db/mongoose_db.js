@@ -9,8 +9,9 @@ class MongoDb {
 
   static instance = new MongoDb();
   async connectMd() {
-    mongoose.connect(Config.dbUrl).then((result) => {
-      console.log("Mongo db connected")
+    const url = process.env.PORT != undefined ? Config.removeDbUrl : Config.localDbUrl
+    mongoose.connect(url).then((result) => {
+      console.log("Mongo db connected", url)
       return result;
     }).catch((e) => {
       console.log(e);

@@ -27,16 +27,33 @@ const SignUp = async (req, res,) => {
         }
 
         else if (authType == AuthType.MOBILE_OTP) {
-            users.userId = mobileNumber;
+            const { mobileNumber } = req.body;
+            const isMobileExist = await findUserByMobileNumber(mobileNumber);
+            console.log(isMobileExist);
+            if (isMobileExist) {
+                res.statusCode = 409;
+                return res.send({
+                    success: false,
+                    error: {
+                        message: "Mobile number is already registered."
+                    }
+                })
+            }
         }
         if (authType == AuthType.GMAIL) {
+
             users.userId = emailId.substring(0, emailId.indexOf("@"));
+        }
+        if (authType == AuthType.MOBILE_OTP) {
+            const { mobileNumber } = req.body;
+            users.userId = mobileNumber;
         }
         users.save().then((d) => {
             res.statusCode = 200;
+            delete d.token;
             return res.send({
                 "success": true,
-                "user": d
+                "data": req.body
             })
         }).catch((e) => {
             if (e.code == 11000) {
@@ -74,6 +91,15 @@ const SignUp = async (req, res,) => {
 const findUserByEmail = async (email) => {
     const user = await Users.findOne({
         emailId: email,
+    });
+    if (user) {
+        return true;
+    }
+    return false;
+};
+const findUserByMobileNumber = async (mobileNumber) => {
+    const user = await Users.findOne({
+        mobileNumber: mobileNumber,
     });
     if (user) {
         return true;

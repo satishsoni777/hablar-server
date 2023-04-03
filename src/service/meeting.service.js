@@ -1,12 +1,11 @@
 import { error } from 'console';
 import { Meeting } from '../models/meeting.model.js';
 import { MeetingUser } from '../models/meeting_user.model.js';
-import { Rooms } from '../models/rooms.js';
+import { Rooms, JoinedUserModel } from '../models/rooms.js';
 
 
 const getAllMeetingUsers = async function (meetId, callback) {
     MeetingUser.find({ meetingId: meetId }).then((response) => {
-        console.log(response);
         if (response.id != null)
             return callback(null, response);
         else {
@@ -26,24 +25,36 @@ const startMeeting = async function (data, callback) {
     })
 }
 
-const joinMeeting = async function (req, callback) {
-    console.log(req.query);
-    const filter = { countryCode: req.body.countryCode, stateCode: req.body.stateCode };
-    const user = await Rooms.findOne(filter)
-    if (!user && req.query.roomId == null) {
+const joinRoom = async function (req, callback) {
+    console.log("######### Meeting Service joinRoom ##########", req.body)
+    const { countryCode, stateCode } = req.body;
+    const filter = { stateCode: stateCode, joinedUserCount: 1 };
+    const room = await Rooms.findOne(filter);
+    if (room == null) {
         return createRoom(req.body, callback);
     }
     else {
-        const roomId = req.query.roomId;
-        return joinRoomWithRoomId({ roomId: roomId, data: req.body }, callback);
+        if (room.joinedUserCount == 1 && room != null) {
+            const { roomId } = room;
+            room.joinedUsers.push(req.body);
+            room.roomId = roomId;
+            room.save().then((r) => {
+                return callback(null, r);
+            }).catch((e) => {
+                return callback(e, null)
+            });
+        } else {
+            return createRoom(req.body, callback);
+        }
     }
 }
 
 const createRoom = async function (params, callback) {
     try {
-        console.log("### createRoom ####");
+        console.log("######### create room ##########")
         const room = new Rooms(params);
-        room.joinedUsers.push(room);
+        params.roomId = room.roomId;
+        room.joinedUsers.push(params);
         room.save().then((result) => {
             return callback(null, result);
         }).catch((error) => {
@@ -56,49 +67,37 @@ const createRoom = async function (params, callback) {
 }
 
 const joinRoomWithRoomId = async function (params, callback) {
-    const { roomId, data } = params;
+    var { roomId, data } = params;
+    const { userId, countryCode } = data;
     const filter = { roomId: roomId };
-    const newUser = Rooms(data.body);
-    console.log(newUser);
-    Rooms.findOne(filter).then((r) => {
-        r.joinedUsers.push(newUser);
-        r.save().then((r) => {
-            return callback(null, r);
-        }).catch((e) => {
-            return callback(e, null)
+    data.roomId = roomId;
+    try {
+        Rooms.findOne(filter).then((r) => {
+            if (r != null) {
+                for (var i = 0; i < r.joinedUsers.length; i++) {
+                    if (r.joinedUsers[i].userId == userId) {
+                        return callback(null, r);
+                    }
+                }
+                r.joinedUsers.push(data)
+                r.save().then((r) => {
+                    return callback(null, r);
+                }).catch((e) => {
+                    return callback(e, null)
+                });
+            }
+            else return callback("No room found", null);
         });
-        // room.updateOne(update).then((r) => {
-        //     return callback(null, r);
-        // }).catch((e) => {
-        //     return (e, null);
-        // });
-    });
+    }
+    catch (e) {
+        return callback({
+            message: "No room found with given room id",
+            success: false,
+        }, null);
+    }
 }
 
-const isMeetingPresent = async function (meetingId, callback) {
-    Meeting.findById("meetingId").populate("MeetingUser", "MeetingUser").then((response) => {
-        if (!response)
-            callback("Invalid meeting id")
-        else callback(null, response);
-    })
-        .catch((err) => {
-            return callback(err, false)
-        })
 
-}
-
-const checkMeetingExists = async function (meetingId, callback) {
-    console.log("Check meeting exists", meetingId);
-    Meeting.findById(meetingId, "hostId, hostName,startTime").then((response) => {
-        if (!response) {
-            callback("Invalid meeting id")
-        }
-        else callback(null, response);
-    })
-        .catch((err) => {
-            return callback(err, false)
-        })
-}
 
 const updateMeetingUser = async function (params, callback) {
     MeetingUser.updateOne({ userId: params.userId }, { $set: params }, { new: true })
@@ -108,6 +107,7 @@ const updateMeetingUser = async function (params, callback) {
             return callback(error)
         });
 }
+
 const getMeetingUser = async function (params, callback) {
     const { meetingId, userId } = params;
 
@@ -127,21 +127,38 @@ const getUserBySocketId = async function (params, callback) {
 }
 
 const leaveRoom = async function (params, callback) {
-    const { emailId, roomId } = params;
-    const filter = { roomId: roomId, emailId: emailId };
-    Rooms.deleteOne(filter).then((result) => {
-        return callback(null, result);
-    }).catch((error) => {
-        return callback(error, null);
-    });
-
+    const { roomId } = params.query;
+    const { userId } = params.body;
+    const filter = { roomId: roomId };
+    var hasRemoved = false;
+    Rooms.findOne(filter, function (e, r) {
+        for (var i = 0; i < r.joinedUsers.length; i++) {
+            if (r.joinedUsers[i].userId == userId) {
+                hasRemoved = true;
+                r.joinedUsers.id(r.joinedUsers[i]._id).remove();
+                break;
+            }
+        }
+        r.save().then((r) => {
+            if (hasRemoved)
+                return callback(null, {
+                    success: true,
+                    data: "User left"
+                });
+            else return callback(null, {
+                success: false,
+                data: "Could not found user"
+            })
+        }).catch((e) => {
+            return callback(e, null);
+        });
+    })
 }
+
 const meetingServices = {
     startMeeting,
-    joinMeeting,
+    joinRoom,
     getAllMeetingUsers,
-    isMeetingPresent,
-    checkMeetingExists,
     getUserBySocketId,
     updateMeetingUser,
     getMeetingUser,

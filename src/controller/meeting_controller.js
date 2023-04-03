@@ -81,14 +81,17 @@ const createRoomController = async (req, res, next) => {
     }
 }
 
-const joinMeetingController = (req, res, next) => {
-    meetingServices.joinMeeting(req, (error, result) => {
+const joinRandomRoom = (req, res, next) => {
+    meetingServices.joinRoom(req, (error, result) => {
         if (error) {
-            return next(error);
+            return res.status(501).send({
+                success: false,
+                error: error
+            })
         }
         console.log("Get all scores", result);
         return res.status(200).send({
-            message: "Success",
+            success: true,
             data: {
                 emailId: req.body.emailId,
                 createdAt: result.createdAt,
@@ -97,10 +100,9 @@ const joinMeetingController = (req, res, next) => {
         })
     });
 }
-const leaveMeetingController=async(req,res,next)=>{
-    console.log("asdfgasd");
-    meetingServices.leaveRoom(req.body,(error,result)=>{
-        if(error){
+const leaveMeetingController = async (req, res, next) => {
+    meetingServices.leaveRoom(req, (error, result) => {
+        if (error) {
             return next(error);
         }
         return res.status(200).send(result);
@@ -109,7 +111,7 @@ const leaveMeetingController=async(req,res,next)=>{
 
 const meetingControllers = {
     createRoomController,
-    joinMeetingController, 
+    joinRandomRoom,
     startMeetingController,
     checkMeetingExistsController,
     getAllMeetingUsersController,
