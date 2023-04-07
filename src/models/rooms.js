@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { nanoid } from 'nanoid';
 
+
 export const JoinedUserModel = new mongoose.Schema({
     userId: {
         type: String,
@@ -83,13 +84,6 @@ roomsSchema.pre('save', function (next) {
     this.joinedUserCount = this.joinedUsers.length;
     next();
 });
-// roomsSchema.pre("save",function(next){
-//     JoinedUserModel.post('save',function(doc,next){
-//         doc.roomId=this.roomD;
-//         next();
-//     });
-//     next();
-// });
 
 const db = mongoose.connection.useDb("webrtc");
 export const Rooms = db.model("rooms", roomsSchema);

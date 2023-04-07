@@ -1,7 +1,18 @@
 
 import { mongoose } from "mongoose";
 
+
 const userScheme = new mongoose.Schema({
+
+    followersCount: {
+        type: Number,
+    },
+    avatarImage: {
+        type: String
+    },
+    followingCount: {
+        type: Number,
+    },
     created: {
         type: String,
         default: new Date().toISOString(),
@@ -59,9 +70,15 @@ const userScheme = new mongoose.Schema({
     password: {
         type: String,
     },
-    rating:{
-        type:Number,
-        default:1,
+    rating: {
+        type: Number,
+        default: 1,
+    },
+    durationLeft: {
+        type: Number,
+    },
+    durationTalked: {
+        type: Number
     }
 
 }, {
@@ -74,6 +91,11 @@ const userScheme = new mongoose.Schema({
     }
 }
 );
+userScheme.pre('save', function (next) {
+    this.followersCount = this.followers.length;
+    this.followingCount = this.following.length;
+    next();
+});
 
 const db = mongoose.connection.useDb("webrtc");
 export const Users = db.model("users", userScheme);

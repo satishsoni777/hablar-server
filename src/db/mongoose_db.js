@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Config } from '../config/default.js'
+import { Config, Flavor } from '../config/default.js'
 class MongoDb {
 
   constructor() {
@@ -9,7 +9,7 @@ class MongoDb {
 
   static instance = new MongoDb();
   async connectMd() {
-    const url = process.env.PORT != undefined ? Config.removeDbUrl : Config.localDbUrl
+    const url = Flavor.getMongoBaseUrl();
     mongoose.connect(url).then((result) => {
       console.log("Mongo db connected", url)
       return result;

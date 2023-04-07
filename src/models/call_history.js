@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const JoinPersonDetails = new mongoose.Schema({
+const JoinUserDetails = new mongoose.Schema({
     userId: {
         type: String,
     },
@@ -11,7 +11,7 @@ const JoinPersonDetails = new mongoose.Schema({
         type: Number,
     },
     date: {
-        type:Date
+        type: Date
     },
     rating: {
         type: Number,
@@ -20,16 +20,20 @@ const JoinPersonDetails = new mongoose.Schema({
     name: {
         type: String,
     }
-
 });
 
-const callHistory = new mongoose.Schema({
+const callHistorySchema = new mongoose.Schema({
     userId: {
         type: String
     },
-    history: [JoinPersonDetails],
+    history: [JoinUserDetails],
+    followersCount: {
+        type: Number,
+    },
+    followingCount: {
+        type: Number,
+    }
 }, {
-
     toJSON: {
         transform: function (doc, ret) {
             ret.id = ret._id.toString(),
@@ -40,4 +44,4 @@ const callHistory = new mongoose.Schema({
 });
 
 const md = mongoose.connection.useDb("webrtc")
-export const CallHistory = md.model("callhistory", callHistory)
+export const CallHistory = md.model("callhistory", callHistorySchema)
