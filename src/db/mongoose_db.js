@@ -1,30 +1,25 @@
-// import mongoose from "mongoose";
-// import {Config} from '../config/default.js'
+import mongoose from "mongoose";
+import { Config, Flavor } from '../config/default.js'
+class MongoDb {
 
-export default async function connectMd() {
-  console.log("OT adad");
-//   await mongoose.connect(Config.dbUrl).then(() => {
-//     console.log("Connected")
-//   }).catch((e) => { console.log("Not Connected", e) });
-
-}
-export async function inserOneData(data) {
-
-  try {
-    const result = await data.save();
-    if(result){
-      console.log(result);
-    }
+  constructor() {
   }
-  catch (e) {
-    console.log(e);
-    throw e;
+
+  static mongoConnection;
+
+  static instance = new MongoDb();
+  async connectMd() {
+    const url = Flavor.getMongoBaseUrl();
+    console.log("Mongo db connecting..",url)
+    mongoose.connect(url).then((result) => {
+      console.log("Mongo db connected", url)
+      return result;
+    }).catch((e) => {
+      console.log(e);
+      throw e;
+    });
   }
-  // mongoose.collection("users_profile").insertOne(data, function (err, res) {
-  //   if (err) throw err;
-  //   mongoose.close();
-  // });
 }
 
-
+export { MongoDb };
 

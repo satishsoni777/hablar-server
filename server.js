@@ -1,55 +1,44 @@
-/* eslint-disable no-undef */
-import express  from "express";
+import express from "express";
 import bodyParser from "body-parser"
-import auth from './src/routes/auth.js';
-import callHistory from './src/routes/call_history.js'
+import callHistory from './src/routes/call_history_routes.js'
 import utils from './src/utils/util.js'
-// import connectMd from './src/db/mongoose_db.js';
-import users from './src/routes/user.js'
+import { MongoDb } from './src/db/mongoose_db.js';
+import auth from './src/routes/authentication_routes.js'
 import rtcBuilder from './src/rtc/rtc_builder.js';
-
-import path from 'path';
 import http from 'http';
+import { connectSocketIo } from './server-io.js';
+import meetingControllerRoutes from "./src/routes/meeting_controller_routes.js";
+import feedback from './src/routes/feedback_routes.js';
+import users from "./src/routes/users_routes.js";
 
-const __dirname = path.resolve();
 
-const app=express();
+const app = express();
 
-const router=express.Router();
 
-const PORT = process.env.PORT|| 8080;
-const hostname="0.0.0.0";
+const PORT = process.env.PORT || 8083;
 
 app.set('port', PORT);
 
-app.use("/.netlifly/functions/api",router);
 app.use(bodyParser.json());
 app.use(express.json())
 
-app.use("/auth",auth) 
-app.use("/",callHistory);
-app.use('/',utils);
-app.use('/users',users);
-app.use("/rtcBuilder",rtcBuilder)
+app.use("/", callHistory);
+app.use('/utils', utils);
+app.use('/users', users);
+app.use('/authentication', auth);
+app.use("/rtcBuilder", rtcBuilder)
+app.use("/meeting", meetingControllerRoutes);
+app.use(("/feedback",feedback));
 
 
-app.get("/",(req,res)=>{
-    console.log("Test")
-    res.send("Hi how are you")
+
+const commonServer = http.createServer(app, {
+    requestCert: true,
 });
+commonServer.listen(PORT, () => {
+    MongoDb.instance.connectMd();
+    connectSocketIo(commonServer);
+    console.log("Listening at port", PORT);
+})
 
-router.get("/test",function(req,res){
-    res.status(200).send({
-        message:"succes"
-    })
-});
 
-
-http.createServer(app,hostname).listen(app.get('port'), function () {
-    initApp();
-    console.log('Listening at port ' + app.get('port'));
-});
-
-var initApp = function () {
-    // connectMd();
-}

@@ -1,6 +1,6 @@
 import { mongoose } from "mongoose";
 
-const authData = new mongoose.Schema({
+const liveUsers = new mongoose.Schema({
     name: {
         type: String,
         require: true,
@@ -9,10 +9,7 @@ const authData = new mongoose.Schema({
         type: Number,
         require: true
     },
-    emailId: {
-        type: String,
-        require: true
-    },
+
     gender: {
         type: String,
         require: true
@@ -36,17 +33,16 @@ const authData = new mongoose.Schema({
         max: 12
     },
 },
-    {
-        toJSON: {
-            transform: function (doc, ret) {
-                ret.id = ret._id.toString(),
-                    delete ret._id;
-                delete ret.__v;
-            }
+{
+    toJSON: {
+        transform: function (doc, ret) {
+            ret.id = ret._id.toString(),
+                delete ret._id;
+            delete ret.__v;
         }
     }
-);
-const myDB = mongoose.connection.useDb('webrtc');
-export const UsersData = myDB.model("AuthData", authData);
+});
+const myDB = mongoose.connection.useDb('users');
+export const LiveUser = myDB.model("LiveUsers", liveUsers);
 
 
