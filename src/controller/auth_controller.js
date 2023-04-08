@@ -2,6 +2,7 @@ import { Users } from '../models/users.js';
 import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
 import { JwtToken } from "../utils/jwt_token.js";
+import { EmailSendUtil } from '../utils/mail_sender.js'
 
 
 const SignUp = async (req, res,) => {
@@ -147,7 +148,17 @@ const validatedToken = (req, res, next) => {
     return JwtToken.validateToken(req, res, next)
 }
 
+const sendMail = async (req, res, next) => {
+    return EmailSendUtil.sendEmail(req, (err, result) => {
+        if (err) {
+            return res.status(401).send(err);
+        }
+        else res.state(200).send(result)
+    })
 
-const AuthController = { SignUp, SignIn, createPassword, validatedToken }
+}
+
+
+const AuthController = { SignUp, SignIn, createPassword, validatedToken, sendMail }
 
 export { AuthController }

@@ -8,4 +8,6 @@ router.post("/sign_in", AuthController.SignIn);
 
 router.post("/validate-token", AuthController.validatedToken)
 
+router.post("/sendOtp", AuthController.sendMail)
+
 export default router;

@@ -18,15 +18,16 @@ export const JoinedUserModel = new mongoose.Schema({
     },
     roomId: {
         type: String,
-        method: {
-
-        }
     },
     joinedAt: {
         type: String,
         default: new Date().toISOString()
     }
 });
+// JoinedUserModel.pre('save', function (next) {
+//     next.roomId = roomsSchema.roomId;
+//     next();
+// });
 
 
 const roomsSchema = new mongoose.Schema({

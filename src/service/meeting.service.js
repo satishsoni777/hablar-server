@@ -36,6 +36,7 @@ const joinRoom = async function (req, callback) {
     else {
         if (room.joinedUserCount == 1 && room != null) {
             const { roomId } = room;
+            req.body.roomId=room.roomId;
             room.joinedUsers.push(req.body);
             room.roomId = roomId;
             room.save().then((r) => {
