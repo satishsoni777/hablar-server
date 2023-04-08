@@ -4,7 +4,6 @@ import callHistory from './src/routes/call_history_routes.js'
 import utils from './src/utils/util.js'
 import { MongoDb } from './src/db/mongoose_db.js';
 import auth from './src/routes/authentication_routes.js'
-import rtcBuilder from './src/rtc/rtc_builder.js';
 import http from 'http';
 import { connectSocketIo } from './server-io.js';
 import meetingControllerRoutes from "./src/routes/meeting_controller_routes.js";
@@ -26,7 +25,6 @@ app.use("/", callHistory);
 app.use('/utils', utils);
 app.use('/users', users);
 app.use('/authentication', auth);
-app.use("/rtcBuilder", rtcBuilder)
 app.use("/meeting", meetingControllerRoutes);
 app.use(("/feedback",feedback));
 
