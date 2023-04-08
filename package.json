@@ -8,8 +8,9 @@
     "start": "nodemon server.js",
     "local": "NODE_ENV=local nodemon server.js",
     "stg": "NODE_ENV=stg nodemon server.js",
-    "build:staging": "NODE_ENV=stg npm run build",
-    "build:production": "NODE_ENV=prod npm run build",
+    "build":"npm run build",
+    "build:stg": "NODE_ENV=stg npm run build",
+    "build:prod": "NODE_ENV=prod npm run build",
     "start-ws": "nodemon server-ws.js",
     "start-io": "nodemon server-io.js"
   },
