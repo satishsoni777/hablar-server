@@ -11,6 +11,7 @@ class MongoDb {
   async connectMd() {
     const url = Flavor.getMongoBaseUrl();
     console.log("Mongo db connecting..",url)
+    mongoose.set('strictQuery', false);
     mongoose.connect(url).then((result) => {
       console.log("Mongo db connected", url)
       return result;

@@ -82,6 +82,7 @@ const createRoomController = async (req, res, next) => {
 }
 
 const joinRandomRoom = (req, res, next) => {
+    console.log("Req##########");
     meetingServices.joinRoom(req, (error, result) => {
         if (error) {
             return res.status(501).send({
@@ -101,6 +102,7 @@ const joinRandomRoom = (req, res, next) => {
     });
 }
 const leaveMeetingController = async (req, res, next) => {
+    console.log("### Leave room ###", req.body);
     meetingServices.leaveRoom(req, (error, result) => {
         if (error) {
             return next(error);
