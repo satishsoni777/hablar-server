@@ -147,13 +147,14 @@ const leaveRoom = async function (params, callback) {
     const filter = { roomId: roomId };
     var hasRemoved = false;
     Rooms.findOne(filter, function (e, r) {
-        for (var i = 0; i < r.joinedUsers.length; i++) {
-            if (r.joinedUsers[i].userId == userId) {
-                hasRemoved = true;
-                r.joinedUsers.id(r.joinedUsers[i]._id).remove();
-                break;
+        if (r.joinedUsers != null)
+            for (var i = 0; i < r.joinedUsers.length; i++) {
+                if (r.joinedUsers[i].userId == userId) {
+                    hasRemoved = true;
+                    r.joinedUsers.id(r.joinedUsers[i]._id).remove();
+                    break;
+                }
             }
-        }
         if (r.joinedUserCount == 0) {
             r.collection.remove();
             return callback(null, {
