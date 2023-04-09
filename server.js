@@ -12,12 +12,12 @@ import users from "./src/routes/users_routes.js";
 
 
 const app = express();
-
+const router = express.Router();
 
 const PORT = process.env.PORT || 8082;
 
 app.set('port', PORT);
-
+app.use("/.netlify/functions/api", router)
 app.use(bodyParser.json());
 app.use(express.json())
 
@@ -27,7 +27,7 @@ app.use('/users', users);
 app.use('/authentication', auth);
 app.use("/meeting", meetingControllerRoutes);
 app.use(("/feedback", feedback));
-app.use("/.netlify/functions/api", app._router)
+
 
 
 
