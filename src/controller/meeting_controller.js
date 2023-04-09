@@ -82,7 +82,6 @@ const createRoomController = async (req, res, next) => {
 }
 
 const joinRandomRoom = (req, res, next) => {
-    console.log("Req##########");
     meetingServices.joinRoom(req, (error, result) => {
         if (error) {
             return res.status(501).send({
@@ -90,11 +89,11 @@ const joinRandomRoom = (req, res, next) => {
                 error: error
             })
         }
-        console.log("Get all scores", result);
+        console.log("Get all scores", result.userId);
         return res.status(200).send({
             success: true,
             data: {
-                emailId: req.body.emailId,
+                userId: req.body.userId,
                 createdAt: result.createdAt,
                 roomId: result.roomId,
             }

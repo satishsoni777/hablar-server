@@ -9,6 +9,7 @@
     "local": "NODE_ENV=local nodemon server.js",
     "stg": "NODE_ENV=stg nodemon server.js",
     "build": "npm run build",
+    "build:local": "NODE_ENV=local nodemon server.js",
     "build:stg": "NODE_ENV=stg npm run build",
     "build:prod": "NODE_ENV=prod npm run build",
     "start-ws": "nodemon server-ws.js",

@@ -26,17 +26,31 @@ const startMeeting = async function (data, callback) {
 }
 
 const joinRoom = async function (req, callback) {
-    console.log("######### Meeting Service joinRoom ##########", req.body)
-    const { countryCode, stateCode } = req.body;
+    console.log("######### Meeting Service  Req  ##########", req.body)
+    const { countryCode, stateCode, userId } = req.body;
     const filter = { stateCode: stateCode, joinedUserCount: 1 };
     const room = await Rooms.findOne(filter);
+    console.log("######### Meeting Service   ##########", room)
     if (room == null) {
+        console.log("######### Meeting Service Join room ##########", req.body)
         return createRoom(req.body, callback);
     }
     else {
+        // var isJoined = false;
+        // room.joinedUsers.forEach((e) => {
+        //     if (e.userId === room.userId) {
+        //         isJoined = true;
+        //     }
+        // })
+        // if (isJoined) {
+        //     req.body.createdAt = room.createdAt;
+        //     req.body.roomId = room.roomId;
+        //     return callback(null, req.body)
+        // }
+        console.log("######### Meeting Service Create Join Room ##########", req.body)
         if (room.joinedUserCount == 1 && room != null) {
             const { roomId } = room;
-            req.body.roomId=room.roomId;
+            req.body.roomId = room.roomId;
             room.joinedUsers.push(req.body);
             room.roomId = roomId;
             room.save().then((r) => {
@@ -139,6 +153,13 @@ const leaveRoom = async function (params, callback) {
                 r.joinedUsers.id(r.joinedUsers[i]._id).remove();
                 break;
             }
+        }
+        if (r.joinedUserCount == 0) {
+            r.collection.remove();
+            return callback(null, {
+                success: true,
+                "message": "No room available"
+            });
         }
         r.save().then((r) => {
             if (hasRemoved)
