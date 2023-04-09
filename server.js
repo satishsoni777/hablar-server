@@ -26,7 +26,8 @@ app.use('/utils', utils);
 app.use('/users', users);
 app.use('/authentication', auth);
 app.use("/meeting", meetingControllerRoutes);
-app.use(("/feedback",feedback));
+app.use(("/feedback", feedback));
+app.use("/.netlify/functions/api", app._router)
 
 
 
