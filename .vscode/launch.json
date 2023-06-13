@@ -8,9 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/index.js",
             "preLaunchTask": "tsc: build - tsconfig.json",
-           
             "console": "integratedTerminal",
             "outputCapture": "std",
             "outFiles": [

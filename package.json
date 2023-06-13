@@ -1,19 +1,19 @@
 {
   "name": "ls",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
-    "local": "NODE_ENV=local nodemon server.js",
-    "stg": "NODE_ENV=stg nodemon server.js",
+    "start": "nodemon index.js",
+    "local": "NODE_ENV=local nodemon index.js",
+    "stg": "NODE_ENV=stg nodemon index.js",
     "build": "npm run build",
-    "build:local": "NODE_ENV=local nodemon server.js",
+    "build:local": "NODE_ENV=local nodemon index.js",
     "build:stg": "NODE_ENV=stg npm run build",
     "build:prod": "NODE_ENV=prod npm run build",
-    "start-ws": "nodemon server-ws.js",
-    "start-io": "nodemon server-io.js"
+    "start-ws": "nodemon index-ws.js",
+    "start-io": "nodemon index-io.js"
   },
   "author": "",
   "license": "ISC",
