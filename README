@@ -1,0 +1,13 @@
+Open an SSH client.
+
+Locate your private key file. The key used to launch this instance is fit-server-key.pem
+
+Run this command, if necessary, to ensure your key is not publicly viewable.
+ chmod 400 fit-server-key.pem
+
+Connect to your instance using its Public DNS:
+ ec2-13-232-51-238.ap-south-1.compute.amazonaws.com
+
+Example:
+
+ ssh -i "fit-server-key.pem" ubuntu@ec2-13-232-51-238.ap-south-1.compute.amazonaws.com
