@@ -108,6 +108,7 @@ const findUserByMobileNumber = async (mobileNumber) => {
     return false;
 };
 const SignIn = async (req, res, isNewUser) => {
+    console.log(req.body);
     const { emailId, mobileNumber, authType } = req.body;
     const filter = { emailId: emailId };
     const update = { created: new Date().toISOString(), uid: uuidv4() };

@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 8082;
 app.set('port', PORT);
 
 app.use(bodyParser.json());
+app.set('Cache-Control', 's-maxage=86400');
 app.use(express.json())
 
 app.use("/", callHistory);
