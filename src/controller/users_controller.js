@@ -22,13 +22,13 @@ const getAllUsers = async (req, res,) => {
             })
         }
         else
-            return res.status(200).send({
-                success:true,
-                users:users
+            return res.send({
+                success: true,
+                users: users
             });
     });
 }
-const getUserDetails=(req,res,next)=>{
-    
+const getUserDetails = (req, res, next) => {
+
 }
 export const UserController = { getAllUsers, getUserDetails }
