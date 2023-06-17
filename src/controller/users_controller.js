@@ -3,9 +3,6 @@ import { Users } from "../models/users.js";
 
 const getAllUsers = async (req, res,) => {
     console.log("get All users");
-    return res.send({
-        "data": req.body
-    });
     const pageNo = req.body.page_no;
     const pageSize = req.body.page_size;
     var lowerLimit, upperLimit;
