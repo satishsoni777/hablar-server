@@ -108,37 +108,42 @@ const findUserByMobileNumber = async (mobileNumber) => {
     return false;
 };
 const SignIn = async (req, res, isNewUser) => {
-    console.log(req.body);
-    const { emailId, mobileNumber, authType } = req.body;
-    const filter = { emailId: emailId };
-    const update = { created: new Date().toISOString(), uid: uuidv4() };
-    const user = await Users.findOneAndUpdate(filter, update);
+    try {
+        console.log(req.body);
+        const { emailId, mobileNumber, authType } = req.body;
+        const filter = { emailId: emailId };
+        const update = { created: new Date().toISOString(), uid: uuidv4() };
+        const user = await Users.findOneAndUpdate(filter, update);
 
-    const token = await JwtToken.getToken({
-        emailId: user.emailId,
-        id: user.id
-    }, res);
-    user.token = token;
-    user.save();
-    if (isNewUser) {
-        const data = {
+        const token = await JwtToken.getToken({
             emailId: user.emailId,
-            state: user.state,
-            pin: user.pin,
-            name: user.nam,
-            type: user.type,
-            uid: user.uid,
-        };
+            id: user.id
+        }, res);
+        user.token = token;
+        user.save();
+        if (isNewUser) {
+            const data = {
+                emailId: user.emailId,
+                state: user.state,
+                pin: user.pin,
+                name: user.nam,
+                type: user.type,
+                uid: user.uid,
+            };
+            return res.status(200).send({
+                success: true,
+                token: user.token,
+                createdAt: new Date().toISOString(),
+            })
+        }
         return res.status(200).send({
             success: true,
             token: user.token,
-            createdAt: new Date().toISOString(),
         })
     }
-    return res.status(200).send({
-        success: true,
-        token: user.token,
-    })
+    catch (e) {
+        res.send(e);
+    }
 }
 
 const createPassword = (req, res, next) => {
