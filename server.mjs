@@ -26,7 +26,7 @@ app.use('/utils', utils);
 app.use('/users', users);
 app.use('/authentication', auth);
 app.use("/meeting", meetingControllerRoutes);
-app.use(("/feedback", feedback));
+app.use("/feedback", feedback);
 
 
 
@@ -36,7 +36,7 @@ const commonServer = http.createServer(app, {
 commonServer.listen(PORT, () => {
     MongoDb.instance.connectMd();
     connectSocketIo(commonServer);
-    console.log("Listening at port", PORT);
+    console.log("Server.js Listening at port", PORT);
 })
 
 
