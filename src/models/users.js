@@ -55,7 +55,7 @@ const userScheme = new mongoose.Schema({
         required: false,
         default: null,
     },
-    mobileNumber: {
+    mobile: {
         type: String,
         required: false,
         default: null,
@@ -92,8 +92,8 @@ const userScheme = new mongoose.Schema({
 }
 );
 userScheme.pre('save', function (next) {
-    this.followersCount = this.followers.length;
-    this.followingCount = this.following.length;
+    this.followersCount = this.followers?.length ?? 0;
+    this.followingCount = this.following?.length ?? 0;
     next();
 });
 

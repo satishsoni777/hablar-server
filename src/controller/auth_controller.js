@@ -3,11 +3,13 @@ import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
 import { JwtToken } from "../utils/jwt_token.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
-
-
+import { FirebaseAuth } from "./firebase_auth.js";
 const SignUp = async (req, res,) => {
     console.log(req.body);
-    var { emailId, mobileNumber, authType } = req.body;
+    var { emailId, mobile, authType } = req.body;
+    if (authType == AuthType.MOBILE_OTP_FB) {
+
+    }
     authType = authType.toUpperCase();
     var isEmailExist = false;
     console.log(authType);
@@ -28,8 +30,8 @@ const SignUp = async (req, res,) => {
         }
 
         else if (authType == AuthType.MOBILE_OTP) {
-            const { mobileNumber } = req.body;
-            const isMobileExist = await findUserByMobileNumber(mobileNumber);
+            const { mobile } = req.body;
+            const isMobileExist = await findUserByMobileNumber(mobile);
             console.log(isMobileExist);
             if (isMobileExist) {
                 res.statusCode = 409;
@@ -46,8 +48,8 @@ const SignUp = async (req, res,) => {
             users.userId = emailId.substring(0, emailId.indexOf("@"));
         }
         if (authType == AuthType.MOBILE_OTP) {
-            const { mobileNumber } = req.body;
-            users.userId = mobileNumber;
+            const { mobile } = req.body;
+            users.userId = mobile;
         }
         users.save().then((d) => {
             res.statusCode = 200;
@@ -98,53 +100,57 @@ const findUserByEmail = async (email) => {
     }
     return false;
 };
-const findUserByMobileNumber = async (mobileNumber) => {
+const findUserByMobileNumber = async (mobile) => {
     const user = await Users.findOne({
-        mobileNumber: mobileNumber,
+        mobile: mobile,
     });
     if (user) {
         return true;
     }
     return false;
 };
-const SignIn = async (req, res, isNewUser) => {
+const SignIn = async (req, res, next) => {
     try {
         console.log(req.body);
-        const { emailId, mobileNumber, authType } = req.body;
-        const filter = { emailId: emailId };
-        const update = { created: new Date().toISOString(), uid: uuidv4() };
-        const user = await Users.findOneAndUpdate(filter, update);
+        const { emailId, mobile, authType } = req.body;
+        switch (authType) {
+            case AuthType.MOBILE_OTP_FB:
+                const result = FirebaseAuth.firebaseOtpAuth(req, res);
+                return result;
+            case AuthType.GMAIL:
+                console.log("Auth type", authType)
+                const filter = { emailId: emailId };
+                const update = { created: new Date().toISOString(), uid: uuidv4() };
+                let user = await Users.findOneAndUpdate(filter, update);
+                console.log(`User data user`, user)
+                if (!user) {
+                    console.log(`User !user`, user)
+                    user = Users(req.body);
+                    user.userId = emailId;
+                }
 
-        const token = await JwtToken.getToken({
-            emailId: user.emailId,
-            id: user.id
-        }, res);
-        user.token = token;
-        user.save();
-        if (isNewUser) {
-            const data = {
-                emailId: user.emailId,
-                state: user.state,
-                pin: user.pin,
-                name: user.nam,
-                type: user.type,
-                uid: user.uid,
-            };
-            return res.status(200).send({
-                success: true,
-                token: user.token,
-                createdAt: new Date().toISOString(),
-            })
+                const token = await JwtToken.getToken({
+                    emailId: user.emailId,
+                    id: user.id
+                }, res);
+
+                user.token = token;
+                user.save();
+                return res.status(200).send({
+                    success: true,
+                    token: user.token,
+                    createdAt: new Date().toISOString(),
+                })
+
         }
-        return res.status(200).send({
-            success: true,
-            token: user.token,
-        })
+
+
     }
     catch (e) {
         res.send(e);
     }
 }
+
 
 const createPassword = (req, res, next) => {
     const { emailId, type, password } = req.body;
@@ -168,3 +174,4 @@ const sendMail = async (req, res, next) => {
 const AuthController = { SignUp, SignIn, createPassword, validatedToken, sendMail }
 
 export { AuthController }
+

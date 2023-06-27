@@ -45,11 +45,11 @@ async function connectSocketIo(httpServer) {
         });
 
 
-        socket.on("textMessageFromClient", (data) => {
+        socket.on("messageFromClient", (data) => {
             console.log("test event data", data);
         });
 
-        socket.on("textMessageToClient", (data) => {
+        socket.on("messageToClient", (data) => {
             console.log("test event data", data);
         });
 
