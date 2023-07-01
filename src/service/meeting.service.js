@@ -1,11 +1,11 @@
 import { error } from 'console';
 import { Meeting } from '../models/meeting.model.js';
-import { MeetingUser } from '../models/meeting_user.model.js';
+import { LiveUsers } from '../models/live_users.js';
 import { Rooms, JoinedUserModel } from '../models/rooms.js';
 
 
 const getAllMeetingUsers = async function (meetId, callback) {
-    MeetingUser.find({ meetingId: meetId }).then((response) => {
+    LiveUsers.find({ meetingId: meetId }).then((response) => {
         if (response.id != null)
             return callback(null, response);
         else {
@@ -25,49 +25,54 @@ const startMeeting = async function (data, callback) {
     })
 }
 
-const joinRoom = async function (req, callback) {
-    console.log("######### Meeting Service  Req  ##########", req.body)
-    const { countryCode, stateCode, userId } = req.body;
-    const filter = { stateCode: stateCode, joinedUserCount: 1 };
+const joinRoom = async function (params, callback) {
+    const { countryCode, stateCode, userId } = params;
+    const filter = { stateCode: stateCode, joinedUserCount: { $in: [0, 1, 2] } };
     const room = await Rooms.findOne(filter);
-    console.log("######### Meeting Service   ##########", room)
+    console.log("######### Rooms is data  ##########")
     if (room == null) {
-        console.log("######### Meeting Service Join room ##########", req.body)
-        return createRoom(req.body, callback);
+        return createRoom(params, callback);
     }
     else {
-        // var isJoined = false;
-        // room.joinedUsers.forEach((e) => {
-        //     if (e.userId === room.userId) {
-        //         isJoined = true;
-        //     }
-        // })
-        // if (isJoined) {
-        //     req.body.createdAt = room.createdAt;
-        //     req.body.roomId = room.roomId;
-        //     return callback(null, req.body)
-        // }
-        console.log("######### Meeting Service Create Join Room ##########", req.body)
+        // is Same user calling again same api
+        if (room.hostId == userId) {
+            return callback(null, {
+                "userId": userId,
+                "createdAt": room.createdAt,
+                "roomId": room.roomId,
+            });
+        }
         if (room.joinedUserCount == 1 && room != null) {
             const { roomId } = room;
-            req.body.roomId = room.roomId;
-            room.joinedUsers.push(req.body);
+            params.roomId = room.roomId;
+            room.joinedUsers.push(params);
             room.roomId = roomId;
+            console.log("User count with more than 2 ")
             room.save().then((r) => {
                 return callback(null, r);
             }).catch((e) => {
                 return callback(e, null)
             });
-        } else {
-            return createRoom(req.body, callback);
+        }
+        else if (room.joinedUserCount >= 2 && room != null) {
+            return callback(null, {
+                "userId": userId,
+                "createdAt": room.createdAt,
+                "roomId": room.roomId,
+                "joinedUserCount": 2
+            });
+        }
+        else {
+            return createRoom(params, callback);
         }
     }
 }
 
 const createRoom = async function (params, callback) {
     try {
-        console.log("######### create room ##########")
+        console.log("######### create room ##########", params)
         const room = new Rooms(params);
+        room.hostId = params.userId;
         params.roomId = room.roomId;
         room.joinedUsers.push(params);
         room.save().then((result) => {
@@ -115,7 +120,7 @@ const joinRoomWithRoomId = async function (params, callback) {
 
 
 const updateMeetingUser = async function (params, callback) {
-    MeetingUser.updateOne({ userId: params.userId }, { $set: params }, { new: true })
+    LiveUsers.updateOne({ userId: params.userId }, { $set: params }, { new: true })
         .then((response) => {
             return callback(null, response);
         }).catch((error) => {
@@ -123,10 +128,9 @@ const updateMeetingUser = async function (params, callback) {
         });
 }
 
-const getMeetingUser = async function (params, callback) {
-    const { meetingId, userId } = params;
-
-    MeetingUser.find({ meetingId, userId }).then((response) => {
+const getMeetingUser = function (params, callback) {
+    const { otherUserId } = params;
+    LiveUsers.findOne({ roomId: otherUserId }).then((response) => {
         return callback(null, response);
     }).catch((error) => {
         return callback(error);
@@ -134,7 +138,7 @@ const getMeetingUser = async function (params, callback) {
 }
 const getUserBySocketId = async function (params, callback) {
     const { meetingId, socketId } = params;
-    MeetingUser.find({ meetingId, socketId }).limit(1).then((response) => {
+    LiveUsers.find({ meetingId, socketId }).limit(1).then((response) => {
         return callback(null, response)
     }).catch((error) => {
         return callback(error);
@@ -142,40 +146,34 @@ const getUserBySocketId = async function (params, callback) {
 }
 
 const leaveRoom = async function (params, callback) {
-    const { roomId } = params.query;
-    const { userId } = params.body;
+    console.log("leave room {1}", params)
+    const { userId, roomId } = params;
     const filter = { roomId: roomId };
-    var hasRemoved = false;
-    Rooms.findOne(filter, function (e, r) {
-        if (r != null)
-            for (var i = 0; i < r.joinedUsers.length; i++) {
-                if (r.joinedUsers[i].userId == userId) {
-                    hasRemoved = true;
-                    r.joinedUsers.id(r.joinedUsers[i]._id).remove();
+    try {
+        const room = await Rooms.findOne(filter);
+        console.log("leave room", room.joinedUsers.length)
+        if (room != null) {
+            for (var i = 0; i < room.joinedUsers.length; i++) {
+                console.log("i", room.joinedUsers[i].userId == userId);
+                if (room.joinedUsers[i].userId == userId) {
+                    room.joinedUsers.id(room.joinedUsers[i]._id).remove();
+                    room.save();
                     break;
                 }
             }
-        if (r.joinedUserCount == 0) {
-            r.collection.remove();
-            return callback(null, {
-                success: true,
-                "message": "No room available"
-            });
         }
-        r.save().then((r) => {
-            if (hasRemoved)
-                return callback(null, {
-                    success: true,
-                    data: "User left"
-                });
-            else return callback(null, {
-                success: false,
-                data: "Could not found user"
-            })
-        }).catch((e) => {
-            return callback(e, null);
-        });
-    })
+        if (room.joinedUsers.length == 0) {
+            room.deleteOne({ roomId: roomId });
+        }
+
+        return callback(null, {
+            message: "User left room",
+            success: true
+        })
+    }
+    catch (e) {
+        return callback({ message: "Unable to leave room", success: false, error: e }, null)
+    }
 }
 
 const meetingServices = {

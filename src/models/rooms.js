@@ -24,10 +24,6 @@ export const JoinedUserModel = new mongoose.Schema({
         default: new Date().toISOString()
     }
 });
-// JoinedUserModel.pre('save', function (next) {
-//     next.roomId = roomsSchema.roomId;
-//     next();
-// });
 
 
 const roomsSchema = new mongoose.Schema({
@@ -45,7 +41,7 @@ const roomsSchema = new mongoose.Schema({
     },
     joinedUserCount: {
         type: Number,
-        default: 1,
+        default: 0,
     },
     pinCode: {
         type: Number,
@@ -60,9 +56,6 @@ const roomsSchema = new mongoose.Schema({
     stateCode: {
         type: String,
         required: false
-    },
-    userId: {
-        type: String,
     },
     countryCode: {
         type: String,

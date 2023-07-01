@@ -9,6 +9,7 @@ import { connectSocketIo } from './server-io.js';
 import meetingControllerRoutes from "./src/routes/meeting_controller_routes.js";
 import feedback from './src/routes/feedback_routes.js';
 import users from "./src/routes/users_routes.js";
+import chat from "./src/routes/chat_routes.js";
 
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/users', users);
 app.use('/authentication', auth);
 app.use("/meeting", meetingControllerRoutes);
 app.use("/feedback", feedback);
+app.use("/chat", chat);
 
 
 

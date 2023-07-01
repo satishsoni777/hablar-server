@@ -1,48 +1,38 @@
-import { mongoose } from "mongoose";
+
+import mongoose from "mongoose"
 
 const liveUsers = new mongoose.Schema({
-    name: {
+    userId: {
         type: String,
-        require: true,
+        required: false
     },
-    mobile: {
-        type: Number,
-        require: true
-    },
-
-    gender: {
+    startTime: {
         type: String,
-        require: true
+        default: new Date().toISOString(),
     },
-    state: {
+    roomId: {
         type: String,
-        require: true
-    },
-    country: {
-        type: String,
-        require: true
+        required: false,
     },
     socketId: {
         type: String,
-        require: false,
+        required: false
     },
-    pin: {
-        type: Number,
-        require: true,
-        min: [10, 'Too few eggs'],
-        max: 12
-    },
-},
-{
-    toJSON: {
-        transform: function (doc, ret) {
-            ret.id = ret._id.toString(),
-                delete ret._id;
-            delete ret.__v;
-        }
+    online: {
+        type: Boolean,
+        required: false
     }
-});
-const myDB = mongoose.connection.useDb('users');
-export const LiveUser = myDB.model("LiveUsers", liveUsers);
-
-
+},
+    // {
+    //     toJSON: {
+    //         transform: function (doc, ret) {
+    //             ret.id = ret._id.toString(),
+    //                 delete ret._id;
+    //             delete ret._v;
+    //         }
+    //     }
+    // }
+);
+const db = mongoose.connection.useDb("webrtc");
+const LiveUsers = db.model("liveUsers", liveUsers);
+export { LiveUsers };

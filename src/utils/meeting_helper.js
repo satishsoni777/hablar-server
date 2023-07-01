@@ -1,18 +1,20 @@
 import { meetingServices } from "../service/meeting.service.js";
 import { MeetingPayloadEnum } from "./meeting_payload_enums.js"
+import { meetingControllers } from "../controller/meeting_controller.js";
+import { LiveUsers } from "../models/live_users.js";
+import { Rooms } from "../models/rooms.js";
 
-
-const joinMeeting = async function (meetingId, socket, meetingServer,payload, ) {
+const joinMeeting = async function (roomId, socket, meetingServer, payload,) {
     const { userId, name } = payload;
 
-    meetingServices.isMeetingPresent(meetingId, async (error, result) => {
+    meetingServices.isMeetingPresent(roomId, async (error, result) => {
         if (error && !result) {
             sendMessage(socket, {
                 type: MeetingPayloadEnum.NOT_FOUND,
             })
         }
         if (result) {
-            addUser(socket, { meetingId, userId, name }).then((result) => {
+            addUser(socket, { roomId, userId, name }).then((result) => {
                 if (result) {
                     sendMessage(socket, {
                         type: MeetingPayloadEnum.JOINED_MEETING,
@@ -20,7 +22,7 @@ const joinMeeting = async function (meetingId, socket, meetingServer,payload, ) 
                             userId
                         }
                     })
-                    broadcastUser(meetingId, socket, meetingServer, {
+                    broadcastUser(roomId, socket, {
                         type: MeetingPayloadEnum.USER_JOINED,
                         data: {
                             userId, name,
@@ -35,13 +37,45 @@ const joinMeeting = async function (meetingId, socket, meetingServer,payload, ) 
     });
 }
 
-const addUser = function (socket, { meetingId, userId, name }) {
+const joinRandomCall = function (message, socket) {
+    const params = message;
+    meetingServices.joinRoom(params, (error, result) => {
+        if (error) {
+            socket.emit(MeetingPayloadEnum.USER_JOINED, {
+                success: false,
+                error: error
+            });
+        }
+        else {
+            socket.join(result.roomId);
+            if (result.joinedUserCount == 2) {
+                socket.emit(MeetingPayloadEnum.USER_JOINED, {
+                    userId: result.userId,
+                    roomId: result.roomId,
+                    createdAt: result.createdAt,
+                    joinedUserCount: result.joinedUserCount
+                });
+
+            }
+            else {
+                socket.emit(MeetingPayloadEnum.USER_JOINED, {
+                    userId: result.userId,
+                    roomId: result.roomId,
+                    createdAt: result.createdAt,
+                    joinedUserCount: result.joinedUserCount
+                });
+            }
+        }
+    });
+}
+
+const addUser = function (socket, { roomId, userId, name }) {
     let promise = new Promise(function (resolve, reject) {
-        meetingServices.getMeetingUser({ meetingId, userId }, (error, result) => {
+        meetingServices.getMeetingUser({ roomId, userId }, (error, result) => {
             if (!result) {
                 var model = {
                     socketId: socket.id,
-                    meetingId: meetingId,
+                    roomId: roomId,
                     userId: userId,
                     name: name,
                     joined: true,
@@ -77,10 +111,10 @@ const addUser = function (socket, { meetingId, userId, name }) {
 }
 
 
-const forwardConnectionRequest = (meetingId, socket, meetingServer, payload) => {
+const forwardConnectionRequest = (roomId, socket, payload) => {
     const { userId, otherUserId, name } = payload.data;
     var model = {
-        meetingId: meetingId,
+        roomId: roomId,
         userId: otherUserId,
     }
     meetingServices.getMeetingUser(model, (error, result) => {
@@ -92,13 +126,13 @@ const forwardConnectionRequest = (meetingId, socket, meetingServer, payload) => 
                 ...payload.data
             })
         }
-        meetingServer.to(result.socketId).emit("message", sendPayload);
+        socket.to(result.socketId).emit("message", sendPayload);
     })
 }
-const forwardIcCanidate = (meetingId, socket, meetingServer, payload) => {
+const forwardIcCanidate = (roomId, socket, meetingServer, payload) => {
     const { userId, otherUserId, canidate } = payload.data;
     var model = {
-        meetingId: meetingId,
+        roomId: roomId,
         userId: otherUserId,
     }
     meetingServices.getMeetingUser(model, (error, result) => {
@@ -113,27 +147,36 @@ const forwardIcCanidate = (meetingId, socket, meetingServer, payload) => {
         meetingServer.to(result.socketId).emit("message", sendPayload);
     })
 }
-const forwardOfferSdp = (meetingId, socket, meetingServer, payload) => {
-    const { userId, otherUserId, sdp } = payload.data;
-    var model = {
-        meetingId: meetingId,
-        userId: otherUserId,
+
+const forwardOfferSdp = async (roomId, socket, payload, io) => {
+    console.log("## forwardOfferSdp ##", payload)
+    const { userId, otherUserId, sdp } = payload;
+    const model = {
+        roomId: roomId,
+        otherUserId: otherUserId,
     }
-    meetingServices.getMeetingUser(model, (error, result) => {
-        if (result) {
-            var sendPayload = JSON.stringify({
-                type: MeetingPayloadEnum.OFFER_SDP,
-                userId,
-                sdp,
-            })
-        }
-        meetingServer.to(result.socketId).emit("message", sendPayload);
-    })
+    const result = await LiveUsers.findOne({ userId: otherUserId });
+    if (result) {
+        var sendPayload = {
+            type: MeetingPayloadEnum.ANSWER_SDP,
+            userId,
+            sdp,
+        };
+    }
+    if (result) {
+        // send to all who joined room1 exlcude sender
+        socket.broadcast.to(roomId).emit(MeetingPayloadEnum.ANSWER_SDP, sendPayload);
+    }
+    else {
+        // send to all who joined room1 exlcude sender
+        socket.broadcast.to(roomId).emit(MeetingPayloadEnum.ANSWER_SDP, { "message": "Not found", "error": true });
+    }
 }
-const forwardAnswerSDP = (meetingId, socket, meetingServer, payload) => {
-    const { userId, otherUserId, sdp } = payload.data;
+
+const forwardAnswerSDP = (roomId, socket, meetingServer, payload) => {
+    const { userId, otherUserId, sdp } = payload;
     var model = {
-        meetingId: meetingId,
+        roomId: roomId,
         userId: otherUserId
     }
     meetingServices.getMeetingUser(model, (error, result) => {
@@ -144,39 +187,55 @@ const forwardAnswerSDP = (meetingId, socket, meetingServer, payload) => {
                 sdp,
             })
         }
-        meetingServer.to(result.socketId).emit("message", sendPayload);
+        socket.broadcast.to(result.socketId).emit("message", sendPayload);
     })
 }
-const userLeft = (meetingId, socket, meetingServer, payload) => {
-    const { userId } = payload.data;
 
-    broadcastUser(meetingId, socket, meetingServer, {
-        type: MeetingPayloadEnum.USER_LEFTL,
-        data: {
-            userId: userId
+const userLeft = (roomId, socket, meetingServer, payload) => {
+    console.log("User left meeting helper")
+    const { userId } = payload;
+    meetingServices.leaveRoom(payload, (error, result) => {
+        if (error) {
+            broadcastUser(roomId, socket, {
+                type: "error",
+                data: {
+                    userId: userId
+                }
+            })
         }
-    })
+        else {
+            if (result.success)
+                broadcastUser(roomId, socket, {
+                    type: MeetingPayloadEnum.USER_LEFTL,
+                    data: {
+                        userId: userId
+                    }
+                })
+        }
+    });
 }
-const meetingEnd = (meetingId, socket, meetingServer, payload) => {
+
+const meetingEnd = (roomId, socket, meetingServer, payload) => {
     const { userId } = payload.data;
 
-    broadcastUser(meetingId, socket, meetingServer, {
+    broadcastUser(roomId, socket, {
         type: MeetingPayloadEnum.MEETING_ENDED,
         data: {
             userId: userId
         }
     })
-    meetingServices.getAllMeetingUsers(meetingId, (error, result) => {
+
+    meetingServices.getAllMeetingUsers(roomId, (error, result) => {
         for (let i = 0; i < result.length; i++) {
             const meetingUser = result[i];
             meetingServer.sockets.connected(meetingUser.socketId).disconnect();
         }
     })
 }
-const forwardEvent = (meetingId, socket, meetingServer, payload) => {
-    const { userId } = payload.data;
 
-    broadcastUser(meetingId, socket, meetingServer, {
+const forwardEvent = (roomId, socket, meetingServer, payload) => {
+    const { userId } = payload.data;
+    broadcastUser(roomId, socket, {
         type: payload.type,
         data: {
             userId: userId,
@@ -185,13 +244,20 @@ const forwardEvent = (meetingId, socket, meetingServer, payload) => {
     })
 }
 
-const broadcastUser = (meetingId, socket, meetingServer, payload) => {
-    socket.broadcast.emit("message", JSON.stringify(payload));
+const broadcastUser = async (roomId, socket, payload) => {
+    socket.broadcast.to(roomId).emit(payload.type, JSON.stringify(payload));
 }
 
 function sendMessage(socket, payload) {
     socket.send(JSON.stringify(payload));
 }
-const meetingHelper = { joinMeeting, addUser, forwardConnectionRequest, forwardAnswerSDP, forwardIcCanidate, userLeft, forwardOfferSdp, forwardEvent,meetingEnd }
+function sendMessageP2P(socket, payload) {
+    to(socket, payload);
+}
+
+function to(socket, payload) {
+    socket.to(socket.socketId).emit("message", payload);
+}
+const meetingHelper = { joinRandomCall, sendMessageP2P, joinMeeting, addUser, forwardConnectionRequest, forwardAnswerSDP, forwardIcCanidate, userLeft, forwardOfferSdp, forwardEvent, meetingEnd }
 
 export { meetingHelper }

@@ -124,9 +124,9 @@ const SignIn = async (req, res, next) => {
                 let user = await Users.findOneAndUpdate(filter, update);
                 console.log(`User data user`, user)
                 if (!user) {
-                    console.log(`User !user`, user)
                     user = Users(req.body);
-                    user.userId = emailId;
+                    user.emailId = emailId;
+                    user.userId = generateUniqueUserID();
                 }
 
                 const token = await JwtToken.getToken({
@@ -151,6 +151,26 @@ const SignIn = async (req, res, next) => {
     }
 }
 
+function generateUserID() {
+    return Math.floor(1000000 + Math.random() * 9000000);
+}
+// - - - - - -
+//10 10 10 10 10 10 10=  10000000  total 10 lakh unique user id can create
+// Function to check if the generated user ID is unique
+
+async function isUniqueUserID(userID) {
+    const id = await Users.findOne({ userId: userID });
+    return id == null ? true : false;
+}
+
+// Generate a unique user ID
+function generateUniqueUserID() {
+    let userID = generateUserID();
+    while (!isUniqueUserID(userID)) {
+        userID = generateUserID();
+    }
+    return userID;
+}
 
 const createPassword = (req, res, next) => {
     const { emailId, type, password } = req.body;
