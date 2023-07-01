@@ -38,7 +38,7 @@ async function handleMessage(message, socket, meetingServer, io) {
             meetingHelper.forwardAnswerSDP(roomId, socket, meetingServer, payload, io);
             break;
         case MeetingPayloadEnum.LEAVE_ROOM:
-            meetingHelper.userLeft(message, socket, meetingServer, payload,);
+            meetingHelper.userLeft(mess, socket, meetingServer, payload,);
             break;
         case MeetingPayloadEnum.END_MEETING:
             meetingHelper.meetingEnd(roomId, socket, meetingServer, payload,);
@@ -58,7 +58,7 @@ async function handleMessage(message, socket, meetingServer, io) {
     }
 }
 
-const saveUserSocketId = async (socket) => {
+const liveUsers = async (socket) => {
     const { userId } = socket.handshake.query;
     const user = await LiveUsers.findOne({ userId: userId });
     if (user == null) {
@@ -74,5 +74,5 @@ const saveUserSocketId = async (socket) => {
     }
 }
 
-const meetingServer = { listenMessage, saveUserSocketId };
+const meetingServer = { listenMessage, liveUsers };
 export { meetingServer }

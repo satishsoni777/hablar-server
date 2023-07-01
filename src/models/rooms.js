@@ -22,6 +22,12 @@ export const JoinedUserModel = new mongoose.Schema({
     joinedAt: {
         type: String,
         default: new Date().toISOString()
+    },
+    sdp: {
+        type: String
+    },
+    icCandiate: {
+        type: String
     }
 });
 

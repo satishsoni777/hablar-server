@@ -3,7 +3,6 @@ import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
 import { JwtToken } from "../utils/jwt_token.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
-// import { FirebaseAuth } from "./firebase_auth.js";
 const SignUp = async (req, res,) => {
     console.log(req.body);
     var { emailId, mobile, authType } = req.body;
@@ -12,7 +11,6 @@ const SignUp = async (req, res,) => {
     }
     authType = authType.toUpperCase();
     var isEmailExist = false;
-    console.log(authType);
     var users = new Users(req.body);
     try {
         if (authType == AuthType.GMAIL) {
@@ -44,12 +42,11 @@ const SignUp = async (req, res,) => {
             }
         }
         if (authType == AuthType.GMAIL) {
-
-            users.userId = emailId.substring(0, emailId.indexOf("@"));
+            users.userId = generateUniqueUserID();
         }
-        if (authType == AuthType.MOBILE_OTP) {
+        else if (authType == AuthType.MOBILE_OTP) {
             const { mobile } = req.body;
-            users.userId = mobile;
+            users.userId = generateUniqueUserID();
         }
         users.save().then((d) => {
             res.statusCode = 200;
@@ -111,12 +108,10 @@ const findUserByMobileNumber = async (mobile) => {
 };
 const SignIn = async (req, res, next) => {
     try {
-        console.log(req.body);
         const { emailId, mobile, authType } = req.body;
         switch (authType) {
             case AuthType.MOBILE_OTP_FB:
-            // const result = FirebaseAuth.firebaseOtpAuth(req, res);
-            // return result;
+                break;
             case AuthType.GMAIL:
                 console.log("Auth type", authType)
                 const filter = { emailId: emailId };
@@ -140,11 +135,9 @@ const SignIn = async (req, res, next) => {
                     success: true,
                     token: user.token,
                     createdAt: new Date().toISOString(),
+                    userId: user.userId
                 })
-
         }
-
-
     }
     catch (e) {
         res.send(e);

@@ -14,7 +14,7 @@ async function connectSocketIo(httpServer) {
         const userId = socket.handshake.query.userId;
 
 
-        meetingServer.saveUserSocketId(socket);
+        meetingServer.liveUsers(socket);
 
         meetingServer.listenMessage(socket, httpServer, io)
 
