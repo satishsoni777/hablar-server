@@ -3,7 +3,7 @@ import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
 import { JwtToken } from "../utils/jwt_token.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
-import { FirebaseAuth } from "./firebase_auth.js";
+// import { FirebaseAuth } from "./firebase_auth.js";
 const SignUp = async (req, res,) => {
     console.log(req.body);
     var { emailId, mobile, authType } = req.body;
@@ -115,8 +115,8 @@ const SignIn = async (req, res, next) => {
         const { emailId, mobile, authType } = req.body;
         switch (authType) {
             case AuthType.MOBILE_OTP_FB:
-                const result = FirebaseAuth.firebaseOtpAuth(req, res);
-                return result;
+            // const result = FirebaseAuth.firebaseOtpAuth(req, res);
+            // return result;
             case AuthType.GMAIL:
                 console.log("Auth type", authType)
                 const filter = { emailId: emailId };
