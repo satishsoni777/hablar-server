@@ -38,7 +38,7 @@ async function handleMessage(message, socket, meetingServer, io) {
             meetingHelper.forwardAnswerSDP(roomId, socket, meetingServer, payload, io);
             break;
         case MeetingPayloadEnum.LEAVE_ROOM:
-            meetingHelper.userLeft(mess, socket, meetingServer, payload,);
+            meetingHelper.userLeft(roomId, socket, meetingServer, payload,);
             break;
         case MeetingPayloadEnum.END_MEETING:
             meetingHelper.meetingEnd(roomId, socket, meetingServer, payload,);
