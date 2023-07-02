@@ -39,7 +39,7 @@ const joinMeeting = async function (roomId, socket, meetingServer, payload,) {
 
 const joinRandomCall = async (io, message, socket) => {
     const params = message;
-    console.log("Join random call {3}");
+    console.log("Join random call {3}", message);
     meetingServices.joinRoom(socket, params, (error, result) => {
         if (error) {
             socket.emit(MeetingPayloadEnum.USER_JOINED, {

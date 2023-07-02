@@ -19,7 +19,6 @@ async function connectSocketIo(httpServer) {
         meetingServer.listenMessage(socket, httpServer, io)
 
 
-        console.log(`Socket io Connected `)
 
         // socket.on("message", (message) => {
         //     console.log("IO message", message, printDateTime());

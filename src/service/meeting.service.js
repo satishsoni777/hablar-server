@@ -26,10 +26,11 @@ const startMeeting = async function (data, callback) {
 }
 
 const joinRoom = async function (socket, params, callback) {
+    console.log("Join room", params)
     const { countryCode, stateCode, userId } = params;
-    const filter = { stateCode: stateCode, joinedUserCount: { $in: [0, 1, 2] } };
+    const filter = { stateCode: stateCode, joinedUserCount: { $in: [0, 1] } };
     const room = await Rooms.findOne(filter);
-    console.log("######### Rooms is data  ##########", socket.id)
+    console.log(" Rooms is data {4}");
     if (room == null) {
         return await createRoom(socket, params, callback);
     }
