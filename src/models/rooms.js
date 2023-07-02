@@ -41,6 +41,9 @@ const roomsSchema = new mongoose.Schema({
         required: true,
         default: nanoid(7)
     },
+    socketId: {
+        type: String
+    },
     hostId: {
         type: String,
     },

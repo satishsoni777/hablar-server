@@ -29,9 +29,10 @@ const joinRoom = async function (socket, params, callback) {
     const { countryCode, stateCode, userId } = params;
     const filter = { stateCode: stateCode, joinedUserCount: { $in: [0, 1, 2] } };
     const room = await Rooms.findOne(filter);
-    console.log("######### Rooms is data  ##########")
+    console.log("######### Rooms is data  ##########", socket.id)
     if (room == null) {
-        return createRoom(params, callback);
+        const result = await createRoom(socket, params, callback);
+        return result;
     }
     else {
         // is Same user calling again same api
@@ -45,6 +46,7 @@ const joinRoom = async function (socket, params, callback) {
         if (room.joinedUserCount == 1 && room != null) {
             const { roomId } = room;
             params.roomId = room.roomId;
+            params.socketId = socket.id;
             room.joinedUsers.push(params);
             room.roomId = roomId;
             console.log("User count with more than 2 ")
@@ -68,12 +70,16 @@ const joinRoom = async function (socket, params, callback) {
     }
 }
 
-const createRoom = async function (params, callback) {
+const createRoom = async function (socket, params, callback) {
     try {
         console.log("######### create room ##########", params)
-        const room = new Rooms(params);
+        const room = await Rooms(params);
         room.hostId = params.userId;
         params.roomId = room.roomId;
+        if (socket) {
+            params.socketId = socket.id;
+            room.socketId = socket.id;
+        }
         room.joinedUsers.push(params);
         room.save().then((result) => {
             return callback(null, result);
