@@ -3,6 +3,8 @@ const MeetingPayloadEnum = {
     JOIN_RANDOM_CALL: "join-random-call",
     JOINED_MEETING: "joined-room",
     USER_JOINED: "user-joined",
+    JOIN: "join",
+    CREATE_ROOM: "create-room",
     CONNECTION_REQUEST: "connection-request",
     INCOMING_CONNECTIOPN_REQUEST: "incoming-connection-request",
     OFFER_SDP: "offer-sdp",

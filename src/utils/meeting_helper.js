@@ -49,16 +49,15 @@ const joinRandomCall = function (message, socket) {
         else {
             socket.join(result.roomId);
             if (result.joinedUserCount == 2) {
-                socket.emit(MeetingPayloadEnum.USER_JOINED, {
+                socket.emit(MeetingPayloadEnum.CREATE_ROOM, {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
                     joinedUserCount: result.joinedUserCount
                 });
-
             }
             else {
-                socket.emit(MeetingPayloadEnum.USER_JOINED, {
+                socket.emit(MeetingPayloadEnum.JOIN, {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
@@ -150,7 +149,7 @@ const forwardIcCanidate = (roomId, socket, meetingServer, payload) => {
 
 const forwardOfferSdp = async (roomId, socket, payload, io) => {
     console.log("## forwardOfferSdp ##", payload)
-    const { userId, otherUserId, sdp } = payload;
+    const { userId, otherUserId, offer } = payload;
     const model = {
         roomId: roomId,
         otherUserId: otherUserId,
@@ -160,7 +159,7 @@ const forwardOfferSdp = async (roomId, socket, payload, io) => {
         var sendPayload = {
             type: MeetingPayloadEnum.ANSWER_SDP,
             userId,
-            sdp,
+            offer,
         };
     }
     if (result) {
@@ -174,7 +173,7 @@ const forwardOfferSdp = async (roomId, socket, payload, io) => {
 }
 
 const forwardAnswerSDP = (roomId, socket, meetingServer, payload) => {
-    const { userId, otherUserId, sdp } = payload;
+    const { userId, otherUserId, sdp, answer } = payload;
     var model = {
         roomId: roomId,
         userId: otherUserId
