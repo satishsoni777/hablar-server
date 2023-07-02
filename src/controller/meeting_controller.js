@@ -81,25 +81,26 @@ const createRoomController = async (req, res, next) => {
     }
 }
 
-const joinRandomRoom = (req, res, next) => {
-    meetingServices.joinRoom(req, (error, result) => {
-        if (error) {
-            return res.status(501).send({
-                success: false,
-                error: error
-            })
-        }
-        console.log("Get all scores", result.userId);
-        return res.status(200).send({
-            success: true,
-            data: {
-                userId: req.body.userId,
-                createdAt: result.createdAt,
-                roomId: result.roomId,
-            }
-        })
-    });
-}
+// const joinRandomRoom = (req, res, next) => {
+//     meetingServices.joinRoom(req, (error, result) => {
+//         if (error) {
+//             return res.status(501).send({
+//                 success: false,
+//                 error: error
+//             })
+//         }
+//         console.log("Get all scores", result.userId);
+//         return res.status(200).send({
+//             success: true,
+//             data: {
+//                 userId: req.body.userId,
+//                 createdAt: result.createdAt,
+//                 roomId: result.roomId,
+//             }
+//         })
+//     });
+// }
+
 const leaveMeetingController = async (req, res, next) => {
     console.log("### Leave room ###", req.body);
     meetingServices.leaveRoom(req, (error, result) => {
@@ -112,7 +113,7 @@ const leaveMeetingController = async (req, res, next) => {
 
 const meetingControllers = {
     createRoomController,
-    joinRandomRoom,
+    // joinRandomRoom,
     startMeetingController,
     checkMeetingExistsController,
     getAllMeetingUsersController,

@@ -25,7 +25,7 @@ const startMeeting = async function (data, callback) {
     })
 }
 
-const joinRoom = async function (params, callback) {
+const joinRoom = async function (socket, params, callback) {
     const { countryCode, stateCode, userId } = params;
     const filter = { stateCode: stateCode, joinedUserCount: { $in: [0, 1, 2] } };
     const room = await Rooms.findOne(filter);
@@ -164,6 +164,12 @@ const leaveRoom = async function (params, callback) {
         }
         if (room.joinedUsers.length == 0) {
             room.deleteOne({ roomId: roomId });
+        }
+        else if (room.joinedUsers.length == 1) {
+            if (room.hostId != room.joinedUsers[0].userId) {
+                room.hostId = room.joinedUsers[0].userId;
+                room.save();
+            }
         }
 
         return callback(null, {

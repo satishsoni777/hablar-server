@@ -28,6 +28,9 @@ export const JoinedUserModel = new mongoose.Schema({
     },
     icCandiate: {
         type: String
+    },
+    socketId: {
+        type: String
     }
 });
 

@@ -37,9 +37,9 @@ const joinMeeting = async function (roomId, socket, meetingServer, payload,) {
     });
 }
 
-const joinRandomCall = function (message, socket) {
+const joinRandomCall = async (message, socket) => {
     const params = message;
-    meetingServices.joinRoom(params, (error, result) => {
+    meetingServices.joinRoom(socket, params, (error, result) => {
         if (error) {
             socket.emit(MeetingPayloadEnum.USER_JOINED, {
                 success: false,
@@ -47,9 +47,10 @@ const joinRandomCall = function (message, socket) {
             });
         }
         else {
+            const liveUser = LiveUsers.findOne({ userId: userId });
             socket.join(result.roomId);
             if (result.joinedUserCount == 2) {
-                socket.emit(MeetingPayloadEnum.CREATE_ROOM, {
+                socket.broadcast.to(liveUser.socketId).emit(MeetingPayloadEnum.CREATE_ROOM, {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
@@ -57,7 +58,7 @@ const joinRandomCall = function (message, socket) {
                 });
             }
             else {
-                socket.emit(MeetingPayloadEnum.JOIN, {
+                socket.broadcast.to(liveUser.socketId).emit(MeetingPayloadEnum.JOIN, {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
