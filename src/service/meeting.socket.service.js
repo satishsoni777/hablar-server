@@ -23,7 +23,7 @@ async function handleMessage(message, socket, meetingServer, io) {
     console.log(message);
     switch (payload.type) {
         case MeetingPayloadEnum.JOIN_RANDOM_CALL:
-            meetingHelper.joinRandomCall(message, socket);
+            meetingHelper.joinRandomCall(io, message, socket);
             break;
         case MeetingPayloadEnum.JOIN_MEETING:
             meetingHelper.joinMeeting(roomId, socket, meetingServer, payload,);

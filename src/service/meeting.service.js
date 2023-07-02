@@ -31,8 +31,7 @@ const joinRoom = async function (socket, params, callback) {
     const room = await Rooms.findOne(filter);
     console.log("######### Rooms is data  ##########", socket.id)
     if (room == null) {
-        const result = await createRoom(socket, params, callback);
-        return result;
+        return await createRoom(socket, params, callback);
     }
     else {
         // is Same user calling again same api
@@ -41,6 +40,7 @@ const joinRoom = async function (socket, params, callback) {
                 "userId": userId,
                 "createdAt": room.createdAt,
                 "roomId": room.roomId,
+                "socketId": room.socketId
             });
         }
         if (room.joinedUserCount == 1 && room != null) {
@@ -51,17 +51,25 @@ const joinRoom = async function (socket, params, callback) {
             room.roomId = roomId;
             console.log("User count with more than 2 ")
             room.save().then((r) => {
+                r.socketId = socket.id;
                 return callback(null, r);
             }).catch((e) => {
                 return callback(e, null)
             });
         }
         else if (room.joinedUserCount >= 2 && room != null) {
+            let socketId;
+            room.joinedUsers.forEach((e) => {
+                if (userId == e.userId) {
+                    socketId = e.socketId;
+                }
+            });
             return callback(null, {
                 "userId": userId,
                 "createdAt": room.createdAt,
                 "roomId": room.roomId,
-                "joinedUserCount": 2
+                "joinedUserCount": 2,
+                "socketId": socketId
             });
         }
         else {

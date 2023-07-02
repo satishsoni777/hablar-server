@@ -37,9 +37,9 @@ const joinMeeting = async function (roomId, socket, meetingServer, payload,) {
     });
 }
 
-const joinRandomCall = async (message, socket) => {
+const joinRandomCall = async (io, message, socket) => {
     const params = message;
-    console.log("Join random call {3}", socket.id);
+    console.log("Join random call {3}");
     meetingServices.joinRoom(socket, params, (error, result) => {
         if (error) {
             socket.emit(MeetingPayloadEnum.USER_JOINED, {
@@ -50,15 +50,17 @@ const joinRandomCall = async (message, socket) => {
         else {
             socket.join(result.roomId);
             if (result.joinedUserCount == 2) {
-                socket.broadcast.to(result.socketId).emit(MeetingPayloadEnum.CREATE_ROOM, {
+                console.log("socket braod cast socket2 id", result.socketId);
+                io.to(result.socketId).emit(MeetingPayloadEnum.JOIN, {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
-                    joinedUserCount: result.joinedUserCount
+                    joinedUserCount: result.joinedUserCount,
                 });
             }
             else {
-                socket.broadcast.to(result.socketId).emit(MeetingPayloadEnum.JOIN, {
+                console.log("socket braod cast socket1 id", result.socketId);
+                io.to(result.socketId).emit(MeetingPayloadEnum.CREATE_ROOM, {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
