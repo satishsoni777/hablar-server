@@ -147,9 +147,6 @@ const SignIn = async (req, res, next) => {
 function generateUserID() {
     return Math.floor(1000000 + Math.random() * 9000000);
 }
-// - - - - - -
-//10 10 10 10 10 10 10=  10000000  total 10 lakh unique user id can create
-// Function to check if the generated user ID is unique
 
 async function isUniqueUserID(userID) {
     const id = await Users.findOne({ userId: userID });

@@ -12,13 +12,13 @@ export class Flavor {
     }
     static getMongoBaseUrl = () => {
         console.log("#### NODE_ENV ###");
-        let url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net/webrtc?retryWrites=true&w=majority";
+        let url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
         switch (process.env.NODE_ENV) {
             case Environment.stg:
-                url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net/webrtc?retryWrites=true&w=majority";
+                url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
                 break;
             case Environment.local:
-                url = "mongodb://127.0.0.1:27017/webrtc";
+                url = "mongodb://127.0.0.1:27017";
                 break;
         }
         console.log("#### Mongo Url ###", url);
