@@ -25,6 +25,6 @@ const FollowingSchema = new mongoose.Schema({
     },
 });
 
-const db = mongoose.connection.useDb("webrtc");
+const db = mongoose.connection.useDb("users");
 export const Followers = db.model("Followers", FollowersSchema);
 export const Following = db.model("Following", FollowingSchema);

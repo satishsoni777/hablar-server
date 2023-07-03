@@ -20,5 +20,5 @@ const FeedbackSchema = new mongoose.Schema({
     }
 });
 
-const db = mongoose.connection.useDb("webrtc");
+const db = mongoose.connection.useDb("users");
 export const Feedback = db.model("Feedback", FeedbackSchema);

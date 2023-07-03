@@ -97,7 +97,7 @@ userScheme.pre('save', function (next) {
     next();
 });
 
-const db = mongoose.connection.useDb("webrtc");
+const db = mongoose.connection.useDb("users");
 export const Users = db.model("users", userScheme);
 
 

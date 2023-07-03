@@ -1,6 +1,6 @@
 import { meetingHelper } from "../utils/meeting_helper.js"
 import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
-import { LiveUsers } from "../models/live_users.js";
+import { LiveUsers } from "../models/webrtc_db/live_users.js";
 
 const parseMessage = (message) => {
     try {

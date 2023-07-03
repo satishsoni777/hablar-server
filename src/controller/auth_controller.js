@@ -1,4 +1,4 @@
-import { Users } from '../models/users.js';
+import { Users } from '../models/user_db/users.js';
 import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
 import { JwtToken } from "../utils/jwt_token.js";
@@ -42,11 +42,11 @@ const SignUp = async (req, res,) => {
             }
         }
         if (authType == AuthType.GMAIL) {
-            users.userId = generateUniqueUserID();
+            users.userId = await generateUniqueUserID();
         }
         else if (authType == AuthType.MOBILE_OTP) {
             const { mobile } = req.body;
-            users.userId = generateUniqueUserID();
+            users.userId = await generateUniqueUserID();
         }
         users.save().then((d) => {
             res.statusCode = 200;
@@ -121,7 +121,7 @@ const SignIn = async (req, res, next) => {
                 if (!user) {
                     user = Users(req.body);
                     user.emailId = emailId;
-                    user.userId = generateUniqueUserID();
+                    user.userId = await generateUniqueUserID();
                 }
 
                 const token = await JwtToken.getToken({
@@ -157,7 +157,11 @@ async function isUniqueUserID(userID) {
 }
 
 // Generate a unique user ID
-function generateUniqueUserID() {
+const generateUniqueUserID = async () => {
+    const last = await Users.find().sort({ _id: -1 }).limit(1);
+    if (last.length == 0 || last == null)
+        return 100000;
+    else return parseInt(last[0].userId) + 1;
     let userID = generateUserID();
     while (!isUniqueUserID(userID)) {
         userID = generateUserID();

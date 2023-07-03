@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { meetingServer } from "./src/service/meeting.socket.service.js";
-import { LiveUsers } from "./src/models/live_users.js";
+import { LiveUsers } from "./src/models/webrtc_db/live_users.js";
 
 async function connectSocketIo(httpServer) {
     console.log("socket connection");

@@ -11,6 +11,11 @@ Connect to your instance using its Public DNS:
 Example:
 
 fit-server : ssh -i "fit-server-key.pem" ubuntu@ec2-13-127-178-129.ap-south-1.compute.amazonaws.com
-f-server1 : ssh -i "fit-server-key.pem" ubuntu@ec2-3-110-30-92.ap-south-1.compute.amazonaws.com
 
- pm2 start npm --interpreter bash --name teasy-server0 -- start
+ pm2 start server.js
+
+
+- 1. Random call
+- 2. Chat history
+- 3. profile details
+- 4. Login [gmail facebook, otp]

@@ -1,41 +1,7 @@
 import { meetingServices } from "../service/meeting.service.js";
 import { MeetingPayloadEnum } from "./meeting_payload_enums.js"
-import { meetingControllers } from "../controller/meeting_controller.js";
-import { LiveUsers } from "../models/live_users.js";
-import { Rooms } from "../models/rooms.js";
+import { LiveUsers } from "../models/webrtc_db/live_users.js";
 
-const joinMeeting = async function (roomId, socket, meetingServer, payload,) {
-    const { userId, name } = payload;
-
-    meetingServices.isMeetingPresent(roomId, async (error, result) => {
-        if (error && !result) {
-            sendMessage(socket, {
-                type: MeetingPayloadEnum.NOT_FOUND,
-            })
-        }
-        if (result) {
-            addUser(socket, { roomId, userId, name }).then((result) => {
-                if (result) {
-                    sendMessage(socket, {
-                        type: MeetingPayloadEnum.JOINED_MEETING,
-                        data: {
-                            userId
-                        }
-                    })
-                    broadcastUser(roomId, socket, {
-                        type: MeetingPayloadEnum.USER_JOINED,
-                        data: {
-                            userId, name,
-                            ...payload.data
-                        }
-                    })
-                }
-            }, (error) => {
-                console.log(error);
-            });
-        }
-    });
-}
 
 const joinRandomCall = async (io, message, socket) => {
     const params = message;
@@ -56,6 +22,7 @@ const joinRandomCall = async (io, message, socket) => {
                     roomId: result.roomId,
                     createdAt: result.createdAt,
                     joinedUserCount: result.joinedUserCount,
+                    socketId: result.socketId
                 });
             }
             else {
@@ -64,7 +31,8 @@ const joinRandomCall = async (io, message, socket) => {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
-                    joinedUserCount: result.joinedUserCount
+                    joinedUserCount: result.joinedUserCount,
+                    socketId: result.socketId
                 });
             }
         }
@@ -260,6 +228,6 @@ function sendMessageP2P(socket, payload) {
 function to(socket, payload) {
     socket.to(socket.socketId).emit("message", payload);
 }
-const meetingHelper = { joinRandomCall, sendMessageP2P, joinMeeting, addUser, forwardConnectionRequest, forwardAnswerSDP, forwardIcCanidate, userLeft, forwardOfferSdp, forwardEvent, meetingEnd }
+const meetingHelper = { joinRandomCall, sendMessageP2P, addUser, forwardConnectionRequest, forwardAnswerSDP, forwardIcCanidate, userLeft, forwardOfferSdp, forwardEvent, meetingEnd }
 
 export { meetingHelper }

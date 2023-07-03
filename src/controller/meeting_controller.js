@@ -1,4 +1,4 @@
-import { Rooms } from "../models/rooms.js";
+import { Rooms } from "../models/webrtc_db/rooms.js";
 import { meetingServices } from "../service/meeting.service.js";
 import { nanoid } from 'nanoid';
 

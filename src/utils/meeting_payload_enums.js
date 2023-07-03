@@ -1,7 +1,6 @@
 const MeetingPayloadEnum = {
     JOIN_MEETING: "join-room",
     JOIN_RANDOM_CALL: "join-random-call",
-    JOINED_MEETING: "joined-room",
     USER_JOINED: "user-joined",
     JOIN: "join",
     CREATE_ROOM: "create-room",

@@ -1,7 +1,6 @@
 import { error } from 'console';
-import { Meeting } from '../models/meeting.model.js';
-import { LiveUsers } from '../models/live_users.js';
-import { Rooms, JoinedUserModel } from '../models/rooms.js';
+import { LiveUsers } from '../models/webrtc_db/live_users.js';
+import { Rooms } from '../models/webrtc_db/rooms.js';
 
 
 const getAllMeetingUsers = async function (meetId, callback) {
@@ -16,14 +15,7 @@ const getAllMeetingUsers = async function (meetId, callback) {
     });
 }
 
-const startMeeting = async function (data, callback) {
-    const meetingScheme = new Meeting(data);
-    meetingScheme.save().then((response) => {
-        return callback(null, response);
-    }).then((err) => {
-        return callback(err);
-    })
-}
+
 
 const joinRoom = async function (socket, params, callback) {
     console.log("Join room", params)
@@ -198,7 +190,6 @@ const leaveRoom = async function (params, callback) {
 }
 
 const meetingServices = {
-    startMeeting,
     joinRoom,
     getAllMeetingUsers,
     getUserBySocketId,
