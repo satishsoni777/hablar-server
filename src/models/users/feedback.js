@@ -1,7 +1,7 @@
 import { mongoose } from "mongoose";
 const FeedbackSchema = new mongoose.Schema({
     userId: {
-        type: String
+        type: Number
     },
     avatarImage: {
         type: String,

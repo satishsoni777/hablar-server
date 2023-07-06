@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 
 export const JoinedUserModel = new mongoose.Schema({
     userId: {
-        type: String,
+        type: Number,
         required: false,
         unique: true
     },
@@ -91,7 +91,7 @@ roomsSchema.pre('save', function (next) {
     next();
 });
 
-const db = mongoose.connection.useDb("webrtc");
+const db = mongoose.connection.useDb("voice_stream");
 export const Rooms = db.model("rooms", roomsSchema);
 
 

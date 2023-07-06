@@ -1,6 +1,6 @@
-import { meetingHelper } from "../utils/meeting_helper.js"
-import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
-import { LiveUsers } from "../models/webrtc_db/live_users.js";
+import { meetingHelper } from "../../utils/meeting_helper.js"
+import { MeetingPayloadEnum } from "../../utils/meeting_payload_enums.js"
+import { WaitingRoom } from "../../models/voice_stream/waiting_room.js";
 
 const parseMessage = (message) => {
     try {
@@ -38,7 +38,7 @@ async function handleMessage(message, socket, meetingServer, io) {
             meetingHelper.forwardAnswerSDP(roomId, socket, meetingServer, payload, io);
             break;
         case MeetingPayloadEnum.LEAVE_ROOM:
-            meetingHelper.userLeft(roomId, socket, meetingServer, payload,);
+            meetingHelper.leaveRoom(roomId, socket, meetingServer, payload,);
             break;
         case MeetingPayloadEnum.END_MEETING:
             meetingHelper.meetingEnd(roomId, socket, meetingServer, payload,);
@@ -58,21 +58,21 @@ async function handleMessage(message, socket, meetingServer, io) {
     }
 }
 
-const liveUsers = async (socket) => {
+const waitingRooms = async (socket) => {
     const { userId } = socket.handshake.query;
-    const user = await LiveUsers.findOne({ userId: userId });
+    const user = await WaitingRoom.findOne({ userId: userId });
     if (user == null) {
-        const user = await LiveUsers({ socketId: socket.id, userId: userId, online: true });
+        const user = await WaitingRoom({ socketId: socket.id, userId: userId, online: true });
         user.save();
     }
     else if (user) {
         user.socketId = socket.id;
         user.online = true;
         user.userId = userId;
-        user.save();
+        await user.save();
         socket.emit("message", { "message": "Data saved" });
     }
 }
 
-const meetingServer = { listenMessage, liveUsers };
+const meetingServer = { listenMessage, waitingRooms };
 export { meetingServer }

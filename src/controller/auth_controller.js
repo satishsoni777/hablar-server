@@ -1,8 +1,10 @@
-import { Users } from '../models/user_db/users.js';
+import { Users } from '../models/users/users.js';
 import { AuthType } from '../common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
 import { JwtToken } from "../utils/jwt_token.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
+
+
 const SignUp = async (req, res,) => {
     console.log(req.body);
     var { emailId, mobile, authType } = req.body;
@@ -97,6 +99,7 @@ const findUserByEmail = async (email) => {
     }
     return false;
 };
+
 const findUserByMobileNumber = async (mobile) => {
     const user = await Users.findOne({
         mobile: mobile,
@@ -106,6 +109,7 @@ const findUserByMobileNumber = async (mobile) => {
     }
     return false;
 };
+
 const SignIn = async (req, res, next) => {
     try {
         const { emailId, mobile, authType } = req.body;
@@ -154,10 +158,11 @@ async function isUniqueUserID(userID) {
 }
 
 // Generate a unique user ID
+// Preserve 99 users
 const generateUniqueUserID = async () => {
     const last = await Users.find().sort({ _id: -1 }).limit(1);
     if (last.length == 0 || last == null)
-        return 100000;
+        return 100;
     else return parseInt(last[0].userId) + 1;
     let userID = generateUserID();
     while (!isUniqueUserID(userID)) {

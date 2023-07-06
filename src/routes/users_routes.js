@@ -4,9 +4,9 @@ import { UserController } from '../controller/users_controller.js';
 
 const router = express.Router();
 
-router.get("/user_list", UserController.getAllUsers);
+router.get("/userList", UserController.getAllUsers);
 
-router.get("/user_details", UserController.getUserDetails)
+router.get("/userDetails", UserController.getUserDetails)
 
 
 

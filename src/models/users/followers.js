@@ -2,7 +2,7 @@ import { mongoose } from "mongoose";
 
 const FollowersSchema = new mongoose.Schema({
     userId: {
-        type: String
+        type: Number
     },
     avatarImage: {
         type: String,
@@ -15,7 +15,7 @@ const FollowersSchema = new mongoose.Schema({
 
 const FollowingSchema = new mongoose.Schema({
     userId: {
-        type: String
+        type: Number
     },
     avatarImage: {
         type: String,

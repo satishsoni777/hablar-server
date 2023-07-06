@@ -1,11 +1,10 @@
-import { meetingServices } from "../service/meeting.service.js";
+import { meetingServices } from "../service/call_service/random_call_service.js";
 import { MeetingPayloadEnum } from "./meeting_payload_enums.js"
-import { LiveUsers } from "../models/webrtc_db/live_users.js";
+import { WaitingRoom } from "../models/voice_stream/waiting_room.js";
 
 
 const joinRandomCall = async (io, message, socket) => {
     const params = message;
-    console.log("Join random call {3}", message);
     meetingServices.joinRoom(socket, params, (error, result) => {
         if (error) {
             socket.emit(MeetingPayloadEnum.USER_JOINED, {
@@ -16,7 +15,6 @@ const joinRandomCall = async (io, message, socket) => {
         else {
             socket.join(result.roomId);
             if (result.joinedUserCount == 2) {
-                console.log("socket braod cast socket2 id", result.socketId);
                 io.to(result.socketId).emit(MeetingPayloadEnum.JOIN, {
                     userId: result.userId,
                     roomId: result.roomId,
@@ -26,7 +24,6 @@ const joinRandomCall = async (io, message, socket) => {
                 });
             }
             else {
-                console.log("socket braod cast socket1 id", result.socketId);
                 io.to(result.socketId).emit(MeetingPayloadEnum.CREATE_ROOM, {
                     userId: result.userId,
                     roomId: result.roomId,
@@ -119,13 +116,12 @@ const forwardIcCanidate = (roomId, socket, meetingServer, payload) => {
 }
 
 const forwardOfferSdp = async (roomId, socket, payload, io) => {
-    console.log("## forwardOfferSdp ##", payload)
     const { userId, otherUserId, offer } = payload;
     const model = {
         roomId: roomId,
         otherUserId: otherUserId,
     }
-    const result = await LiveUsers.findOne({ userId: otherUserId });
+    const result = await WaitingRoom.findOne({ userId: otherUserId });
     if (result) {
         var sendPayload = {
             type: MeetingPayloadEnum.ANSWER_SDP,
@@ -161,8 +157,7 @@ const forwardAnswerSDP = (roomId, socket, meetingServer, payload) => {
     })
 }
 
-const userLeft = (roomId, socket, meetingServer, payload) => {
-    console.log("User left meeting helper")
+const leaveRoom = (roomId, socket, meetingServer, payload) => {
     const { userId } = payload;
     meetingServices.leaveRoom(payload, (error, result) => {
         if (error) {
@@ -228,6 +223,16 @@ function sendMessageP2P(socket, payload) {
 function to(socket, payload) {
     socket.to(socket.socketId).emit("message", payload);
 }
-const meetingHelper = { joinRandomCall, sendMessageP2P, addUser, forwardConnectionRequest, forwardAnswerSDP, forwardIcCanidate, userLeft, forwardOfferSdp, forwardEvent, meetingEnd }
+const meetingHelper = {
+    joinRandomCall,
+    sendMessageP2P,
+    addUser, forwardConnectionRequest,
+    forwardAnswerSDP,
+    forwardIcCanidate,
+    leaveRoom,
+    forwardOfferSdp,
+    forwardEvent,
+    meetingEnd,
+}
 
 export { meetingHelper }

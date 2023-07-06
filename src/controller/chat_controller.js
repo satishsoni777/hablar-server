@@ -1,8 +1,7 @@
-import { Users } from "../models/user_db/users.js";
+import { Users } from "../models/users/users.js";
 
 
 const sendMessage = async (req, res,) => {
-    console.log("get All users");
     const pageNo = req.body.page_no;
     const pageSize = req.body.page_size;
     var lowerLimit, upperLimit;

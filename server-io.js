@@ -1,67 +1,32 @@
 import { Server } from "socket.io";
-import { meetingServer } from "./src/service/meeting.socket.service.js";
-import { LiveUsers } from "./src/models/webrtc_db/live_users.js";
+import { meetingServer } from "./src/service/call_service/meeting.socket.service.js";
+import { WaitingRoom } from "./src/models/voice_stream/waiting_room.js";
 
 async function connectSocketIo(httpServer) {
-    console.log("socket connection");
-    const io = new Server(httpServer
-    );
+    const io = new Server(httpServer);
     console.log("Connecting socket")
-
+    global.IO = io;
     io.on("connection", async (socket) => {
 
-        console.log("connection {1}", socket.handshake.query.userId);
+        console.log("Socket connected");
+
         const userId = socket.handshake.query.userId;
 
-
-        meetingServer.liveUsers(socket);
+        meetingServer.waitingRooms(socket);
 
         meetingServer.listenMessage(socket, httpServer, io)
 
-
-
-        // socket.on("message", (message) => {
-        //     console.log("IO message", message, printDateTime());
-        //     socket.emit("message", { "test-data": "sd" })
-        // });
-
-        // socket.on("joinChannel", (data) => {
-        //     console.log("joined", socket);
-        //     liveUsers[data.emailId] = socket.id;
-        //     console.log(liveUsers);
-        // })
-
-
-        // socket.on("voiceMessageFromClient", (data) => {
-        //     console.log(data.emailId);
-        //     // eslint-disable-next-line no-undef
-        //     // const d = Buffer.from(JSON.stringify(data.voiceMessageFromClient));
-        //     const socketId = liveUsers[data.emailId];
-        //     console.log("voiceMessageFromClient Socket ", socketId);
-        //     io.to(socketId).emit("voiceMessageToClient", data.voiceMessageFromClient);
-        // });
-
-
-        // socket.on("messageFromClient", (data) => {
-        //     console.log("test event data", data);
-        // });
-
-        // socket.on("messageToClient", (data) => {
-        //     console.log("test event data", data);
-        // });
-
-        socket.on("close", async (close) => {
-            const user = await LiveUsers.findOneAndUpdate({ userId: userId }, { online: false });
-            console.log("disconnect ", user)
-            user.save();
+        socket.on("close", async (_) => {
+            const user = await WaitingRoom.findByIdAndDelete({ userId: userId });
+            console.log("close ", user)
+            await user.save();
         })
 
-        socket.on("disconnect", async (close) => {
-            const user = await LiveUsers.findOneAndUpdate({ userId: userId }, { online: false });
-            console.log("disconnect ", user)
-            user.save();
+        socket.on("disconnect", async (_) => {
+            const user = await WaitingRoom.findByIdAndDelete({ userId: userId });
+            console.log("socket disconnected ", user)
+            await user.save();
         })
-        // if you need the certificate details (it is no longer available once the handshake is completed)
     });
 
 }
