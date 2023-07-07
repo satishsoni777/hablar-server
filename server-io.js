@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { meetingServer } from "./src/service/call_service/meeting.socket.service.js";
+import { meetingServer } from "./src/service/call_service/call_socket_service.js";
 import { WaitingRoom } from "./src/models/voice_stream/waiting_room.js";
 
 async function connectSocketIo(httpServer) {

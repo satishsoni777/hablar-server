@@ -1,16 +1,7 @@
-import { meetingHelper } from "../../utils/meeting_helper.js"
+import { meetingHelper } from "../../../websocket/voice_call_helper.js"
 import { MeetingPayloadEnum } from "../../utils/meeting_payload_enums.js"
 import { WaitingRoom } from "../../models/voice_stream/waiting_room.js";
 
-const parseMessage = (message) => {
-    try {
-        const payload = JSON.parse(message);
-        return payload;
-    }
-    catch (error) {
-        return { type: MeetingPayloadEnum.UNKNOWN };
-    }
-}
 
 const listenMessage = (socket, meetingServer, io) => {
     socket.on("message", (message) => handleMessage(message, socket, meetingServer, io));

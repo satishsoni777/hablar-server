@@ -34,12 +34,14 @@ const callHistorySchema = new mongoose.Schema({
     },
 }, {
     toJSON: {
-        transform: function (doc, obj) {
-            delete obj._id;
-            return obj;
+        transform: function (doc, ret) {
+            ret.id = ret._id.toString(),
+                delete ret._id;
+            delete ret._v;
+            delete ret.id
         }
-    },
-},);
+    }
+});
 
 
 

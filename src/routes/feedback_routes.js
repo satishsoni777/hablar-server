@@ -1,16 +1,8 @@
 import express from "express";
+import { FeedbackController } from "../controller/feed_back.js";
 const router = express.Router();
 
-router.post('/submit', function (req, res) {
-  res.send({
-    message: "submit, API is Under Dev."
-  })
-});
-
-router.get("/feedbacks", function (req, res) {
-  res.send({
-    message: "submit, API is Under Dev."
-  })
-});
+router.post('/submit', FeedbackController.submitFeedbackController)
+router.get('/getFeedbacks', FeedbackController.getFeedbacksCntr)
 
 export default router;

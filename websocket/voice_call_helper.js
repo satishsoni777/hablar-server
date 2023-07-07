@@ -1,6 +1,6 @@
-import { meetingServices } from "../service/call_service/random_call_service.js";
-import { MeetingPayloadEnum } from "./meeting_payload_enums.js"
-import { WaitingRoom } from "../models/voice_stream/waiting_room.js";
+import { meetingServices } from "../src/service/call_service/random_call_service.js";
+import { MeetingPayloadEnum } from "../src/utils/meeting_payload_enums.js"
+import { WaitingRoom } from "../src/models/voice_stream/waiting_room.js";
 
 
 const joinRandomCall = async (io, message, socket) => {

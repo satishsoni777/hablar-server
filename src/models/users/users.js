@@ -3,19 +3,26 @@ import { mongoose } from "mongoose";
 
 
 const userScheme = new mongoose.Schema({
-
     followersCount: {
         type: Number,
     },
     avatarImage: {
         type: String
     },
+    likes: {
+        type: Number,
+        default: 0
+    },
+    dislike: {
+        type: Number,
+        default: 0
+    },
     followingCount: {
         type: Number,
     },
-    created: {
+    createdAt: {
         type: String,
-        default: new Date().toISOString(),
+        default: Date.now()
     },
     authType: {
         type: String,
@@ -60,9 +67,6 @@ const userScheme = new mongoose.Schema({
         required: false,
         default: null,
     },
-    uid: {
-        type: String,
-    },
     token: {
         type: String,
         default: null,
@@ -79,7 +83,7 @@ const userScheme = new mongoose.Schema({
     },
     durationTalked: {
         type: Number
-    }
+    },
 
 }, {
     toJSON: {

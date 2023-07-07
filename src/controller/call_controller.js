@@ -1,34 +1,9 @@
 import { Rooms } from "../models/voice_stream/rooms.js";
 import { meetingServices } from "../service/call_service/random_call_service.js";
 import { nanoid } from 'nanoid';
+import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
 
-
-const checkMeetingExistsController = (req, res, next) => {
-    const { meetingId } = req.query;
-
-    meetingServices.checkMeetingExists(meetingId, (error, result) => {
-        if (error)
-            return next(error);
-        return res.status(200).send({
-            message: "Success",
-            data: result.id
-        })
-    })
-}
-
-const getAllMeetingUsersController = (req, res, next) => {
-    const { meetingId } = req.query;
-    meetingServices.getAllMeetingUsers(meetingId, (error, result) => {
-        if (error) {
-            return next(error);
-        }
-        console.log("Get all scores", meetingId, result);
-        return res.status(200).send({
-            message: "Success",
-            data: result.id
-        })
-    })
-}
+const baseController = new BaseController();
 
 const createRoomController = async (req, res, next) => {
     const filter = { emailId: req.body.emailId };
@@ -141,8 +116,6 @@ const saveCallHistory = async (req, res, next) => {
 const meetingControllers = {
     createRoomController,
     joinRandomRoom,
-    checkMeetingExistsController,
-    getAllMeetingUsersController,
     leaveRoomController,
     clearRooms,
     callStarted,

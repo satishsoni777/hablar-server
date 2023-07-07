@@ -1,24 +1,46 @@
 import { mongoose } from "mongoose";
-const FeedbackSchema = new mongoose.Schema({
+
+const fdSch = new mongoose.Schema({
     userId: {
         type: Number
     },
-    avatarImage: {
-        type: String,
+    likes: {
+        type: Number,
+        default: -1
     },
-    name: {
-        type: String,
+    follow: {
+        type: Number,
+        default: 0
     },
-    title: {
-        type: String,
+    rating: {
+        type: Number,
+        default: 0
     },
     message: {
         type: String,
     },
-    rating: {
-        type: Number,
+},
+    {
+        toJSON: {
+            transform: function (doc, ret) {
+                ret.id = ret._id.toString(),
+                    delete ret._id;
+                delete ret._v;
+                delete ret.id
+            }
+        }
     }
+);
+
+const fs = new mongoose.Schema({
+    userId: {
+        type: Number
+    },
+    avgRating: {
+        type: Number,
+    },
+    feedbacks: [fdSch]
 });
 
 const db = mongoose.connection.useDb("users");
-export const Feedback = db.model("Feedback", FeedbackSchema);
+export const Feedback = db.model("feedback", fs);

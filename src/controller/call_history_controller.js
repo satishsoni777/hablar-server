@@ -1,19 +1,18 @@
 import { voiceCallsHistory } from "../service/call_service/call_history.js";
+import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
 
+const baseController = new BaseController();
 const getCallHistory = (req, res, next) => {
     try {
         voiceCallsHistory.getCallHistory(req.query, (error, result) => {
             if (error) {
-                return res.status(401).send(error);
+                return baseController.errorResponse(error, res);
             }
-            return res.status(200).send(result);
+            return baseController.successResponse(result, res);
         });
     }
-    catch (_) {
-        return res.status(501).send({
-            message: "Something went wrong",
-            error: true
-        });
+    catch (e) {
+        return baseController.errorResponse(e, res, HTTPFailureStatus.INTERNAL_SERVER_ERROR);
     }
 }
 
