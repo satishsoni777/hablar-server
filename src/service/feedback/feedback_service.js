@@ -11,7 +11,6 @@ const submitFeedback = async (params, callback) => {
         if (feedback) {
             feedback.feedbacks.push(params);
             feedback.save();
-            console.log("submitFeedback submitted {1}", feedback);
             return callback(null, params);
         }
         feedback = await Feedback({ userId: otherUserId })

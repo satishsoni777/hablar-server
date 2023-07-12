@@ -89,8 +89,9 @@ const userScheme = new mongoose.Schema({
     toJSON: {
         transform: function (doc, ret) {
             ret.id = ret._id.toString(),
-                delete ret.__id;
-            delete ret.__v;
+                delete ret._id;
+            delete ret._v;
+            delete ret.id
         }
     }
 }

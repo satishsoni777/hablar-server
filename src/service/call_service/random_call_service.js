@@ -10,7 +10,7 @@ const joinRoom = async function (socket, params, callback) {
     const filter = { stateCode: stateCode, joinedUserCount: { $in: [0, 1] } };
     const room = await Rooms.findOne(filter);
     if (room == null) {
-        return await createRoom(socket, params, callback);
+        return createRoom(socket, params, callback);
     }
     else {
 
