@@ -27,6 +27,7 @@ const token = new mongoose.Schema({
                 ret.id = ret._id.toString(),
                     delete ret._id;
                 delete ret._v;
+                delete ret.__v;
                 delete ret.__id
             }
         }

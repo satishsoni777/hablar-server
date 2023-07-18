@@ -5,6 +5,7 @@ import { v4 as uuidv4, } from 'uuid';
 import { JwtUtil } from "../utils/jwt_token.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
 import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
+
 const baseController = new BaseController();
 
 const SignUp = async (req, res,) => {
@@ -83,8 +84,10 @@ const SignUp = async (req, res,) => {
         });
     }
     catch (e) {
-        res.statusCode = 400;
-        return res.send({ failed: "bad request", error: e })
+        return baseController.errorResponse({
+            "error": e
+        }, res, HTTPFailureStatus.BAD_REQUEST
+        );
     }
 }
 
@@ -135,8 +138,13 @@ const SignIn = async (req, res, next) => {
                 const result1 = await Tokens.findOneAndUpdate({ userId: user.userId }, updateData);
                 let token;
                 if (!result1) {
-                    token = new Tokens(updateData);
-                    const [r1, r2] = Promise.all([await token.save(), await user.save()]);
+                    try {
+                        token = new Tokens(updateData);
+                        const [r1, r2] = await Promise.all([token.save(), user.save()]);
+                    }
+                    catch (e) {
+                        return baseController.errorResponse(e, res);
+                    }
                 }
                 else {
                     await user.save();
@@ -147,8 +155,7 @@ const SignIn = async (req, res, next) => {
                     createdAt: jwtResult.createdAt,
                     userId: user.userId,
                     expireAt: jwtResult.expireAt
-                }, res,
-                );
+                }, res);
         }
     }
     catch (e) {
@@ -172,11 +179,11 @@ const generateUniqueUserID = async () => {
     if (last.length == 0 || last == null)
         return 100;
     else return parseInt(last[0].userId) + 1;
-    let userID = generateUserID();
-    while (!isUniqueUserID(userID)) {
-        userID = generateUserID();
-    }
-    return userID;
+    // let userID = generateUserID();
+    // while (!isUniqueUserID(userID)) {
+    //     userID = generateUserID();
+    // }
+    // return userID;
 }
 
 const createPassword = (req, res, next) => {
