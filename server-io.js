@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { meetingServer } from "./src/service/call_service/call_socket_service.js";
+import { meetingServer } from "./src/service/random_call_service/call_socket_service.js";
 import { WaitingRoom } from "./src/models/voice_stream/waiting_room.js";
 
 async function connectSocketIo(httpServer) {
@@ -12,7 +12,7 @@ async function connectSocketIo(httpServer) {
 
         const userId = socket.handshake.query.userId;
 
-        meetingServer.waitingRooms(socket);
+        meetingServer.liveUsers(socket);
 
         meetingServer.listenMessage(socket, httpServer, io)
 

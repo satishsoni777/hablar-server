@@ -1,6 +1,5 @@
 import { CallHistory } from '../../models/users/call_history.js';
 import { Users } from '../../models/users/users.js';
-
 const getCallHistory = async (params, callback) => {
     try {
         const { userId } = params;

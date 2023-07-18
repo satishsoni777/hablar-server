@@ -1,5 +1,5 @@
 import { Rooms } from "../models/voice_stream/rooms.js";
-import { meetingServices } from "../service/call_service/random_call_service.js";
+import { meetingServices } from "../service/random_call_service/random_call_service.js";
 import { nanoid } from 'nanoid';
 import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
 
@@ -112,6 +112,27 @@ const saveCallHistory = async (req, res, next) => {
         return res.status(501).send(e);
     }
 }
+const toggleOnline = (req, res, next) => {
+    try {
+        req.body.userId = req.session.userId;
+        meetingServices.toggleOnline(req.body, (e, result) => {
+            if (e) {
+                return baseController.errorResponse(e, res,
+                    HTTPFailureStatus.BAD_REQUEST
+                );
+            }
+            else {
+                return baseController.successResponse(result, res);
+            }
+        });
+
+    }
+    catch (e) {
+        return baseController.errorResponse(e, res,
+            HTTPFailureStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+}
 
 const meetingControllers = {
     createRoomController,
@@ -119,7 +140,8 @@ const meetingControllers = {
     leaveRoomController,
     clearRooms,
     callStarted,
-    saveCallHistory
+    saveCallHistory,
+    toggleOnline
 }
 
 export { meetingControllers }

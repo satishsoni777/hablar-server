@@ -1,9 +1,11 @@
 import { Users } from '../models/users/users.js';
-import { AuthType } from '../common/constant.js';
+import { Tokens } from '../models/tokens.js';
+import { AuthType } from '../../config/common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
-import { JwtToken } from "../utils/jwt_token.js";
+import { JwtUtil } from "../utils/jwt_token.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
-
+import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
+const baseController = new BaseController();
 
 const SignUp = async (req, res,) => {
     console.log(req.body);
@@ -66,21 +68,17 @@ const SignUp = async (req, res,) => {
                 else if (e.keyPattern.emailId == 1) {
                     errorMessage = "Email id already registered";
                 }
-                res.statusCode = 409;
-                return res.send({
-                    "success": false,
+                return baseController.errorResponse({
                     "user": req.body,
-                    "error": {
-                        "message": errorMessage
-                    }
-                })
+                    "error": errorMessage,
+                }, res, HTTPFailureStatus.FORBIDDEN
+                );
             }
             else {
-                res.statusCode = 400;
-                return res.send({
-                    "success": false,
-                    "message": e
-                })
+                return baseController.errorResponse({
+                    "error": e
+                }, res, HTTPFailureStatus.BAD_REQUEST
+                );
             }
         });
     }
@@ -112,39 +110,49 @@ const findUserByMobileNumber = async (mobile) => {
 
 const SignIn = async (req, res, next) => {
     try {
-        const { emailId, mobile, authType } = req.body;
+        const { emailId, authType } = req.body;
         switch (authType) {
             case AuthType.MOBILE_OTP_FB:
                 break;
             case AuthType.GMAIL:
-                console.log("Auth type", authType)
+                var isNewUser = false;
                 const filter = { emailId: emailId };
                 const update = { created: new Date().toISOString(), uid: uuidv4() };
                 let user = await Users.findOneAndUpdate(filter, update);
-                console.log(`User data user`, user)
                 if (!user) {
-                    user = Users(req.body);
+                    isNewUser = true;
+                    user = new Users(req.body);
                     user.emailId = emailId;
                     user.userId = await generateUniqueUserID();
                 }
 
-                const token = await JwtToken.getToken({
-                    emailId: user.emailId,
-                    id: user.id
-                }, res);
-
-                user.token = token;
-                user.save();
-                return res.status(200).send({
-                    success: true,
-                    token: user.token,
-                    createdAt: new Date().toISOString(),
+                const jwtResult = await JwtUtil.getToken({
                     userId: user.userId
-                })
+                });
+                user.token = jwtResult.token;
+                req.session.userId = user.userId;
+                const updateData = { userId: user.userId, token: jwtResult.token, expireAt: jwtResult.expireAt, createdAt: jwtResult.createdAt }
+                const result1 = await Tokens.findOneAndUpdate({ userId: user.userId }, updateData);
+                let token;
+                if (!result1) {
+                    token = new Tokens(updateData);
+                    const [r1, r2] = Promise.all([await token.save(), await user.save()]);
+                }
+                else {
+                    await user.save();
+                }
+                return baseController.successResponse({
+                    success: true,
+                    token: jwtResult.token,
+                    createdAt: jwtResult.createdAt,
+                    userId: user.userId,
+                    expireAt: jwtResult.expireAt
+                }, res,
+                );
         }
     }
     catch (e) {
-        res.send(e);
+        return baseController.errorResponse(e, res);
     }
 }
 
@@ -176,15 +184,15 @@ const createPassword = (req, res, next) => {
 }
 
 const validatedToken = (req, res, next) => {
-    return JwtToken.validateToken(req, res, next)
+    return JwtUtil.validateToken(req, res, next)
 }
 
 const sendMail = async (req, res, next) => {
     return EmailSendUtil.sendEmail(req, (err, result) => {
         if (err) {
-            return res.status(401).send(err);
+            return baseController.errorResponse(err, res);
         }
-        else res.state(200).send(result)
+        else return baseController.successResponse(result);
     })
 
 }

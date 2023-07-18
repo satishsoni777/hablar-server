@@ -1,6 +1,6 @@
 import { meetingHelper } from "../../../websocket/voice_call_helper.js"
 import { MeetingPayloadEnum } from "../../utils/meeting_payload_enums.js"
-import { WaitingRoom } from "../../models/voice_stream/waiting_room.js";
+import { LiveUser } from "../../models/voice_stream/live_users.js";
 
 
 const listenMessage = (socket, meetingServer, io) => {
@@ -49,21 +49,22 @@ async function handleMessage(message, socket, meetingServer, io) {
     }
 }
 
-const waitingRooms = async (socket) => {
-    const { userId } = socket.handshake.query;
-    const user = await WaitingRoom.findOne({ userId: userId });
+const liveUsers = async (socket) => {
+    console.log("Live user function", socket.handshake.query);
+    const { userId, online } = socket.handshake.query;
+    const user = await LiveUser.findOneAndUpdate({ userId: userId }, { online: online });
     if (user == null) {
-        const user = await WaitingRoom({ socketId: socket.id, userId: userId, online: true });
-        user.save();
+        const user = await LiveUser({ socketId: socket.id, userId: userId, online: true });
+        await user.save();
     }
     else if (user) {
         user.socketId = socket.id;
-        user.online = true;
+        user.online = online;
         user.userId = userId;
         await user.save();
         socket.emit("message", { "message": "Data saved" });
     }
 }
 
-const meetingServer = { listenMessage, waitingRooms };
+const meetingServer = { listenMessage, liveUsers };
 export { meetingServer }

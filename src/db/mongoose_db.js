@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { Config, Flavor } from '../config/default.js'
+import { Config, Flavor } from '../../config/default.js'
+import { default as connectMongoDBSession } from 'connect-mongodb-session';
+import session from 'express-session';
+const MongoDBStore = connectMongoDBSession(session);
 class MongoDb {
 
   constructor() {
@@ -8,18 +11,24 @@ class MongoDb {
   static mongoConnection;
 
   static instance = new MongoDb();
-  async connectMd() {
+  async connectMd(callback) {
     const url = Flavor.getMongoBaseUrl();
-    console.log("Mongo db connecting..", url)
     mongoose.set('strictQuery', false);
     mongoose.connect(url).then((result) => {
-      console.log("Mongo db connected", url)
-      return result;
+      console.log("Mongo db connected")
+      return callback(null, true);
     }).catch((e) => {
       console.log(e);
       throw e;
     });
   }
+  // async getStore() {
+  //   const store = new MongoDBStore({
+  //     uri: Flavor.getMongoBaseUrl(), // Replace with your MongoDB connection URI
+  //     collection: 'sessions' // Collection name for storing sessions
+  //   });
+  //   return store;
+  // }
 }
 
 export { MongoDb };

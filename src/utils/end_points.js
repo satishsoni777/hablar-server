@@ -1,3 +1,3 @@
-export const Endpoints ={
-     createUser:"/create/user"
+export const Endpoints = {
+     createUser: "/create/user"
 }

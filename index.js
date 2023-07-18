@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser"
 import callHistory from './src/routes/call_history_routes.js'
-import utils from './src/utils/util.js'
+import { utils } from '../src/utils/util.js'
 import { MongoDb } from './src/db/mongoose_db.js';
 import auth from './src/routes/authentication_routes.js'
 import http from 'http';

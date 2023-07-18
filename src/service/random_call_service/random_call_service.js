@@ -1,6 +1,7 @@
 import { WaitingRoom } from '../../models/voice_stream/waiting_room.js';
 import { Rooms } from '../../models/voice_stream/rooms.js';
 import { CallHistory } from '../../models/users/call_history.js';
+import { LiveUser } from '../../models/voice_stream/live_users.js';
 
 
 const joinRoom = async function (socket, params, callback) {
@@ -250,6 +251,18 @@ const clearRooms = async (params, callback) => {
     }
 }
 
+const toggleOnline = async (params, callback) => {
+    console.log("toggleOnline", params);
+    const { userId, online } = params;
+    try {
+        const user = await LiveUser.findByIdAndUpdate({ userId: userId }, { online: online, userId: userId });
+        return callback(null, { "message": "Status Changed" });
+    }
+    catch (_) {
+        return callback(_, null);
+    }
+}
+
 
 const meetingServices = {
     joinRoom,
@@ -257,6 +270,7 @@ const meetingServices = {
     clearRooms,
     callStared,
     saveCallHistory,
+    toggleOnline
 };
 export {
     meetingServices

@@ -3,19 +3,12 @@ export class BaseController {
 
     }
     successResponse(data, res, statusCode = HTTPFailureStatus.SUCCESS) {
-        data = {
-            data: data,
-            error: false
-        }
         return res.status(statusCode).send(data);
     }
 
     errorResponse(error, res, statusCode = HTTPFailureStatus.INTERNAL_SERVER_ERROR) {
-        error = {
-            error: error,
-            error: true,
-            meesage: this.errorMessage(statusCode)
-        }
+        error.meesage = error;
+        error.success = false;
         return res.status(statusCode).send(error);
     }
     errorMessage(statusCode) {

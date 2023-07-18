@@ -1,7 +1,10 @@
 import mongoose from "mongoose"
 
-const tokens = new mongoose.Schema({
+const token = new mongoose.Schema({
     token: {
+        type: String,
+    },
+    refreshToken: {
         type: String,
     },
     userId: {
@@ -9,7 +12,6 @@ const tokens = new mongoose.Schema({
     },
     createdAt: {
         type: String,
-        default: Date.now()
     },
     expireAt: {
         type: String,
@@ -18,6 +20,17 @@ const tokens = new mongoose.Schema({
         type: String,
     }
 
-});
-const db = mongoose.connection.useDb("tokens");
-export const Tokens = db.model("tokens", tokens);
+},
+    {
+        toJSON: {
+            transform: function (doc, ret) {
+                ret.id = ret._id.toString(),
+                    delete ret._id;
+                delete ret._v;
+                delete ret.__id
+            }
+        }
+    }
+);
+const db = mongoose.connection.useDb("users");
+export const Tokens = db.model("tokens", token);

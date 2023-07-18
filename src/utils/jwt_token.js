@@ -1,51 +1,62 @@
 import Jwt from 'jsonwebtoken';
 
-import { Config } from '../config/default.js'
+import { Config } from '../../config/default.js'
+import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
 
-const getToken = async (params, res, next) => {
-    const { id, emailId } = params;
-    console.log(params);
+const baseController = new BaseController();
+
+
+const getToken = async (params) => {
+    const { userId } = params;
     const token = Jwt.sign(
-        { id: id, emailId: emailId },
+        { userId: userId },
         process.env.TOKE_KEY || Config.TOKEN_KEY,
         {
-            expiresIn: "24h",
+            expiresIn: "1000h",
         }
     );
-    return token;
+    const decodedToken = Jwt.decode(token);
+    let expireAt, createdAt;
+    if (decodedToken && decodedToken.exp) {
+        expireAt = new Date(decodedToken.exp * 1000);
+        createdAt = new Date(decodedToken.iat * 1000);
+    } else {
+        return { error: true, message: "Invalid token" }
+    }
+    const result = { token: token, expireAt: expireAt, createdAt: createdAt }
+    return result;
 }
 
-const validateToken = async (req, res, next) => {
+const validateToken = (req, res, next) => {
     const { token } = req.body;
     Jwt.verify(token, process.env.TOKE_KEY || Config.TOKEN_KEY, function (err, decode) {
         if (err) {
             if (err.name.toString() == "TokenExpiredError") {
-                res.status(401).send({
+                return baseController.errorResponse({
                     success: false,
                     error: {
                         message: "Token expired",
                         type: err.name
                     }
-                })
+                }, res, HTTPFailureStatus.UNAUTHORIZED);
+
             }
             else {
-                res.status(401).send(err)
+                return baseController.errorResponse(err, res, HTTPFailureStatus.UNAUTHORIZED);
             }
 
         }
         else {
-            // var date=new Date(decode.exp * 1000);
-            res.status(200).send({
-                success: true,
-                "data": {
-                    id: decode.id,
-                    emailId: decode.emailId,
-                    createdAt: decode.iat,
-                    exp: decode.exp,
-                }
-            })
+            return baseController.successResponse({
+                userId: decode.userId,
+                createdAt: decode.iat,
+                exp: decode.exp,
+            }, res);
         }
     });
+}
+const getUserId = (params, res, next) => {
+    return validateToken(req, res, next).userId;
 }
 
 // Middleware function to validate the token
@@ -60,7 +71,7 @@ const authenticateToken = (req, res, next) => {
 
     try {
         // Verify the token
-        const decoded = jwt.verify(token, 'your-secret-key');
+        const decoded = Jwt.verify(token, 'your-secret-key');
 
         // Add the decoded token payload to the request object
         req.user = decoded;
@@ -72,4 +83,4 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
-export const JwtToken = { getToken, validateToken, authenticateToken }
+export const JwtUtil = { getToken, validateToken, authenticateToken, getUserId }
