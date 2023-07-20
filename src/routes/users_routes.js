@@ -8,6 +8,8 @@ router.get("/userList", UserController.getAllUsers);
 
 router.get("/userDetails", UserController.getUserDetails)
 
+router.get("/testServer", UserController.testServer)
+
 
 
 

@@ -7,8 +7,7 @@ export class BaseController {
     }
 
     errorResponse(error, res, statusCode = HTTPFailureStatus.INTERNAL_SERVER_ERROR) {
-        error.meesage = error;
-        error.success = false;
+        // error.success = false;
         return res.status(statusCode).send(error);
     }
     errorMessage(statusCode) {

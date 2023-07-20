@@ -6,7 +6,7 @@ import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.
 const baseController = new BaseController();
 
 
-const getToken = async (params) => {
+const createAuthToken = async (params) => {
     const { userId } = params;
     const token = Jwt.sign(
         { userId: userId },
@@ -55,9 +55,6 @@ const validateToken = (req, res, next) => {
         }
     });
 }
-const getUserId = (params, res, next) => {
-    return validateToken(req, res, next).userId;
-}
 
 // Middleware function to validate the token
 const authenticateToken = (req, res, next) => {
@@ -83,4 +80,4 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
-export const JwtUtil = { getToken, validateToken, authenticateToken, getUserId }
+export const JwtUtil = { createAuthToken, validateToken, authenticateToken }

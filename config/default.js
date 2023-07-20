@@ -10,7 +10,6 @@ export class Flavor {
 
     }
     static getMongoBaseUrl = () => {
-        console.log("#### NODE_ENV ###", process.env.NODE_ENV);
         let url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
         switch (process.env.NODE_ENV) {
             case Environment.stg:

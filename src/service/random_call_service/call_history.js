@@ -33,6 +33,7 @@ const getCallHistory = async (params, callback) => {
         return callback({
             success: false,
             message: "Something went wrong",
+            error: e
         }, null);
     }
 }

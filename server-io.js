@@ -3,9 +3,13 @@ import { meetingServer } from "./src/service/random_call_service/call_socket_ser
 import { WaitingRoom } from "./src/models/voice_stream/waiting_room.js";
 
 async function connectSocketIo(httpServer) {
+
     const io = new Server(httpServer);
-    console.log("Connecting socket")
+
+    console.log("Connecting socket...")
+
     global.IO = io;
+
     io.on("connection", async (socket) => {
 
         console.log("Socket connected");
@@ -27,7 +31,10 @@ async function connectSocketIo(httpServer) {
             console.log("socket disconnected ", user)
             await user.save();
         })
+
     });
 
+    return io;
 }
+
 export { connectSocketIo }

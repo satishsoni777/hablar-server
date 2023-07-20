@@ -31,4 +31,7 @@ const getAllUsers = async (req, res,) => {
 const getUserDetails = (req, res, next) => {
 
 }
-export const UserController = { getAllUsers, getUserDetails }
+const testServer = (req, res, next) => {
+    return res.send({ success: true })
+}
+export const UserController = { getAllUsers, getUserDetails, testServer }

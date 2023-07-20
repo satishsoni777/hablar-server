@@ -1,41 +1,25 @@
-import { axios } from 'axios';
-const BASE_URL = "http://localhost:3000/";
-// Test HTTP endpoint
-test('GET /authentication/signIn', async () => {
-    console.log("test start");
-    for (const i = 0; i < 100; i++) {
-        const response = await axios.post(`${BASE_URL}/authentication/signIn`,
-            {
-                "name": "satish kumaar",
-                "emailId": `satishsa123${i}@gmail.com`,
-                "state": "Jharkhand",
-                "pin": 8282021,
-                "authType": "MOBILE_OTP",
-                "mobileNumber": "7829097550"
-            }
-        );
-    }
-    expect(response.status).toBe(200);
-    expect(response.data).toEqual({ success: true });
+import chai from 'chai';
+// import chaiHttp from 'chai-http';
+import app from '../server.js';
+// Use the "should" assertion style
+chai.should();
+
+// test/test_api.js
+
+// Configure chai
+// chai.use(chaiHttp);
+
+// Write the test
+describe('GET testServer', () => {
+    it('should return status 200 and a JSON object', (done) => {
+        server
+            .request(app)
+            .get('/testServer')
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.an('object');
+                res.body.should.have.property('message').equal('Hello, world!');
+                done();
+            });
+    });
 });
-
-
-
-// // Test WebSocket functionality
-// describe('WebSocket Tests', () => {
-//     test('WebSocket Connection', (done) => {
-//         const ws = new WebSocket('ws://localhost:4000');
-
-//         ws.on('open', () => {
-//             // Send a message to the WebSocket server
-//             ws.send('Hello, WebSocket!');
-
-//             // Listen for a message from the WebSocket server
-//             ws.on('message', (message) => {
-//                 expect(message).toBe('WebSocket Server Received: Hello, WebSocket!');
-//                 ws.close();
-//                 done();
-//             });
-//         });
-//     });
-// });

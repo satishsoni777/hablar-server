@@ -2,9 +2,10 @@ import { Users } from '../models/users/users.js';
 import { Tokens } from '../models/tokens.js';
 import { AuthType } from '../../config/common/constant.js';
 import { v4 as uuidv4, } from 'uuid';
-import { JwtUtil } from "../utils/jwt_token.js";
+import { JwtUtil } from "../utils/jwt_util.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
 import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
+
 
 const baseController = new BaseController();
 
@@ -129,7 +130,7 @@ const SignIn = async (req, res, next) => {
                     user.userId = await generateUniqueUserID();
                 }
 
-                const jwtResult = await JwtUtil.getToken({
+                const jwtResult = await JwtUtil.createAuthToken({
                     userId: user.userId
                 });
                 user.token = jwtResult.token;
