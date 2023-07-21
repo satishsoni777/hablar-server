@@ -4,7 +4,6 @@ import mongoose from "mongoose"
 const waitingroom = new mongoose.Schema({
     userId: {
         type: Number,
-        required: false
     },
     startTime: {
         type: String,

@@ -11,14 +11,13 @@ class MongoDb {
   static mongoConnection;
 
   static instance = new MongoDb();
-  async connectMd(callback) {
+  connectMd() {
     const url = Flavor.getMongoBaseUrl();
     mongoose.set('strictQuery', false);
     mongoose.connect(url).then((result) => {
       console.log("Mongo db connected")
-      return callback(null, true);
+      return true;
     }).catch((e) => {
-      console.log(e);
       throw e;
     });
   }

@@ -12,7 +12,6 @@ const sendMessage = async (req, res,) => {
         lowerLimit = (pageNo - 1) * pageSize;
     }
     upperLimit = pageNo == 1 ? pageSize : (pageNo - 1) * pageSize + pageSize;
-    console.log(lowerLimit, upperLimit)
     Users.find().skip(lowerLimit == 1 ? 0 : lowerLimit).limit(upperLimit).lean().exec(function (err, users) {
         if (err) {
             res.statusCode = 401;

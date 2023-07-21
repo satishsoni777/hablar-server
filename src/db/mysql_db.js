@@ -7,13 +7,12 @@ const pool = mysql.createConnection({
     password: 'Test@123',
     database: 'Users'
 });
+
 const connectMySql = async () => {
     pool.connect(function (err) {
-        console.log(err);
         if (err) throw err;
         console.log("Connected!");
     });
 }
-
 
 export { connectMySql }

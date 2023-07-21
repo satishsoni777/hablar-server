@@ -6,22 +6,19 @@ import { JwtUtil } from "../utils/jwt_util.js";
 import { EmailSendUtil } from '../utils/mail_sender.js'
 import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
 
-
 const baseController = new BaseController();
 
 const SignUp = async (req, res,) => {
-    console.log(req.body);
-    var { emailId, mobile, authType } = req.body;
-    if (authType == AuthType.MOBILE_OTP_FB) {
+    var { authType } = req.body;
+    // if (authType == AuthType.MOBILE_OTP_FB) {
 
-    }
+    // }
     authType = authType.toUpperCase();
     var isEmailExist = false;
     var users = new Users(req.body);
     try {
         if (authType == AuthType.GMAIL) {
             isEmailExist = await findUserByEmail(req.body.emailId);
-            console.log(isEmailExist);
             if (isEmailExist) {
                 res.statusCode = 409;
                 return res.send({
@@ -36,7 +33,6 @@ const SignUp = async (req, res,) => {
         else if (authType == AuthType.MOBILE_OTP) {
             const { mobile } = req.body;
             const isMobileExist = await findUserByMobileNumber(mobile);
-            console.log(isMobileExist);
             if (isMobileExist) {
                 res.statusCode = 409;
                 return res.send({
@@ -51,7 +47,7 @@ const SignUp = async (req, res,) => {
             users.userId = await generateUniqueUserID();
         }
         else if (authType == AuthType.MOBILE_OTP) {
-            const { mobile } = req.body;
+            // const { mobile } = req.body;
             users.userId = await generateUniqueUserID();
         }
         users.save().then((d) => {
@@ -72,22 +68,18 @@ const SignUp = async (req, res,) => {
                 }
                 return baseController.errorResponse({
                     "user": req.body,
-                    "error": errorMessage,
+                    "message": errorMessage,
                 }, res, HTTPFailureStatus.FORBIDDEN
                 );
             }
             else {
-                return baseController.errorResponse({
-                    "error": e
-                }, res, HTTPFailureStatus.BAD_REQUEST
+                return baseController.errorResponse(e, res, HTTPFailureStatus.BAD_REQUEST
                 );
             }
         });
     }
     catch (e) {
-        return baseController.errorResponse({
-            "error": e
-        }, res, HTTPFailureStatus.BAD_REQUEST
+        return baseController.errorResponse(e, res, HTTPFailureStatus.BAD_REQUEST
         );
     }
 }
@@ -112,7 +104,7 @@ const findUserByMobileNumber = async (mobile) => {
     return false;
 };
 
-const SignIn = async (req, res, next) => {
+const SignIn = async (req, res) => {
     try {
         const { emailId, authType } = req.body;
         switch (authType) {

@@ -6,7 +6,6 @@ const baseController = new BaseController();
 const submitFeedbackController = async (req, res, next) => {
     try {
         feedbackService.submitFeedback(req.body, (error, result) => {
-            console.log("Sadsa", error)
             if (error) {
                 return baseController.errorMessage(error, res, HTTPFailureStatus.BAD_REQUEST);
             }
@@ -18,7 +17,6 @@ const submitFeedbackController = async (req, res, next) => {
     }
 }
 const getFeedbacksCntr = async (req, res, next) => {
-    console.log("getFeedbacksCntr")
     try {
         feedbackService.getFeedbacks(req.query, (error, result) => {
             if (error) {

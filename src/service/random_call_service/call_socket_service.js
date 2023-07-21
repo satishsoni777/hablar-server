@@ -1,48 +1,48 @@
-import { meetingHelper } from "../../../websocket/voice_call_helper.js"
+import { MeetingHelper } from "../../../websocket/voice_call_helper.js"
 import { MeetingPayloadEnum } from "../../utils/meeting_payload_enums.js"
 import { LiveUser } from "../../models/voice_stream/live_users.js";
 
+const listenMessage = (socket, server, io) => {
+    socket.on("ping", (message) => {
 
-const listenMessage = (socket, meetingServer, io) => {
-    socket.on("message", (message) => handleMessage(message, socket, meetingServer, io));
+    });
+    socket.on("message", (message) => handleMessage(message, socket, io));
 }
 
-async function handleMessage(message, socket, meetingServer, io) {
+async function handleMessage(message, socket, io) {
     var payload = message;
     const roomId = message.roomId;
-    const userId = socket.handshake.query.userId;
-    console.log(message);
     switch (payload.type) {
         case MeetingPayloadEnum.JOIN_RANDOM_CALL:
-            meetingHelper.joinRandomCall(io, message, socket);
+            message.userId = socket.handshake.query.userId;
+            MeetingHelper.joinRandomCall(io, message, socket);
             break;
         case MeetingPayloadEnum.JOIN_MEETING:
-            meetingHelper.joinMeeting(roomId, socket, meetingServer, payload,);
             break;
         case MeetingPayloadEnum.CONNECTION_REQUEST:
-            meetingHelper.forwardConnectionRequest(roomId, socket, payload,);
+            MeetingHelper.forwardConnectionRequest(roomId, socket, payload,);
             break;
         case MeetingPayloadEnum.OFFER_SDP:
-            meetingHelper.forwardOfferSdp(roomId, socket, payload, io);
+            MeetingHelper.forwardOfferSdp(roomId, socket, payload, io);
             break;
         case MeetingPayloadEnum.ANSWER_SDP:
-            meetingHelper.forwardAnswerSDP(roomId, socket, meetingServer, payload, io);
+            MeetingHelper.forwardAnswerSDP(roomId, socket, MeetingServer, payload, io);
             break;
         case MeetingPayloadEnum.LEAVE_ROOM:
-            meetingHelper.leaveRoom(roomId, socket, meetingServer, payload,);
+            MeetingHelper.leaveRoom(roomId, socket, payload,);
             break;
         case MeetingPayloadEnum.END_MEETING:
-            meetingHelper.meetingEnd(roomId, socket, meetingServer, payload,);
+            MeetingHelper.meetingEnd(roomId, socket, payload,);
             break;
         case MeetingPayloadEnum.ICECANDIDATE:
-            meetingHelper.forwardIcCanidate(roomId, socket, meetingServer, payload)
+            MeetingHelper.forwardIcCanidate(roomId, socket, payload)
             break;
         case MeetingPayloadEnum.VIDEO_TOOGLE:
         case MeetingPayloadEnum.AUDIO_TOOGLE:
             break;
         case MeetingPayloadEnum.CHAT_MESSAGE:
-            meetingHelper.sendMessageP2P(socket, meetingServer, payload,);
-            meetingHelper.forE
+            MeetingHelper.sendMessageP2P(socket, payload,);
+            MeetingHelper.forE
             break;
         default:
             break;
@@ -66,5 +66,5 @@ const liveUsers = async (socket) => {
     }
 }
 
-const meetingServer = { listenMessage, liveUsers };
-export { meetingServer }
+const MeetingServer = { listenMessage, liveUsers };
+export { MeetingServer }

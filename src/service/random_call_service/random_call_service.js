@@ -2,32 +2,35 @@ import { WaitingRoom } from '../../models/voice_stream/waiting_room.js';
 import { Rooms } from '../../models/voice_stream/rooms.js';
 import { CallHistory } from '../../models/users/call_history.js';
 import { LiveUser } from '../../models/voice_stream/live_users.js';
+import { Utils } from '../../utils/utils.js';
 
-
-const joinRoom = async function (socket, params, callback) {
-    console.log("Join room")
+const joinRoom = async function (socketId, params, callback) {
     params.countryCode = "IN";
-    const { countryCode, stateCode, userId } = params;
-    const filter = { stateCode: stateCode, joinedUserCount: { $in: [0, 1] } };
-    const room = await Rooms.findOne(filter);
-    if (room == null) {
-        return createRoom(socket, params, callback);
+    const { userId } = params;
+    let room;
+    try {
+        const result = await Rooms.findOneAndDelete({ hostId: userId });
+        if (result) {
+            return createRoom(socketId, params, callback);
+        }
+        else {
+            const filter = {
+                countryCode: "IN", joinedUserCount: { $in: [0, 1], }
+            };
+            room = await Rooms.find(filter);
+        }
+    }
+    catch (_) { }
+
+    if (room == null || room.length == 0) {
+        return createRoom(socketId, params, callback);
     }
     else {
-
-        // is Same user calling again same api
-        if (room.hostId == userId) {
-            return callback(null, {
-                "userId": userId,
-                "createdAt": room.createdAt,
-                "roomId": room.roomId,
-                "socketId": room.socketId
-            });
-        }
+        room = Utils.shuffleArray(room)[0];
         if (room.joinedUserCount == 1 && room != null) {
             const { roomId } = room;
             params.roomId = room.roomId;
-            params.socketId = socket.id;
+            params.socketId = socketId
             room.joinedUsers.push(params);
             room.roomId = roomId;
             let cH, cH2;
@@ -36,31 +39,27 @@ const joinRoom = async function (socket, params, callback) {
                 cH.history.push({ otherUserId: room.joinedUsers[1].userId, roomId: room.roomId });
             }
             else {
-                cH = await CallHistory({ userId: room.joinedUsers[0].userId });
+                cH = new CallHistory({ userId: room.joinedUsers[0].userId });
                 cH.history.push({ otherUserId: room.joinedUsers[1].userId, roomId: room.roomId });
             }
             cH2 = await CallHistory.findOne({ userId: room.joinedUsers[1].userId });
-            console.log("CallHistory", cH2);
             if (cH2) {
                 cH2.history.push({ otherUserId: room.joinedUsers[0].userId, roomId: room.roomId });
             }
             else {
-                cH2 = await CallHistory({ userId: room.joinedUsers[1].userId });
+                cH2 = new CallHistory({ userId: room.joinedUsers[1].userId });
                 cH2.history.push({ otherUserId: room.joinedUsers[0].userId, roomId: room.roomId });
             }
             cH.save();
             cH2.save();
             room.save().then((r) => {
-                r.socketId = socket.id;
+                r.socketId = socketId
                 return callback(null, r);
             }).catch((e) => {
                 return callback(e, null)
             });
         }
         else if (room.joinedUserCount >= 2 && room != null) {
-            console.log("room.joinedUserCount", room.joinedUsers);
-
-
             let socketId;
             room.joinedUsers.forEach((e) => {
                 if (userId == e.userId) {
@@ -76,19 +75,19 @@ const joinRoom = async function (socket, params, callback) {
             });
         }
         else {
-            return createRoom(params, callback);
+            return createRoom(socketId, params, callback);
         }
     }
 }
 
-const createRoom = async function (socket, params, callback) {
+const createRoom = async function (socketId, params, callback) {
     try {
-        const room = await Rooms(params);
+        const room = new Rooms(params);
         room.hostId = params.userId;
         params.roomId = room.roomId;
-        if (socket) {
-            params.socketId = socket.id;
-            room.socketId = socket.id;
+        if (socketId) {
+            params.socketId = socketId
+            room.socketId = socketId
         }
         room.joinedUsers.push(params);
         room.save().then((result) => {
@@ -101,7 +100,6 @@ const createRoom = async function (socket, params, callback) {
         return callback(err, null);
     }
 }
-
 
 const leaveRoom = async function (params, callback) {
     const { userId, roomId } = params;
@@ -149,11 +147,13 @@ const leaveRoom = async function (params, callback) {
 }
 
 const saveCallHistory = async (params) => {
-    console.log("Save call hoist", params)
+
     const { userId, otherUserId, roomId } = params;
+
     try {
         const ch = await CallHistory.findOne({ userId: userId, "history.otherUserId": otherUserId, "history.roomId": roomId });
         const ch2 = await CallHistory.findOne({ userId: otherUserId, "history.otherUserId": userId, "history.roomId": roomId });
+
         ch.callEnd = true;
         if (ch && ch2) {
             ch.history.forEach((e) => {
@@ -166,6 +166,7 @@ const saveCallHistory = async (params) => {
             });
             await ch.save();
             await ch2.save();
+
             return {
                 message: "History saved",
                 error: false
@@ -190,12 +191,13 @@ const createPairFromWaitingRoom = async (waitingRoom) => {
 }
 
 const createPairs = async (params, callback) => {
+
     try {
         const waitingRoom = await WaitingRoom.slice(0, 10);
         if (waitingRoom && waitingRoom.length >= 2) {
             const result = await createPairFromWaitingRoom(waitingRoom);
             if (result) {
-                const res = await WaitingRoom.deleteMany({}).limit(10);
+                await WaitingRoom.deleteMany({}).limit(10);
                 createPairs(params, callback);
             }
             else {
@@ -221,7 +223,6 @@ const createPairs = async (params, callback) => {
 const callStared = async (params, callback) => {
     try {
         const { userId, otherUserId, roomId } = params;
-        console.log("params ", params);
         const cH = await CallHistory.findOneAndUpdate({ userId: userId }, { userId: userId });
         cH.history.push({ otherUserId: otherUserId, roomId: roomId },);
         cH.save();
@@ -232,18 +233,15 @@ const callStared = async (params, callback) => {
     }
 }
 
-
-
-
-
-
 const clearRooms = async (params, callback) => {
     try {
         Rooms.deleteMany({}, function (err, result) {
-            console.log("asdfasdf", err, result);
-            if (err)
+            if (err) {
                 return callback(err, null);
-            else return callback(null, result);
+            }
+            else {
+                return callback(null, result);
+            }
         });
     }
     catch (e) {
@@ -252,10 +250,9 @@ const clearRooms = async (params, callback) => {
 }
 
 const toggleOnline = async (params, callback) => {
-    console.log("toggleOnline", params);
     const { userId, online } = params;
     try {
-        const user = await LiveUser.findByIdAndUpdate({ userId: userId }, { online: online, userId: userId });
+        await LiveUser.findByIdAndUpdate({ userId: userId }, { online: online, userId: userId });
         return callback(null, { "message": "Status Changed" });
     }
     catch (_) {
@@ -263,8 +260,7 @@ const toggleOnline = async (params, callback) => {
     }
 }
 
-
-const meetingServices = {
+const RandomCallService = {
     joinRoom,
     leaveRoom,
     clearRooms,
@@ -272,6 +268,4 @@ const meetingServices = {
     saveCallHistory,
     toggleOnline
 };
-export {
-    meetingServices
-};
+export { RandomCallService }

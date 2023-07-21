@@ -1,5 +1,6 @@
 import { CallHistory } from '../../models/users/call_history.js';
 import { Users } from '../../models/users/users.js';
+
 const getCallHistory = async (params, callback) => {
     try {
         const { userId } = params;
@@ -49,7 +50,8 @@ const getRecentCalls = async (params, callback) => {
 
     }
 }
-const voiceCallsHistory = { getCallHistory, };
+
+const voiceCallsHistory = { getCallHistory };
 export {
     voiceCallsHistory
 };

@@ -3,7 +3,7 @@ import bodyParser from "body-parser"
 import { MongoDb } from './src/db/mongoose_db.js';
 import auth from './src/routes/authentication_routes.js'
 import http from 'http';
-import { connectSocketIo } from './server-io.js';
+import { SocketIO } from './server-io.js';
 import callController from "./src/routes/meeting_controller_routes.js";
 import feedback from './src/routes/feedback_routes.js';
 import users from "./src/routes/users_routes.js";
@@ -11,10 +11,12 @@ import chat from "./src/routes/chat_routes.js";
 import callsHitory from "./src/routes/call_history_routes.js";
 import session from 'express-session';
 import dotenv from 'dotenv';
-import { authTokenMiddleware } from './middleware/auth_middleware.js';
+import { AuthTokenMiddleware } from './middleware/auth_middleware.js';
 import { Config } from "./config/default.js";
-import { userSession } from './middleware/user_session.js';
+import { UserSession } from './middleware/user_session.js';
+import { BaseController, HTTPFailureStatus } from "./src/webserver/base_controller.js";
 
+const baseController = new BaseController();
 // creating 24 hours from milliseconds
 const oneDay = 1000 * 60 * 60 * 24;
 
@@ -22,12 +24,12 @@ dotenv.config();
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8083;
 
 app.set('port', PORT);
 app.use(bodyParser.json());
+// app.set('Cache-Control', 's-maxage=86400');
 app.use(express.json())
-
 
 app.use(session({
     secret: process.env.SERCET_KEY || Config.TOKEN_KEY,
@@ -37,29 +39,53 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-    if (userSession.whiteListing().includes(req.path) != -1) {
-        console.log("asdfadfsgfwaesfdgfdwaesfd")
+    if (UserSession.whiteListing().includes(req.path)) {
         next();
     }
     else {
-        authTokenMiddleware.authMiddleware(req, res, next);
+        const result = AuthTokenMiddleware.authMiddleware(req.headers['authorization']);
+        if (result == null) {
+            return baseController.errorResponse('Authorization token not provided',
+                res,
+                HTTPFailureStatus.UNAUTHORIZED
+            );
+        }
+        else if (result && result.isValide) {
+            req.session.userId = result.userId;
+            next();
+        }
+        else {
+            return baseController.errorResponse('Invalid token',
+                res,
+                HTTPFailureStatus.UNAUTHORIZED
+            );
+        }
     }
-})
 
+})
+//Routes
 app.use('/users', users);
 app.use('/authentication', auth);
-app.use("/callStream", callController);
+app.use("/signaling", callController);
 app.use("/feedback", feedback);
 app.use("/chat", chat);
 app.use("/calls", callsHitory);
 
-const commonServer = http.createServer(app, {
+const server = http.createServer(app, {
     requestCert: true,
 });
 
-commonServer.listen(PORT, async () => {
-    console.log("Server.js Listening at port", PORT);
-    await connectSocketIo(commonServer);
-    await MongoDb.instance.connectMd(function (e, r) {
-    });
-})
+server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use.`);
+    } else {
+        console.error('An error occurred while starting the server:', error.message);
+    }
+});
+
+// Start the server
+server.listen(PORT, () => {
+    SocketIO.connectSocketIo(server);
+    MongoDb.instance.connectMd();
+    console.log(`Server listening on port ${PORT}`);
+});

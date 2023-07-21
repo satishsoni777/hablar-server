@@ -4,7 +4,6 @@ import nodemailer from 'nodemailer';
 
 const sendEmail = async function (req, callback) {
     const to = req.body.emailId;
-    console.log("##### send email", to);
     let mailTransporter = nodemailer.createTransport({
         service: 'hotmail',
         auth: {

@@ -1,12 +1,13 @@
 const whiteListing = () => [
     "/authentication/signIn",
-    "/authentication/signUp"
+    "/authentication/signUp",
+    "/authentication/validateToken"
 ];
 
-function getUserId(req, res, next) {
+function getUserId(req) {
     return req.session.userId
 }
 
-const userSession = { getUserId, whiteListing };
+const UserSession = { getUserId, whiteListing };
 
-export { userSession }
+export { UserSession }

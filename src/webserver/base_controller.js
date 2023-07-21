@@ -1,13 +1,15 @@
 export class BaseController {
-    constructor() {
 
-    }
+    constructor() { }
+
     successResponse(data, res, statusCode = HTTPFailureStatus.SUCCESS) {
+        data.success = true;
         return res.status(statusCode).send(data);
     }
 
     errorResponse(error, res, statusCode = HTTPFailureStatus.INTERNAL_SERVER_ERROR) {
-        // error.success = false;
+        error = { error: error }
+        error.success = false;
         return res.status(statusCode).send(error);
     }
     errorMessage(statusCode) {

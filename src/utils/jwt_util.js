@@ -33,11 +33,8 @@ const validateToken = (req, res, next) => {
         if (err) {
             if (err.name.toString() == "TokenExpiredError") {
                 return baseController.errorResponse({
-                    success: false,
-                    error: {
-                        message: "Token expired",
-                        type: err.name
-                    }
+                    message: "Token expired",
+                    type: err.name
                 }, res, HTTPFailureStatus.UNAUTHORIZED);
 
             }

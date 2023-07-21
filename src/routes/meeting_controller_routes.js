@@ -1,13 +1,13 @@
 import express from "express";
-import { meetingControllers } from "../controller/call_controller.js";
+import { MeetingControllers } from "../controller/call_controller.js";
 
 const router = express.Router();
 
-router.post("/joinRandomRoom", meetingControllers.joinRandomRoom)
-router.post("/createRoom", meetingControllers.createRoomController);
-router.post("/leaveRoom", meetingControllers.leaveRoomController);
-router.post("/clearRooms", meetingControllers.clearRooms);
-router.post("/callStarted", meetingControllers.callStarted);
-router.post("/toggleOnline", meetingControllers.toggleOnline);
+router.post("/joinRandomRoom", MeetingControllers.joinRandomRoom)
+router.post("/createRoom", MeetingControllers.createRoomController);
+router.post("/leaveRoom", MeetingControllers.leaveRoomController);
+router.post("/clearRooms", MeetingControllers.clearRooms);
+router.post("/callStarted", MeetingControllers.callStarted);
+router.post("/toggleOnline", MeetingControllers.toggleOnline);
 
 export default router;

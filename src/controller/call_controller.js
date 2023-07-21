@@ -1,5 +1,5 @@
 import { Rooms } from "../models/voice_stream/rooms.js";
-import { meetingServices } from "../service/random_call_service/random_call_service.js";
+import { RandomCallService } from "../service/random_call_service/random_call_service.js";
 import { nanoid } from 'nanoid';
 import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
 
@@ -13,19 +13,16 @@ const createRoomController = async (req, res, next) => {
             new: true,
             upsert: true
         });
-        return res.status(200).send({
-            success: true,
-            data: {
-                roomId: doc.roomId,
-                emailId: doc.emailId,
-                createdAt: update.createdAt
-            }
-        });
+        return baseController.successResponse({
+            roomId: doc.roomId,
+            emailId: doc.emailId,
+            createdAt: update.createdAt
+        }, res,);
     }
     catch (e) {
         if (e.code == 11000) {
             const room = new Rooms(req.body);
-            room.save();
+            await room.save();
             return res.status(200).send({
                 success: true,
                 data: {
@@ -41,14 +38,13 @@ const createRoomController = async (req, res, next) => {
 }
 
 const joinRandomRoom = (req, res, next) => {
-    meetingServices.joinRoom(req, (error, result) => {
+    RandomCallService.joinRoom(req, (error, result) => {
         if (error) {
             return res.status(501).send({
                 success: false,
                 error: error
             })
         }
-        console.log("Get all scores", result.userId);
         return res.status(200).send({
             success: true,
             data: {
@@ -61,8 +57,7 @@ const joinRandomRoom = (req, res, next) => {
 }
 
 const leaveRoomController = async (req, res, next) => {
-    console.log("### Leave room ###", req.body);
-    meetingServices.leaveRoom(req.body, (error, result) => {
+    RandomCallService.leaveRoom(req.body, (error, result) => {
         if (error) {
             return next(error);
         }
@@ -71,9 +66,8 @@ const leaveRoomController = async (req, res, next) => {
 }
 
 const clearRooms = async (req, res, next) => {
-    console.log("### clearRooms all rooms ###");
     try {
-        meetingServices.clearRooms(req, (error, result) => {
+        RandomCallService.clearRooms(req, (error, result) => {
             if (error) {
                 return res.status(501).send(error);
             }
@@ -86,9 +80,8 @@ const clearRooms = async (req, res, next) => {
 }
 
 const callStarted = async (req, res, next) => {
-    console.log("### callStarted ###");
     try {
-        meetingServices.callStared(req.body, (error, result) => {
+        RandomCallService.callStared(req.body, (error, result) => {
             if (error) {
                 return res.status(501).send(error);
             }
@@ -101,7 +94,7 @@ const callStarted = async (req, res, next) => {
 }
 const saveCallHistory = async (req, res, next) => {
     try {
-        meetingServices.saveCallHistory(req.body, (error, result) => {
+        RandomCallService.saveCallHistory(req.body, (error, result) => {
             if (error) {
                 return res.status(501).send(error);
             }
@@ -115,7 +108,7 @@ const saveCallHistory = async (req, res, next) => {
 const toggleOnline = (req, res, next) => {
     try {
         req.body.userId = req.session.userId;
-        meetingServices.toggleOnline(req.body, (e, result) => {
+        RandomCallService.toggleOnline(req.body, (e, result) => {
             if (e) {
                 return baseController.errorResponse(e, res,
                     HTTPFailureStatus.BAD_REQUEST
@@ -134,7 +127,7 @@ const toggleOnline = (req, res, next) => {
     }
 }
 
-const meetingControllers = {
+const MeetingControllers = {
     createRoomController,
     joinRandomRoom,
     leaveRoomController,
@@ -144,4 +137,4 @@ const meetingControllers = {
     toggleOnline
 }
 
-export { meetingControllers }
+export { MeetingControllers }

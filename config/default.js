@@ -6,9 +6,10 @@ export const Config = {
     TOKEN_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 }
 export class Flavor {
-    constructor() {
 
+    constructor() {
     }
+
     static getMongoBaseUrl = () => {
         let url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
         switch (process.env.NODE_ENV) {

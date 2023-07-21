@@ -3,7 +3,6 @@
 import { Feedback } from '../../models/users/feedback.js';
 
 const submitFeedback = async (params, callback) => {
-    console.log("submitFeedback submitted {0}", params);
     try {
         const { otherUserId, userId, rating, message, like, follow } = params;
         let feedback
@@ -22,6 +21,7 @@ const submitFeedback = async (params, callback) => {
 
     }
 }
+
 const getFeedbacks = async (params, callback) => {
     const { userId } = params;
     let feedback
@@ -32,7 +32,6 @@ const getFeedbacks = async (params, callback) => {
         message: "No feedback yet given"
     });
 }
-
 
 const feedbackService = { submitFeedback, getFeedbacks }
 export { feedbackService }

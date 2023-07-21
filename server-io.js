@@ -1,40 +1,66 @@
 import { Server } from "socket.io";
-import { meetingServer } from "./src/service/random_call_service/call_socket_service.js";
-import { WaitingRoom } from "./src/models/voice_stream/waiting_room.js";
+import { MeetingServer } from "./src/service/random_call_service/call_socket_service.js";
+// import { WaitingRoom } from "./src/models/voice_stream/waiting_room.js";
+import { AuthTokenMiddleware } from './middleware/auth_middleware.js'
+// import { Rooms } from "./src/models/voice_stream/rooms.js";
 
-async function connectSocketIo(httpServer) {
+function connectSocketIo(httpServer) {
 
-    const io = new Server(httpServer);
+    try {
+        const io = new Server(httpServer);
+        io.use((socket, next) => {
+            // Get the token from the query parameters sent by the client
+            const token = socket.handshake.headers.authorization;
+            // Validate the token (you can use your own authentication logic here)
+            const result = AuthTokenMiddleware.authMiddleware(token);
+            if (result == null) {
+                return next(new Error('Authentication token not providen'));
+            }
+            else if (result && result.isValide == true) {
+                // If the token is valid, proceed with the connection
+                return next();
+            }
+            // If the token is invalid, reject the connection
+            return next(new Error('Authentication failed: Invalid token'));
+        });
 
-    console.log("Connecting socket...")
+        console.log("Connecting socket...",)
 
-    global.IO = io;
+        global.IO = io;
 
-    io.on("connection", async (socket) => {
+        io.on("connection", async (socket) => {
 
-        console.log("Socket connected");
+            console.log("Socket connected");
 
-        const userId = socket.handshake.query.userId;
+            const userId = socket.handshake.query.userId;
 
-        meetingServer.liveUsers(socket);
+            MeetingServer.liveUsers(socket);
 
-        meetingServer.listenMessage(socket, httpServer, io)
+            MeetingServer.listenMessage(socket, httpServer, io)
 
-        socket.on("close", async (_) => {
-            const user = await WaitingRoom.findByIdAndDelete({ userId: userId });
-            console.log("close ", user)
-            await user.save();
-        })
+            socket.on("close", async (_) => {
+                // const userId = socket.handshake.query.userId;
+                console.log("Closed", userId)
+                // try {
+                //     await WaitingRoom.findByIdAndDelete({ userId: userId });
+                //     await Rooms.findOneAndDelete({ hostId: userId })
+                // }
+                // catch (_) { }
+            })
+            socket.on("disconnect", async (_) => {
+                // const userId = socket.handshake.query.userId;
+                console.log("disconnect", userId)
+                // try {
+                //     await WaitingRoom.findOneAndDelete({ userId: userId });
+                //     await Rooms.findOneAndDelete({ hostId: userId })
+                // }
+                // catch (_) {
+                // }
+            })
 
-        socket.on("disconnect", async (_) => {
-            const user = await WaitingRoom.findByIdAndDelete({ userId: userId });
-            console.log("socket disconnected ", user)
-            await user.save();
-        })
-
-    });
-
-    return io;
+        });
+    }
+    catch (e) { }
 }
-
-export { connectSocketIo }
+const SocketIO = { connectSocketIo };
+export { SocketIO }

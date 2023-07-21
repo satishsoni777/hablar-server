@@ -4,26 +4,25 @@ import { Config } from '../config/default.js'
 
 const baseController = new BaseController();
 
-function authMiddleware(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader)
-        return baseController.errorResponse({ message: 'Authorization token not provided' }, res, HTTPFailureStatus.FORBIDDEN);
+function authMiddleware(params) {
+    const authHeader = params;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return baseController.errorResponse('Authorization token not provided', res, HTTPFailureStatus.UNAUTHORIZED);
+        return null;
     }
-
     const token = authHeader.substring(7); // Remove "Bearer " from the token
     const secretKey = process.env.TOKE_KEY || Config.TOKEN_KEY; // Replace with your own secret key
-    console.log("secretKey ", secretKey);
+    var isValide = false;
+    var userId;
     Jwt.verify(token, secretKey, (err, decodedToken) => {
+        console.log("err", decodedToken);
         if (err) {
-            return baseController.errorResponse({ message: 'Invalid token' }, res, HTTPFailureStatus.UNAUTHORIZED);
+            isValide = false;
         }
-        // Token is valid, store the user information in the request for future use
-        req.session.userId = decodedToken.userId;
-        next();
+        userId = decodedToken.userId;
+        isValide = true;
     });
+    return { isValide: isValide, userId: userId };
 }
 
-const authTokenMiddleware = { authMiddleware };
-export { authTokenMiddleware };
+const AuthTokenMiddleware = { authMiddleware };
+export { AuthTokenMiddleware };

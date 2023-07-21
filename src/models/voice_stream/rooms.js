@@ -45,7 +45,7 @@ const roomsSchema = new mongoose.Schema({
         type: String
     },
     hostId: {
-        type: String,
+        type: Number,
     },
     emailId: {
         type: String,
@@ -81,7 +81,7 @@ const roomsSchema = new mongoose.Schema({
     toJSON: {
         transform: function (doc, obj) {
             delete obj.__v;
-            return obj;
+            return obj._v;
         }
     },
 },
@@ -90,7 +90,13 @@ roomsSchema.pre('save', function (next) {
     this.joinedUserCount = this.joinedUsers.length;
     next();
 });
-
+roomsSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        delete ret.__v;
+        return ret;
+    },
+});
+roomsSchema.set('toJSON', { versionKey: false });
 const db = mongoose.connection.useDb("voice_stream");
 export const Rooms = db.model("rooms", roomsSchema);
 
