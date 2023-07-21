@@ -1,3 +1,4 @@
 export const EndPoints = {
-    CallHistory: "/callHistory",
+    CallHistory: "/call_history",
+    userList: "/user_list"
 }

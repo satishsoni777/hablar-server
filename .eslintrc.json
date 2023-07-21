@@ -23,5 +23,7 @@
     "rules": {},
     "globals": {
         "process": "readonly"
-    }
+    },
+    "eslint": "^8.27.0",
+    "eslint-plugin-react": "^7.25.3"
 }
