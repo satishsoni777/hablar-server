@@ -106,7 +106,7 @@ const findUserByMobileNumber = async (mobile) => {
 
 const SignIn = async (req, res) => {
     try {
-        const { emailId, authType } = req.body;
+        const { emailId, authType, image } = req.body;
         switch (authType) {
             case AuthType.MOBILE_OTP_FB:
                 break;
@@ -118,8 +118,13 @@ const SignIn = async (req, res) => {
                 if (!user) {
                     isNewUser = true;
                     user = new Users(req.body);
-                    user.emailId = emailId;
+                    user.emailId = emailId
+                    user.image = image
                     user.userId = await generateUniqueUserID();
+                    user.isNewUser = isNewUser
+                }
+                else {
+                    user.isNewUser = false;
                 }
 
                 const jwtResult = await JwtUtil.createAuthToken({
@@ -142,13 +147,7 @@ const SignIn = async (req, res) => {
                 else {
                     await user.save();
                 }
-                return baseController.successResponse({
-                    success: true,
-                    token: jwtResult.token,
-                    createdAt: jwtResult.createdAt,
-                    userId: user.userId,
-                    expireAt: jwtResult.expireAt
-                }, res);
+                return baseController.successResponse(user, res);
         }
     }
     catch (e) {
@@ -198,7 +197,6 @@ const sendMail = async (req, res, next) => {
 }
 
 
-const AuthController = { SignUp, SignIn, createPassword, validatedToken, sendMail }
+export const AuthController = { SignUp, SignIn, createPassword, validatedToken, sendMail }
 
-export { AuthController }
 

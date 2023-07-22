@@ -49,9 +49,9 @@ async function handleMessage(message, socket, io) {
     }
 }
 
-const liveUsers = async (socket) => {
-    console.log("Live user function", socket.handshake.query);
-    const { userId, online } = socket.handshake.query;
+const liveUsers = async (socket, params) => {
+    params.online = socket.handshake.query.online
+    const { userId, online } = params;
     const user = await LiveUser.findOneAndUpdate({ userId: userId }, { online: online });
     if (user == null) {
         const user = await LiveUser({ socketId: socket.id, userId: userId, online: true });

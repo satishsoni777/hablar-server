@@ -23,21 +23,19 @@ const createRoomController = async (req, res, next) => {
         if (e.code == 11000) {
             const room = new Rooms(req.body);
             await room.save();
-            return res.status(200).send({
-                success: true,
-                data: {
-                    roomId: room.roomId,
-                    emailId: room.emailId,
-                    createdAt: room.createdAt
-                }
-            });
+            return baseController.successResponse({
+                roomId: room.roomId,
+                emailId: room.emailId,
+                createdAt: room.createdAt
+            }, res,);
         }
-        else
-            return res.status(400).send(e);
+        else {
+            return baseController.errorResponse(e, res,);
+        }
     }
 }
 
-const joinRandomRoom = (req, res, next) => {
+const joinRandomRoom = (req, res) => {
     RandomCallService.joinRoom(req, (error, result) => {
         if (error) {
             return res.status(501).send({

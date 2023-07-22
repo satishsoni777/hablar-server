@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
-import { Config, Flavor } from '../../config/default.js'
-import { default as connectMongoDBSession } from 'connect-mongodb-session';
-import session from 'express-session';
-const MongoDBStore = connectMongoDBSession(session);
+import { Flavor } from '../../config/default.js'
 class MongoDb {
 
   constructor() {

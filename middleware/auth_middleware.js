@@ -14,7 +14,7 @@ function authMiddleware(params) {
     var isValide = false;
     var userId;
     Jwt.verify(token, secretKey, (err, decodedToken) => {
-        console.log("err", decodedToken);
+        console.log("authMiddleware", decodedToken)
         if (err) {
             isValide = false;
         }
@@ -24,5 +24,4 @@ function authMiddleware(params) {
     return { isValide: isValide, userId: userId };
 }
 
-const AuthTokenMiddleware = { authMiddleware };
-export { AuthTokenMiddleware };
+export const AuthTokenMiddleware = { authMiddleware };

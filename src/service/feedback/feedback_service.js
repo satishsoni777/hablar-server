@@ -3,6 +3,7 @@
 import { Feedback } from '../../models/users/feedback.js';
 
 const submitFeedback = async (params, callback) => {
+
     try {
         const { otherUserId, userId, rating, message, like, follow } = params;
         let feedback
@@ -33,5 +34,8 @@ const getFeedbacks = async (params, callback) => {
     });
 }
 
-const feedbackService = { submitFeedback, getFeedbacks }
-export { feedbackService }
+const getSubmittedFeedback = async (params, callback) => {
+
+}
+
+export const FeedbackService = { submitFeedback, getFeedbacks, getSubmittedFeedback }

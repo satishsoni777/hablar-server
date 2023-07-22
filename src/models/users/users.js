@@ -6,7 +6,7 @@ const userScheme = new mongoose.Schema({
     followersCount: {
         type: Number,
     },
-    avatarImage: {
+    image: {
         type: String
     },
     likes: {
@@ -45,8 +45,6 @@ const userScheme = new mongoose.Schema({
     },
     gender: {
         type: String,
-        required: false,
-        default: null,
     },
     state: {
         type: String,
@@ -84,6 +82,10 @@ const userScheme = new mongoose.Schema({
     durationTalked: {
         type: Number
     },
+    isNewUser: {
+        type: Boolean,
+        default: true
+    }
 
 }, {
     toJSON: {

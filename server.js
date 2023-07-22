@@ -83,7 +83,6 @@ server.on('error', (error) => {
     }
 });
 
-// Start the server
 server.listen(PORT, () => {
     SocketIO.connectSocketIo(server);
     MongoDb.instance.connectMd();

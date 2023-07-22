@@ -9,6 +9,8 @@ router.get(EndPoints.userList, UserController.getAllUsers);
 
 router.get("/userDetails", UserController.getUserDetails)
 
+router.post("/updateUserData", UserController.updateUserData)
+
 router.get("/testServer", UserController.testServer)
 
 

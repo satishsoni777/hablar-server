@@ -20,7 +20,6 @@ const getCallHistory = (req, res, next) => {
     }
 }
 
-const VoiceCallController = { getCallHistory }
+export const VoiceCallController = { getCallHistory }
 
-export { VoiceCallController }
 

@@ -29,5 +29,4 @@ const waitingroom = new mongoose.Schema({
     }
 );
 const db = mongoose.connection.useDb("voice_stream");
-const WaitingRoom = db.model("waitingroom", waitingroom);
-export { WaitingRoom };
+export const WaitingRoom = db.model("waitingroom", waitingroom);

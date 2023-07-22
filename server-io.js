@@ -5,14 +5,16 @@ import { AuthTokenMiddleware } from './middleware/auth_middleware.js'
 // import { Rooms } from "./src/models/voice_stream/rooms.js";
 
 function connectSocketIo(httpServer) {
-
     try {
-        const io = new Server(httpServer);
+        const io = new Server(httpServer, {
+            path: ""
+        });
         io.use((socket, next) => {
             // Get the token from the query parameters sent by the client
             const token = socket.handshake.headers.authorization;
             // Validate the token (you can use your own authentication logic here)
             const result = AuthTokenMiddleware.authMiddleware(token);
+            httpServer._events.request.userId = result.userId;
             if (result == null) {
                 return next(new Error('Authentication token not providen'));
             }
@@ -32,9 +34,10 @@ function connectSocketIo(httpServer) {
 
             console.log("Socket connected");
 
-            const userId = socket.handshake.query.userId;
 
-            MeetingServer.liveUsers(socket);
+            const userId = httpServer._events.request.userId;
+
+            MeetingServer.liveUsers(socket, { userId: userId });
 
             MeetingServer.listenMessage(socket, httpServer, io)
 
@@ -47,6 +50,7 @@ function connectSocketIo(httpServer) {
                 // }
                 // catch (_) { }
             })
+
             socket.on("disconnect", async (_) => {
                 // const userId = socket.handshake.query.userId;
                 console.log("disconnect", userId)
@@ -62,5 +66,6 @@ function connectSocketIo(httpServer) {
     }
     catch (e) { }
 }
+
 const SocketIO = { connectSocketIo };
 export { SocketIO }

@@ -23,4 +23,4 @@ fit-server : ssh -i "fit-server-key.pem" ubuntu@ec2-13-127-178-129.ap-south-1.co
 Unit Test
 step 1  npm install mocha chai supertest --save-dev
 step 2 npm install chai --save-dev
-run npx mocha 
+run sh
