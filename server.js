@@ -4,7 +4,7 @@ import { MongoDb } from './src/db/mongoose_db.js';
 import auth from './src/routes/authentication_routes.js'
 import http from 'http';
 import { SocketIO } from './server-io.js';
-import callController from "./src/routes/meeting_controller_routes.js";
+import callController from "./src/routes/signaling_routes.js";
 import feedback from './src/routes/feedback_routes.js';
 import users from "./src/routes/users_routes.js";
 import chat from "./src/routes/chat_routes.js";
@@ -16,7 +16,6 @@ import { Config } from "./config/default.js";
 import { UserSession } from './middleware/user_session.js';
 import { BaseController, HTTPFailureStatus } from "./src/webserver/base_controller.js";
 import initData from "./src/routes/init_data_routes.js";
-import path from 'path';
 
 const baseController = new BaseController();
 // creating 24 hours from milliseconds
@@ -65,8 +64,8 @@ app.use((req, res, next) => {
     }
 
 })
+
 //Routes
-// app.use(express.static(path.join(__dirname, 'assets')));
 app.use('/users', users);
 app.use('/authentication', auth);
 app.use("/signaling", callController);

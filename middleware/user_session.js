@@ -2,7 +2,8 @@ const whiteListing = () => [
     "/authentication/signIn",
     "/authentication/signUp",
     "/authentication/validateToken",
-    "/init/init_data"
+    "/init/init_data",
+    "/users/get_token"
 ];
 
 function getUserId(req) {

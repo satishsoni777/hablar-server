@@ -54,6 +54,7 @@ const joinRoom = async function (socketId, params, callback) {
             cH2.save();
             room.save().then((r) => {
                 r.socketId = socketId
+                r.userId = userId;
                 return callback(null, r);
             }).catch((e) => {
                 return callback(e, null)
@@ -102,7 +103,7 @@ const createRoom = async function (socketId, params, callback) {
 }
 
 const leaveRoom = async function (params, callback) {
-    const { userId, roomId } = params;
+    const { userId, roomId, otherUserId } = params;
     const filter = { roomId: roomId };
     try {
         const room = await Rooms.findOne(filter);
@@ -112,7 +113,7 @@ const leaveRoom = async function (params, callback) {
                 if (res.error) {
                     return callback(null, res);
                 }
-                room.deleteOne({ roomId: roomId });
+                await Rooms.findOneAndDelete(filter);
                 return callback(null, {
                     message: "User left room",
                     success: true

@@ -6,7 +6,7 @@ import { MongoDb } from './src/db/mongoose_db.js';
 import auth from './src/routes/authentication_routes.js'
 import http from 'http';
 import { connectSocketIo } from './server-io.js';
-import meetingControllerRoutes from "./src/routes/meeting_controller_routes.js";
+import meetingControllerRoutes from "./src/routes/signaling_routes.js";
 import feedback from './src/routes/feedback_routes.js';
 import users from "./src/routes/users_routes.js";
 
@@ -22,11 +22,13 @@ app.use(bodyParser.json());
 app.set('Cache-Control', 's-maxage=86400');
 app.use(express.json())
 
-app.use('/', callHistory);
+//Routes
+app.use('/calls', callHistory);
 app.use('/utils', utils);
 app.use('/users', users);
 app.use('/authentication', auth);
 app.use('/meeting', meetingControllerRoutes);
+app.use('/signaling', meetingControllerRoutes);
 app.use('/feedback', feedback);
 
 

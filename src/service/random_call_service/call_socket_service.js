@@ -12,10 +12,12 @@ const listenMessage = (socket, server, io) => {
 async function handleMessage(message, socket, io) {
     var payload = message;
     const roomId = message.roomId;
+    const userId = socket.handshake.query.userId;
+    payload.userId = userId;
+    payload.roomId = roomId;
     switch (payload.type) {
         case MeetingPayloadEnum.JOIN_RANDOM_CALL:
-            message.userId = socket.handshake.query.userId;
-            MeetingHelper.joinRandomCall(io, message, socket);
+            MeetingHelper.joinRandomCall(io, payload, socket);
             break;
         case MeetingPayloadEnum.JOIN_MEETING:
             break;
@@ -26,16 +28,16 @@ async function handleMessage(message, socket, io) {
             MeetingHelper.forwardOfferSdp(roomId, socket, payload, io);
             break;
         case MeetingPayloadEnum.ANSWER_SDP:
-            MeetingHelper.forwardAnswerSDP(roomId, socket, MeetingServer, payload, io);
+            MeetingHelper.forwardAnswerSDP(socket, MeetingServer, payload, io);
             break;
         case MeetingPayloadEnum.LEAVE_ROOM:
-            MeetingHelper.leaveRoom(roomId, socket, payload,);
+            MeetingHelper.leaveRoom(socket, payload);
             break;
         case MeetingPayloadEnum.END_MEETING:
-            MeetingHelper.meetingEnd(roomId, socket, payload,);
+            MeetingHelper.meetingEnd(socket, payload,);
             break;
         case MeetingPayloadEnum.ICECANDIDATE:
-            MeetingHelper.forwardIcCanidate(roomId, socket, payload)
+            MeetingHelper.forwardIcCanidate(socket, payload)
             break;
         case MeetingPayloadEnum.VIDEO_TOOGLE:
         case MeetingPayloadEnum.AUDIO_TOOGLE:

@@ -1,8 +1,5 @@
 import Jwt from "jsonwebtoken";
-import { BaseController, HTTPFailureStatus } from '../src/webserver/base_controller.js';
 import { Config } from '../config/default.js'
-
-const baseController = new BaseController();
 
 function authMiddleware(params) {
     const authHeader = params;

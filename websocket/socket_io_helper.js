@@ -1,28 +1,29 @@
-/**
-*
+/*
+* Send socket event.
 * send to all who joined room1 exlcude sender
 */
-function sendAllExcludeSenderIO(socket, params) {
-    const { roomId, event, payload } = params;
+function sendAllExcludeSender(socket, event, params) {
+    const { roomId, payload } = params;
     socket.broadcast.to(roomId).emit(event, payload);
 }
 
-/**
+/*
 * Send IO event.
 *
 * To all clients in room1
 */
-function IoToAllClinetsInARooom(io, params) {
-    const { roomId, event, payload } = params;
+function ioToAllClinetsInARooom(io, event, params) {
+    const { roomId, payload } = params;
     io.in(roomId).emit(event, payload);
 }
 
 /* 
-To individual socketid (private message)
+* Send IO event.
+* To individual socketid (private message)
 */
-function toASocketId(io, params) {
-    const { event, payload, socketId } = params;
+function toASocketId(io, event, params) {
+    const { payload, socketId } = params;
     io.to(socketId).emit(event, payload);
 }
 
-export const SokcetIOHelper = { sendAllExcludeSenderIO, toASocketId, IoToAllClinetsInARooom }
+export const SokcetIOHelper = { sendAllExcludeSender, toASocketId, ioToAllClinetsInARooom }

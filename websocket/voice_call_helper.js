@@ -1,7 +1,7 @@
 import { RandomCallService } from "../src/service/random_call_service/random_call_service.js";
 import { MeetingPayloadEnum } from "../src/utils/meeting_payload_enums.js"
 import { WaitingRoom } from "../src/models/voice_stream/waiting_room.js";
-
+import { SokcetIOHelper } from "./socket_io_helper.js";
 
 const joinRandomCall = async (io, message, socket) => {
     const params = message;
@@ -84,8 +84,8 @@ const forwardAnswerSDP = (roomId, socket, payload) => {
     }
 }
 
-const leaveRoom = (roomId, socket, payload) => {
-    const { userId } = payload;
+const leaveRoom = (socket, payload) => {
+    const { userId, roomId } = payload;
     RandomCallService.leaveRoom(payload, (error, result) => {
         if (error) {
             broadcastUser(roomId, socket, {
@@ -107,24 +107,8 @@ const leaveRoom = (roomId, socket, payload) => {
     });
 }
 
-const meetingEnd = (roomId, socket, payload) => {
-    const { userId } = payload.data;
 
-    broadcastUser(roomId, socket, {
-        type: MeetingPayloadEnum.MEETING_ENDED,
-        data: {
-            userId: userId
-        }
-    })
-
-    RandomCallService.getAllMeetingUsers(roomId, (error, result) => {
-        for (let i = 0; i < result.length; i++) {
-            const meetingUser = result[i];
-        }
-    })
-}
-
-const forwardEvent = (roomId, socket, MeetingServer, payload) => {
+const forwardEvent = (roomId, socket, payload) => {
     const { userId } = payload.data;
     broadcastUser(roomId, socket, {
         type: payload.type,
@@ -158,7 +142,6 @@ const MeetingHelper = {
     leaveRoom,
     forwardOfferSdp,
     forwardEvent,
-    meetingEnd,
 }
 
 export { MeetingHelper }

@@ -2,10 +2,11 @@ import { Rooms } from "../models/voice_stream/rooms.js";
 import { RandomCallService } from "../service/random_call_service/random_call_service.js";
 import { nanoid } from 'nanoid';
 import { BaseController, HTTPFailureStatus } from '../webserver/base_controller.js';
+import { UserSession } from "../../middleware/user_session.js";
 
 const baseController = new BaseController();
 
-const createRoomController = async (req, res, next) => {
+const createRoomController = async (req, res) => {
     const filter = { emailId: req.body.emailId };
     const update = { createdAt: new Date().toISOString(), roomId: nanoid(7), emailId: filter.emailId, };
     try {
@@ -43,33 +44,35 @@ const joinRandomRoom = (req, res) => {
                 error: error
             })
         }
-        return res.status(200).send({
-            success: true,
-            data: {
-                userId: req.body.userId,
-                createdAt: result.createdAt,
-                roomId: result.roomId,
-            }
-        })
+        return baseController.successResponse({
+            userId: req.body.userId,
+            createdAt: result.createdAt,
+            roomId: result.roomId,
+        }, res);
     });
 }
 
-const leaveRoomController = async (req, res, next) => {
-    RandomCallService.leaveRoom(req.body, (error, result) => {
+const leaveRoomController = (req, res, next) => {
+    const params = {
+        userId: UserSession.getUserId(req),
+        otherUserId: req.body.otherUserId,
+        roomId: req.body.roomId,
+    };
+    RandomCallService.leaveRoom(params, (error, result) => {
         if (error) {
             return next(error);
         }
-        return res.status(200).send(result);
+        return baseController.successResponse(result, res);
     })
 }
 
-const clearRooms = async (req, res, next) => {
+const clearRooms = (req, res) => {
     try {
         RandomCallService.clearRooms(req, (error, result) => {
             if (error) {
-                return res.status(501).send(error);
+                return baseController.errorResponse(error, res);
             }
-            return res.status(200).send(result);
+            return baseController.successResponse(result, res);
         })
     }
     catch (e) {
@@ -77,7 +80,7 @@ const clearRooms = async (req, res, next) => {
     }
 }
 
-const callStarted = async (req, res, next) => {
+const callStarted = (req, res) => {
     try {
         RandomCallService.callStared(req.body, (error, result) => {
             if (error) {
@@ -90,20 +93,22 @@ const callStarted = async (req, res, next) => {
         res.status(501).send(e);
     }
 }
-const saveCallHistory = async (req, res, next) => {
+
+const saveCallHistory = async (req, res) => {
     try {
         RandomCallService.saveCallHistory(req.body, (error, result) => {
             if (error) {
                 return res.status(501).send(error);
             }
-            return res.status(200).send(result);
+            return baseController.successResponse(result, res);
         })
     }
     catch (e) {
         return res.status(501).send(e);
     }
 }
-const toggleOnline = (req, res, next) => {
+
+const toggleOnline = (req, res) => {
     try {
         req.body.userId = req.session.userId;
         RandomCallService.toggleOnline(req.body, (e, result) => {
@@ -125,7 +130,7 @@ const toggleOnline = (req, res, next) => {
     }
 }
 
-const MeetingControllers = {
+const SignalingController = {
     createRoomController,
     joinRandomRoom,
     leaveRoomController,
@@ -135,4 +140,4 @@ const MeetingControllers = {
     toggleOnline
 }
 
-export { MeetingControllers }
+export { SignalingController }

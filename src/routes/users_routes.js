@@ -5,13 +5,19 @@ import { EndPoints } from './endpoint.js';
 
 const router = express.Router();
 
-router.get(EndPoints.userList, UserController.getAllUsers);
+router.get("/user_list", UserController.getAllUsers);
 
 router.get("/userDetails", UserController.getUserDetails)
 
+router.get("/user_details", UserController.getUserDetails)
+
 router.post("/updateUserData", UserController.updateUserData)
 
-router.get("/testServer", UserController.testServer)
+router.post("/update_userdetails", UserController.updateUserData)
+
+router.get("/test_server", UserController.testServer)
+
+router.get("/get_token", UserController.getToken)
 
 
 

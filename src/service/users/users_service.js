@@ -1,3 +1,4 @@
+import { Tokens } from "../../models/tokens.js";
 import { Users } from "../../models/users/users.js";
 
 const updateUserData = async (params, callback) => {
@@ -20,4 +21,17 @@ const updateUserData = async (params, callback) => {
     }
 }
 
-export const UserService = { updateUserData }
+const getToken = async (params, callback) => {
+    const { userId } = params;
+    try {
+        const token = await Tokens.findOne({ userId: userId });
+        if (token) {
+            return callback(null, token)
+        }
+    }
+    catch (e) {
+        return callback(e, null)
+    }
+}
+
+export const UserService = { updateUserData, getToken }

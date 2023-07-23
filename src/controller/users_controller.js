@@ -30,6 +30,7 @@ const getAllUsers = async (req, res,) => {
             });
     });
 }
+
 const getUserDetails = async (req, res, next) => {
 
 }
@@ -47,7 +48,18 @@ const updateUserData = (req, res) => {
     });
 }
 
+const getToken = async (req, res, next) => {
+    const params = { userId: req.query.userId }
+    UserService.getToken(params, (error, result) => {
+        if (error) {
+            return baseController.errorResponse(error, res)
+        }
+        return baseController.successResponse(result, res);
+    });
+}
+
 const testServer = (req, res, next) => {
     return res.send({ success: true })
 }
-export const UserController = { getAllUsers, getUserDetails, testServer, updateUserData }
+
+export const UserController = { getAllUsers, getUserDetails, testServer, updateUserData, getToken }
