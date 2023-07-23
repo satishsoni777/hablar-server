@@ -19,7 +19,7 @@ const joinRandomCall = async (io, message, socket) => {
                 const payload = {
                     roomId: result.roomId,
                     payload: {
-                        userId: result.hostId,
+                        hostId: result.hostId,
                         roomId: result.roomId,
                         createdAt: result.createdAt,
                         socketId: result.socketId,
