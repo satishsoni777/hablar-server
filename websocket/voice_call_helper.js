@@ -15,7 +15,7 @@ const joinRandomCall = async (io, message, socket) => {
         else {
             socket.join(result.roomId);
             if (result.joinedUserCount == 2) {
-                io.to(result.socketId).emit(MeetingPayloadEnum.JOIN, {
+                io.to(result.socketId).emit(MeetingPayloadEnum.CALL_STARTED, {
                     userId: result.userId,
                     roomId: result.roomId,
                     createdAt: result.createdAt,
@@ -24,13 +24,13 @@ const joinRandomCall = async (io, message, socket) => {
                 });
             }
             else {
-                io.to(result.socketId).emit(MeetingPayloadEnum.CREATE_ROOM, {
-                    userId: result.userId,
-                    roomId: result.roomId,
-                    createdAt: result.createdAt,
-                    joinedUserCount: result.joinedUserCount,
-                    socketId: result.socketId
-                });
+                // io.to(result.socketId).emit(MeetingPayloadEnum.CREATE_ROOM, {
+                //     userId: result.userId,
+                //     roomId: result.roomId,
+                //     createdAt: result.createdAt,
+                //     joinedUserCount: result.joinedUserCount,
+                //     socketId: result.socketId
+                // });
             }
         }
     });

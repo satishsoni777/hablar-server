@@ -125,14 +125,14 @@ const leaveRoom = async function (params, callback) {
                 // }
                 await Rooms.findOneAndDelete(filter);
                 return callback(null, {
-                    message: "User left room",
+                    data: room.joinedUsers,
                     success: true
                 })
             }
             else if (room.joinedUsers.length == 1) {
                 await Rooms.findOneAndDelete(filter);
                 return callback(null, {
-                    message: "User left room",
+                    data: room.joinedUsers,
                     success: true
                 })
             }
