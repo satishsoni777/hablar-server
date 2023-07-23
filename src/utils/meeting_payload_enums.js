@@ -18,6 +18,7 @@ const MeetingPayloadEnum = {
     AUDIO_TOOGLE: "audio-toggle",
     NOT_FOUND: "not-found",
     UNKNOWN: "unknown",
-    CHAT_MESSAGE: "chat-message"
+    CHAT_MESSAGE: "chat-message",
+    ERROR: "error"
 };
 export { MeetingPayloadEnum }

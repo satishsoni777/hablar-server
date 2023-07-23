@@ -84,25 +84,20 @@ const forwardAnswerSDP = (roomId, socket, payload) => {
     }
 }
 
-const leaveRoom = (socket, payload) => {
+const leaveRoom = (io, socket, payload) => {
     const { userId, roomId } = payload;
     RandomCallService.leaveRoom(payload, (error, result) => {
+        console.log("Leave Room result##", error, result)
         if (error) {
-            broadcastUser(roomId, socket, {
-                type: "error",
-                data: {
-                    userId: userId
-                }
-            })
+            const payload = {
+                data: { userId: userId },
+                roomId: roomId
+            }
+            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.ERROR, payload)
         }
         else {
-            if (result.success)
-                broadcastUser(roomId, socket, {
-                    type: MeetingPayloadEnum.USER_LEFTL,
-                    data: {
-                        userId: userId
-                    }
-                })
+            const payload = { userId: userId, roomId: roomId }
+            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.USER_LEFTL, payload)
         }
     });
 }

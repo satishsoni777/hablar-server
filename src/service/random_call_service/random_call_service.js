@@ -20,7 +20,9 @@ const joinRoom = async function (socketId, params, callback) {
             room = await Rooms.find(filter);
         }
     }
-    catch (_) { }
+    catch (err) {
+        return callback(err, null)
+    }
 
     if (room == null || room.length == 0) {
         return createRoom(socketId, params, callback);
@@ -34,31 +36,38 @@ const joinRoom = async function (socketId, params, callback) {
             room.joinedUsers.push(params);
             room.roomId = roomId;
             let cH, cH2;
-            cH = await CallHistory.findOne({ userId: room.joinedUsers[0].userId });
-            if (cH) {
-                cH.history.push({ otherUserId: room.joinedUsers[1].userId, roomId: room.roomId });
+            // await createCallHistory(room);
+            // cH = await CallHistory.findOne({ userId: room.joinedUsers[0].userId });
+            // if (cH) {
+            //     cH.history.push({ otherUserId: room.joinedUsers[1].userId, roomId: room.roomId });
+            // }
+            // else {
+            //     cH = new CallHistory({ userId: room.joinedUsers[0].userId });
+            //     cH.history.push({ otherUserId: room.joinedUsers[1].userId, roomId: room.roomId });
+            // }
+            // cH2 = await CallHistory.findOne({ userId: room.joinedUsers[1].userId });
+            // if (cH2) {
+            //     cH2.history.push({ otherUserId: room.joinedUsers[0].userId, roomId: room.roomId });
+            // }
+            // else {
+            //     cH2 = new CallHistory({ userId: room.joinedUsers[1].userId });
+            //     cH2.history.push({ otherUserId: room.joinedUsers[0].userId, roomId: room.roomId });
+            // }
+            // try {
+            //     const [p1, p2] = await Promise.all([cH.save(), cH2.save()]);
+            // }
+            // catch (e) {
+            //     return baseController.errorResponse(e, res);
+            // }
+            try {
+                const result = await room.save();
+                result.socketId = socketId;
+                result.userId = userId;
+                return callback(null, result)
             }
-            else {
-                cH = new CallHistory({ userId: room.joinedUsers[0].userId });
-                cH.history.push({ otherUserId: room.joinedUsers[1].userId, roomId: room.roomId });
+            catch (e) {
+                return callback(e, null);
             }
-            cH2 = await CallHistory.findOne({ userId: room.joinedUsers[1].userId });
-            if (cH2) {
-                cH2.history.push({ otherUserId: room.joinedUsers[0].userId, roomId: room.roomId });
-            }
-            else {
-                cH2 = new CallHistory({ userId: room.joinedUsers[1].userId });
-                cH2.history.push({ otherUserId: room.joinedUsers[0].userId, roomId: room.roomId });
-            }
-            cH.save();
-            cH2.save();
-            room.save().then((r) => {
-                r.socketId = socketId
-                r.userId = userId;
-                return callback(null, r);
-            }).catch((e) => {
-                return callback(e, null)
-            });
         }
         else if (room.joinedUserCount >= 2 && room != null) {
             let socketId;
@@ -91,7 +100,7 @@ const createRoom = async function (socketId, params, callback) {
             room.socketId = socketId
         }
         room.joinedUsers.push(params);
-        room.save().then((result) => {
+        await room.save().then((result) => {
             return callback(null, result);
         }).catch((error) => {
             return callback(error, null);
@@ -103,54 +112,48 @@ const createRoom = async function (socketId, params, callback) {
 }
 
 const leaveRoom = async function (params, callback) {
-    const { userId, roomId, otherUserId } = params;
+    const { roomId } = params;
     const filter = { roomId: roomId };
     try {
-        const room = await Rooms.findOne(filter);
+        const room = await Rooms.findOneAndDelete(filter);
+        console.log("Rooms", room)
         if (room != null) {
             if (room.joinedUsers.length >= 2) {
-                const res = await saveCallHistory(params);
-                if (res.error) {
-                    return callback(null, res);
-                }
+                // const res = await saveCallHistory(params);
+                // if (res.error) {
+                //     return callback(res.error, null);
+                // }
                 await Rooms.findOneAndDelete(filter);
                 return callback(null, {
                     message: "User left room",
                     success: true
                 })
             }
-            for (var i = 0; i < room.joinedUsers.length; i++) {
-                if (room.joinedUsers[i].userId == userId) {
-                    room.joinedUsers.id(room.joinedUsers[i]._id).remove();
-                    room.save();
-                    break;
-                }
+            else if (room.joinedUsers.length == 1) {
+                await Rooms.findOneAndDelete(filter);
+                return callback(null, {
+                    message: "User left room",
+                    success: true
+                })
             }
         }
-        if (room.joinedUsers.length == 0) {
-            await room.deleteOne({ roomId: roomId });
-        }
-        else if (room.joinedUsers.length == 1) {
-            if (room.hostId != room.joinedUsers[0].userId) {
-                room.hostId = room.joinedUsers[0].userId;
-                await room.save();
-            }
-        }
-
-        return callback(null, {
-            message: "User left room",
-            success: true
-        })
     }
     catch (e) {
-        return callback({ message: "Unable to leave room", success: false, error: e }, null)
+        return callback({ message: "No room found", success: false, error: e }, null)
+    }
+}
+
+const createCallHistory = async (params, callback) => {
+    const room = params;
+    for (var i = 0; i < room.joinedUsers.length; i++) {
+        const filter = { userId: room.joinedUsers[i].userId };
+        const call = await CallHistory.findOneAndUpdate(filter,);
     }
 }
 
 const saveCallHistory = async (params) => {
-
     const { userId, otherUserId, roomId } = params;
-
+    console.log(params)
     try {
         const ch = await CallHistory.findOne({ userId: userId, "history.otherUserId": otherUserId, "history.roomId": roomId });
         const ch2 = await CallHistory.findOne({ userId: otherUserId, "history.otherUserId": userId, "history.roomId": roomId });
