@@ -87,7 +87,6 @@ const forwardAnswerSDP = (roomId, socket, payload) => {
 const leaveRoom = (io, socket, payload) => {
     const { userId, roomId } = payload;
     RandomCallService.leaveRoom(payload, (error, result) => {
-        console.log("Leave Room result##", error, result)
         if (error) {
             const payload = {
                 data: { userId: userId },
