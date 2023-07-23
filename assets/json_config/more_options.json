@@ -1,0 +1,46 @@
+{
+    "moreOptions": [
+        {
+            "title": "Call History",
+            "cta": "call_history",
+            "icon": "",
+            "enable": true,
+            "index": 0
+        },
+        {
+            "title": "Conversational feedback",
+            "cta": "conversational_feedback",
+            "icon": "",
+            "enable": true,
+            "index": 1
+        },
+        {
+            "title": "Conversational feedback",
+            "cta": "conversational_feedback",
+            "icon": "",
+            "enable": true,
+            "index": 1
+        },
+        {
+            "title": "Conversational feedback",
+            "cta": "conversational_feedback",
+            "icon": "",
+            "enable": true,
+            "index": 1
+        },
+        {
+            "title": "Conversational feedback",
+            "cta": "conversational_feedback",
+            "icon": "",
+            "enable": true,
+            "index": 1
+        },
+        {
+            "title": "Conversational feedback",
+            "cta": "conversational_feedback",
+            "icon": "",
+            "enable": true,
+            "index": 1
+        }
+    ]
+}

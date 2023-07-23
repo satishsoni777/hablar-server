@@ -15,6 +15,8 @@ import { AuthTokenMiddleware } from './middleware/auth_middleware.js';
 import { Config } from "./config/default.js";
 import { UserSession } from './middleware/user_session.js';
 import { BaseController, HTTPFailureStatus } from "./src/webserver/base_controller.js";
+import initData from "./src/routes/init_data_routes.js";
+import path from 'path';
 
 const baseController = new BaseController();
 // creating 24 hours from milliseconds
@@ -64,12 +66,14 @@ app.use((req, res, next) => {
 
 })
 //Routes
+// app.use(express.static(path.join(__dirname, 'assets')));
 app.use('/users', users);
 app.use('/authentication', auth);
 app.use("/signaling", callController);
 app.use("/feedback", feedback);
 app.use("/chat", chat);
 app.use("/calls", callsHitory);
+app.use("/init", initData);
 
 const server = http.createServer(app, {
     requestCert: true,
