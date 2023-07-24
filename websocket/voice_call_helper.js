@@ -30,7 +30,7 @@ const joinRandomCall = async (io, message, socket) => {
                         users: result.joinedUsers,
                     }
                 }
-                SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.CALL_STARTED, payload);
+                SokcetIOHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
             }
             else {
 
