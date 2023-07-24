@@ -114,7 +114,7 @@ const createRoom = async function (socketId, params, callback) {
 const leaveRoom = async function (params, callback) {
     const { roomId, userId } = params;
     try {
-        await Rooms.findOneAndUpdate(
+        const roomData = await Rooms.findOneAndUpdate(
             { roomId: roomId },
             {
                 $pull: {
@@ -123,11 +123,22 @@ const leaveRoom = async function (params, callback) {
             },
             { new: true }
         ).then((result) => {
-            return callback(null, result)
+            if (roomData.joinedUsers.length == 0) {
+                Rooms.findOneAndDelete({ roomId: roomId })
+                    .then(removedDocument => {
+                        if (removedDocument) {
+                            return callback(null, removedDocument)
+                        }
+                    })
+                    .catch(err => {
+                        return callback(err, null)
+                    });
+            }
+            else
+                return callback(null, result)
         }).catch((err) => {
             return callback(err, null)
         });
-
     }
     catch (e) {
         return callback({ message: "No room found", success: false, error: e }, null)
