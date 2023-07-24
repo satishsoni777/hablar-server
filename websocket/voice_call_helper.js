@@ -14,7 +14,11 @@ const joinRandomCall = async (io, message, socket) => {
         }
         else {
             socket.join(result.roomId);
-            console.log("call started", result);
+            const payload = {
+                socketId: socket.id,
+                payload: result
+            }
+            SokcetIOHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
             if (result.joinedUserCount == 2) {
                 const payload = {
                     roomId: result.roomId,

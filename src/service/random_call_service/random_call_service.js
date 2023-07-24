@@ -135,7 +135,7 @@ const leaveRoom = async function (params, callback) {
                     });
             }
             else {
-                return callback(result, null);
+                return callback(null, result);
             }
         }).catch((err) => {
             return callback(err, null);
