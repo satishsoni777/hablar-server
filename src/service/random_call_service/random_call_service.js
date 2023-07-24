@@ -122,23 +122,23 @@ const leaveRoom = async function (params, callback) {
                 }
             },
             { new: true }
-        ).then((result) => {
-            if (roomData.joinedUsers.length == 0) {
-                Rooms.findOneAndDelete({ roomId: roomId })
-                    .then(removedDocument => {
-                        if (removedDocument) {
-                            return callback(null, removedDocument)
-                        }
-                    })
-                    .catch(err => {
-                        return callback(err, null)
-                    });
-            }
-            else
-                return callback(null, result)
-        }).catch((err) => {
-            return callback(err, null)
+        ).then((e) => { }).catch((err) => {
+            return callback(err, null);
         });
+        if (roomData.joinedUsers.length == 0) {
+            await Rooms.findOneAndDelete({ roomId: roomId })
+                .then(removedDocument => {
+                    if (removedDocument) {
+                        return callback(null, removedDocument)
+                    }
+                })
+                .catch(err => {
+                    return callback(err, null)
+                });
+        }
+        else {
+            return callback(roomData, null)
+        }
     }
     catch (e) {
         return callback({ message: "No room found", success: false, error: e }, null)
