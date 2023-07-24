@@ -112,31 +112,21 @@ const createRoom = async function (socketId, params, callback) {
 }
 
 const leaveRoom = async function (params, callback) {
-    const { roomId } = params;
+    const { roomId, userId } = params;
     const filter = { roomId: roomId };
     try {
-        const room = await Rooms.findOneAndDelete(filter);
+        const room = await Rooms.findOne(filter);
         console.log("Rooms", room)
         if (room != null) {
-            if (room.joinedUsers.length >= 2) {
-                // const res = await saveCallHistory(params);
-                // if (res.error) {
-                //     return callback(res.error, null);
-                // }
-                await Rooms.findOneAndDelete(filter);
-                return callback(null, {
-                    data: room.joinedUsers,
-                    success: true
-                })
-            }
-            else if (room.joinedUsers.length == 1) {
-                await Rooms.findOneAndDelete(filter);
-                return callback(null, {
-                    data: room.joinedUsers,
-                    success: true
+            if (room.joinedUsers.length >= 1) {
+                room.joinedUsers.forEach((e) => {
+                    if (e.userId == userId) {
+                        e.deleteOne();
+                    }
                 })
             }
         }
+        return callback({ message: "User left room", roomId: roomId }, null)
     }
     catch (e) {
         return callback({ message: "No room found", success: false, error: e }, null)

@@ -85,24 +85,19 @@ const forwardAnswerSDP = (roomId, socket, payload) => {
 
 const leaveRoom = (io, socket, payload) => {
     const { userId, roomId } = payload;
-    if (roomId) {
-        RandomCallService.leaveRoom(payload, (error, result) => {
-            if (error) {
-                const payload = {
-                    payload: { userId: userId },
-                    roomId: roomId
-                }
-                SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.ERROR, payload)
+    RandomCallService.leaveRoom(payload, (error, result) => {
+        if (error) {
+            const payload = {
+                payload: { userId: userId },
+                roomId: roomId
             }
-            else {
-                const payload = { payload: userId, roomId: roomId }
-                SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.USER_LEFTL, payload)
-            }
-        });
-    }
-    else {
-
-    }
+            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.ERROR, payload)
+        }
+        else {
+            const payload = { payload: userId, roomId: roomId }
+            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.USER_LEFTL, payload)
+        }
+    });
 }
 
 
