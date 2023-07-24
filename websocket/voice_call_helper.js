@@ -18,7 +18,7 @@ const joinRandomCall = async (io, message, socket) => {
                 socketId: socket.id,
                 payload: result
             }
-            SokcetIOHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
+
             if (result.joinedUserCount == 2) {
                 const payload = {
                     roomId: result.roomId,
@@ -33,7 +33,7 @@ const joinRandomCall = async (io, message, socket) => {
                 SokcetIOHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
             }
             else {
-
+                SokcetIOHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
             }
         }
     });
