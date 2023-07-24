@@ -15,9 +15,11 @@ const joinRandomCall = async (io, message, socket) => {
         else {
             socket.join(result.roomId);
             const payload = {
-                socketId: socket.id,
+                roomId: result.roomId,
                 payload: result
             }
+
+            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.JOIN, payload);
 
             if (result.joinedUserCount == 2) {
                 const payload = {
@@ -30,11 +32,9 @@ const joinRandomCall = async (io, message, socket) => {
                         users: result.joinedUsers,
                     }
                 }
-                SokcetIOHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
+                // SokcetIOHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
             }
-            else {
-                SokcetIOHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
-            }
+
         }
     });
 }
