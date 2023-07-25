@@ -1,3 +1,3 @@
 git add .
-git commit -m "Ping pong integrated"
-git push origin stage
+git commit -m $1
+git push origin $2
