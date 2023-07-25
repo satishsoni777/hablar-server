@@ -11,7 +11,6 @@ const listenMessage = (socket, io) => {
         clearTimeout(pingTimeout);
         sendPing(socket, message);
         pongReceived = true;
-        console.log("ping message", message)
     });
     socket.on("message", (message) => handleMessage(message, socket, io));
 }
@@ -23,7 +22,7 @@ function sendPing(socket, message) {
             socket.disconnect(true); // Disconnect the socket with 'true' parameter, which means closing it gracefully
             console.log('User disconnected due to inactivity.');
         }
-    }, 5000);
+    }, 7000);
 }
 
 async function handleMessage(message, socket, io) {
