@@ -1,7 +1,6 @@
 import express from 'express'
 
 import { UserController } from '../controller/users_controller.js';
-import { EndPoints } from './endpoint.js';
 
 const router = express.Router();
 
