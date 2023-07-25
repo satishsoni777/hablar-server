@@ -19,6 +19,7 @@ function ioToAllClinetsInARooom(io, event, params) {
 
 /* 
 * Send IO event.
+* P2P communication
 * To individual socketid (private message)
 */
 function toASocketId(io, event, params) {

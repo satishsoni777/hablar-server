@@ -5,20 +5,17 @@ const MeetingPayloadEnum = {
     JOIN: "join",
     CALL_STARTED: "call-started",
     CREATE_ROOM: "create-room",
-    CONNECTION_REQUEST: "connection-request",
-    INCOMING_CONNECTIOPN_REQUEST: "incoming-connection-request",
     OFFER_SDP: "offer-sdp",
     ANSWER_SDP: "answer-sdp",
     LEAVE_ROOM: "leave-room",
     USER_LEFTL: "user-left",
-    END_MEETING: "end-room",
-    MEETING_ENDED: "room-ended",
-    ICECANDIDATE: "incecandidate",
+    CALL_EDN: "call-end",
     VIDEO_TOOGLE: "video-toggle",
     AUDIO_TOOGLE: "audio-toggle",
-    NOT_FOUND: "not-found",
     UNKNOWN: "unknown",
     CHAT_MESSAGE: "chat-message",
-    ERROR: "error"
+    ERROR: "error",
+    PING: "ping",
+    PONG: "pong"
 };
 export { MeetingPayloadEnum }

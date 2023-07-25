@@ -1,7 +1,6 @@
-import { RandomCallService } from "../src/service/random_call_service/random_call_service.js";
-import { MeetingPayloadEnum } from "../src/utils/meeting_payload_enums.js"
-import { WaitingRoom } from "../src/models/voice_stream/waiting_room.js";
-import { SokcetIOHelper } from "./socket_io_helper.js";
+import { RandomCallService } from "../service/random_call_service/random_call_service.js";
+import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
+import { WaitingRoom } from "../models/voice_stream/waiting_room.js";
 
 const joinRandomCall = async (io, message, socket) => {
     const params = message;
@@ -130,7 +129,7 @@ function sendMessageP2P(socket, payload) {
 function to(socket, payload) {
     socket.to(socket.socketId).emit("message", payload);
 }
-const MeetingHelper = {
+const SignalingHelper = {
     joinRandomCall,
     sendMessageP2P,
     forwardConnectionRequest,
@@ -141,4 +140,4 @@ const MeetingHelper = {
     forwardEvent,
 }
 
-export { MeetingHelper }
+export { SignalingHelper }

@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { MeetingServer } from "./src/service/random_call_service/call_socket_service.js";
+import { SocketService } from "./src/webserver/events_handler.js";
 // import { WaitingRoom } from "./src/models/voice_stream/waiting_room.js";
 import { AuthTokenMiddleware } from './middleware/auth_middleware.js'
 // import { Rooms } from "./src/models/voice_stream/rooms.js";
@@ -37,9 +37,7 @@ function connectSocketIo(httpServer) {
 
             const userId = httpServer._events.request.userId;
 
-            MeetingServer.liveUsers(socket, { userId: userId });
-
-            MeetingServer.listenMessage(socket, httpServer, io)
+            SocketService.listenMessage(socket, io)
 
             socket.on("close", async (_) => {
                 // const userId = socket.handshake.query.userId;
@@ -52,6 +50,7 @@ function connectSocketIo(httpServer) {
             })
 
             socket.on("disconnect", async (_) => {
+                SocketService.disconnect(socket, io);
                 // const userId = socket.handshake.query.userId;
                 console.log("disconnect", userId)
                 // try {

@@ -1,3 +1,3 @@
 git add .
-git commit -m "WIP"
+git commit -m "Ping pong integrated"
 git push origin dev
