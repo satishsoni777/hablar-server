@@ -18,7 +18,6 @@ const listenMessage = (socket, io) => {
 
 function sendPing(socket, message) {
     socket.emit(MeetingPayloadEnum.PONG, message)
-    pongReceived = false;
     pingTimeout = setTimeout(() => {
         if (!pongReceived) {
             socket.disconnect(true); // Disconnect the socket with 'true' parameter, which means closing it gracefully
