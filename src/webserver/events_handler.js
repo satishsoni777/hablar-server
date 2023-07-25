@@ -65,24 +65,5 @@ async function close(socket, io) {
 
 }
 
-
-
-// const liveUsers = async (socket, params) => {
-//     params.online = socket.handshake.query.online
-//     const { userId, online } = params;
-//     const user = await LiveUser.findOneAndUpdate({ userId: userId }, { online: online });
-//     if (user == null) {
-//         const user = await LiveUser({ socketId: socket.id, userId: userId, online: true });
-//         await user.save();
-//     }
-//     else if (user) {
-//         user.socketId = socket.id;
-//         user.online = online;
-//         user.userId = userId;
-//         await user.save();
-//         socket.emit("message", { "message": "Data saved" });
-//     }
-// }
-
 const SocketService = { listenMessage, disconnect, close };
 export { SocketService }
