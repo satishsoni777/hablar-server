@@ -7,9 +7,10 @@ let pingTimeout;
 const listenMessage = (socket, io) => {
     sendPing(socket, socket.handshake.query);
     socket.on(MeetingPayloadEnum.PING, (message) => {
+        console.log("ping message", message)
         clearTimeout(pingTimeout);
-        pongReceived = true;
         sendPing(socket, message);
+        pongReceived = true;
         console.log("ping message", message)
     });
     socket.on("message", (message) => handleMessage(message, socket, io));
