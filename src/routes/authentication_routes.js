@@ -8,7 +8,7 @@ router.post("/signup", AuthController.SignUp);
 
 router.post("/signIn", AuthController.SignIn);
 
-router.post("/sigin", AuthController.SignIn);
+router.post("/signin", AuthController.SignIn);
 
 router.post("/validateToken", AuthController.validatedToken)
 
