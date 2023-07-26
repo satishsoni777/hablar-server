@@ -52,7 +52,7 @@ function connectSocketIo(httpServer) {
             socket.on("disconnect", async (_) => {
                 SocketService.disconnect(socket, io);
                 // const userId = socket.handshake.query.userId;
-                console.log("disconnect", userId)
+                console.log("User disconnect", userId)
                 // try {
                 //     await WaitingRoom.findOneAndDelete({ userId: userId });
                 //     await Rooms.findOneAndDelete({ hostId: userId })

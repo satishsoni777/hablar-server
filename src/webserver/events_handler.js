@@ -5,24 +5,21 @@ let pongReceived = false;
 let pingTimeout;
 
 const listenMessage = (socket, io) => {
-    sendPing(socket, socket.handshake.query);
     socket.on(MeetingPayloadEnum.PING, (message) => {
         console.log("ping message", message)
         clearTimeout(pingTimeout);
-        sendPing(socket, message);
         pongReceived = true;
+        timeOut(socket, message);
     });
     socket.on("message", (message) => handleMessage(message, socket, io));
 }
 
-function sendPing(socket, message) {
-    socket.emit(MeetingPayloadEnum.PONG, message)
-    pingTimeout = setTimeout(() => {
-        if (!pongReceived) {
-            socket.disconnect(true); // Disconnect the socket with 'true' parameter, which means closing it gracefully
-            console.log('User disconnected due to inactivity.');
-        }
+function timeOut(socket, message) {
+    pingTimeout = setTimeout(function () {
+        socket.disconnect(true); // Disconnect the socket with 'true' parameter, which means closing it gracefully
+        console.log('User disconnected due to inactivity.');
     }, 7000);
+    console.log(pingTimeout)
 }
 
 async function handleMessage(message, socket, io) {
