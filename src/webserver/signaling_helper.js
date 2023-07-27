@@ -1,6 +1,7 @@
 import { RandomCallService } from "../service/random_call_service/random_call_service.js";
 import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
 import { WaitingRoom } from "../models/voice_stream/waiting_room.js";
+import { SocketIoHelper } from "../webserver/socket_io_helper.js";
 
 const joinRandomCall = async (io, message, socket) => {
     const params = message;
@@ -18,7 +19,7 @@ const joinRandomCall = async (io, message, socket) => {
                 payload: result
             }
 
-            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.JOIN, payload);
+            SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.JOIN, payload);
 
             if (result.joinedUserCount == 2) {
                 const payload = {
@@ -31,7 +32,7 @@ const joinRandomCall = async (io, message, socket) => {
                         users: result.joinedUsers,
                     }
                 }
-                // SokcetIOHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
+                // SocketIoHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
             }
 
         }
@@ -94,11 +95,11 @@ const leaveRoom = (io, socket, payload) => {
                 payload: { userId: userId },
                 roomId: roomId
             }
-            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.ERROR, payload)
+            SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.ERROR, payload)
         }
         else {
             const payload = { payload: userId, roomId: roomId }
-            SokcetIOHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.USER_LEFTL, payload)
+            SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.USER_LEFTL, payload)
         }
     });
 }

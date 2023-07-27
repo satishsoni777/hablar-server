@@ -27,4 +27,4 @@ function toASocketId(io, event, params) {
     io.to(socketId).emit(event, payload);
 }
 
-export const SokcetIOHelper = { sendAllExcludeSender, toASocketId, ioToAllClinetsInARooom }
+export const SocketIoHelper = { sendAllExcludeSender, toASocketId, ioToAllClinetsInARooom }
