@@ -16,6 +16,7 @@ const submitFeedbackController = async (req, res, next) => {
         return baseController.errorResponse(e, res);
     }
 }
+
 const getFeedbacksCntr = async (req, res, next) => {
     try {
         FeedbackService.getFeedbacks(req.query, (error, result) => {

@@ -10,9 +10,6 @@ const baseController = new BaseController();
 
 const SignUp = async (req, res,) => {
     var { authType } = req.body;
-    // if (authType == AuthType.MOBILE_OTP_FB) {
-
-    // }
     authType = authType.toUpperCase();
     var isEmailExist = false;
     var users = new Users(req.body);

@@ -1,14 +1,12 @@
 import { SignalingHelper } from "./signaling_helper.js"
 import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
 
-let pongReceived = false;
 let pingTimeout;
 
 const listenMessage = (socket, io) => {
     socket.on(MeetingPayloadEnum.PING, (message) => {
         console.log("ping message", message)
         clearTimeout(pingTimeout);
-        pongReceived = true;
         timeOut(socket, message);
     });
     socket.on("message", (message) => handleMessage(message, socket, io));
@@ -18,7 +16,7 @@ function timeOut(socket, message) {
     pingTimeout = setTimeout(function () {
         socket.disconnect(true); // Disconnect the socket with 'true' parameter, which means closing it gracefully
         console.log('User disconnected due to inactivity.');
-    }, 7000);
+    }, 8000);
     console.log(pingTimeout)
 }
 
@@ -54,6 +52,7 @@ async function handleMessage(message, socket, io) {
             break;
     }
 }
+
 async function disconnect(socket, io) {
 
 }

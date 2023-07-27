@@ -4,6 +4,7 @@ import { BaseController } from "../webserver/base_controller.js";
 const baseController = new BaseController();
 
 const getInitData = (req, res) => {
+
     InitData.getInitData("", (err, result) => {
         if (err) {
             return baseController.errorMessage(err, res,);
