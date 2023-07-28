@@ -1,6 +1,5 @@
 import { Rooms } from "../../models/voice_stream/rooms";
 const joinRoomWithRoomId = function (params, callback) {
-
     var { roomId, data } = params;
     const { userId, countryCode } = data;
     const filter = { roomId: roomId };

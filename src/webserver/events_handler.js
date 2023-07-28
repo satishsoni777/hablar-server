@@ -4,6 +4,7 @@ import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
 let pingTimeout;
 
 const listenMessage = (socket, io) => {
+    // timeOut(socket, "");
     socket.on(MeetingPayloadEnum.PING, (message) => {
         console.log("ping message", message)
         clearTimeout(pingTimeout);
@@ -54,8 +55,11 @@ async function handleMessage(message, socket, io) {
 }
 
 async function disconnect(socket, io) {
-
+    const userId = socket.handshake.query.userId;
+    const payload = { userId: userId, roomId: roomId };
+    SignalingHelper.leaveRoom(io, socket, payload);
 }
+
 async function close(socket, io) {
 
 }

@@ -5,6 +5,7 @@ import { SocketIoHelper } from "../webserver/socket_io_helper.js";
 
 const joinRandomCall = async (io, message, socket) => {
     const params = message;
+    console.log(params);
     RandomCallService.joinRoom(socket.id, params, (error, result) => {
         if (error) {
             socket.emit(MeetingPayloadEnum.USER_JOINED, {
@@ -14,6 +15,7 @@ const joinRandomCall = async (io, message, socket) => {
         }
         else {
             socket.join(result.roomId);
+
             const payload = {
                 roomId: result.roomId,
                 payload: result
@@ -34,7 +36,6 @@ const joinRandomCall = async (io, message, socket) => {
                 }
                 // SocketIoHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
             }
-
         }
     });
 }
