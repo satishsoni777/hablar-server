@@ -55,9 +55,9 @@ async function handleMessage(message, socket, io) {
 }
 
 async function disconnect(socket, io) {
-    const userId = socket.handshake.query.userId;
-    const payload = { userId: userId, roomId: roomId };
-    SignalingHelper.leaveRoom(io, socket, payload);
+    const { userId, roomId } = socket.handshake.query;
+    // const payload = { userId: userId, roomId: roomId };
+    // SignalingHelper.leaveRoom(io, socket, payload);
 }
 
 async function close(socket, io) {
