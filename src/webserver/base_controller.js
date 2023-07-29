@@ -37,5 +37,6 @@ export const HTTPFailureStatus = {
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500,
     SUCCESS: 200,
+
     // Add more failure statuses as needed
 };

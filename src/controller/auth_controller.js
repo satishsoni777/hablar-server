@@ -17,13 +17,9 @@ const SignUp = async (req, res,) => {
         if (authType == AuthType.GMAIL) {
             isEmailExist = await findUserByEmail(req.body.emailId);
             if (isEmailExist) {
-                res.statusCode = 409;
-                return res.send({
-                    success: false,
-                    error: {
-                        message: "Email id is already registered."
-                    }
-                })
+                return baseController.errorResponse({
+                    message: "Email id is already registered."
+                }, res);
             }
         }
 
@@ -31,13 +27,11 @@ const SignUp = async (req, res,) => {
             const { mobile } = req.body;
             const isMobileExist = await findUserByMobileNumber(mobile);
             if (isMobileExist) {
-                res.statusCode = 409;
-                return res.send({
-                    success: false,
-                    error: {
-                        message: "Mobile number is already registered."
-                    }
-                })
+                return baseController.errorResponse({
+                    message: "Mobile number is already registered."
+                }, res,
+                    HTTPFailureStatus.UNAUTHORIZED
+                )
             }
         }
         if (authType == AuthType.GMAIL) {
