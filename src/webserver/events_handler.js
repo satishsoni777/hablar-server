@@ -8,7 +8,7 @@ const listenMessage = (socket, io) => {
     socket.on(MeetingPayloadEnum.PING, (message) => {
         console.log("ping message", message)
         clearTimeout(pingTimeout);
-        timeOut(socket, message);
+        // timeOut(socket, message);
     });
     socket.on("message", (message) => handleMessage(message, socket, io));
 }
