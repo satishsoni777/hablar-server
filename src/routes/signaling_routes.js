@@ -19,8 +19,6 @@ router.post("/clearRooms", SignalingController.clearRooms);
 
 router.post("/callStarted", SignalingController.callStarted);
 
-router.post("/toggleOnline", SignalingController.toggleOnline);
-
 router.post("/toggle_online", SignalingController.toggleOnline);
 
 export default router;

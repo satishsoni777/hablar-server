@@ -258,8 +258,9 @@ const clearRooms = async (params, callback) => {
 
 const toggleOnline = async (params, callback) => {
     const { userId, online } = params;
+    console.log(params)
     try {
-        await LiveUser.findByIdAndUpdate({ userId: userId }, { online: online, userId: userId });
+        await LiveUser.findOneAndUpdate({ userId: userId }, { online: online });
         return callback(null, { "message": "Status Changed" });
     }
     catch (_) {

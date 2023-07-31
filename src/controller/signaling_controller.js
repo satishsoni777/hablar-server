@@ -110,8 +110,8 @@ const saveCallHistory = async (req, res) => {
 
 const toggleOnline = (req, res) => {
     try {
-        req.body.userId = req.session.userId;
-        RandomCallService.toggleOnline(req.body, (e, result) => {
+        const params = { online: req.body.online, userId: UserSession.getUserId(req) };
+        RandomCallService.toggleOnline(params, (e, result) => {
             if (e) {
                 return baseController.errorResponse(e, res,
                     HTTPFailureStatus.BAD_REQUEST
@@ -121,7 +121,6 @@ const toggleOnline = (req, res) => {
                 return baseController.successResponse(result, res);
             }
         });
-
     }
     catch (e) {
         return baseController.errorResponse(e, res,
