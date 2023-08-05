@@ -16,6 +16,7 @@ import { Config } from "./config/default.js";
 import { UserSession } from './middleware/user_session.js';
 import { BaseController, HTTPFailureStatus } from "./src/webserver/base_controller.js";
 import initData from "./src/routes/init_data_routes.js";
+import agoraBuilder from "./src/routes/agora_routes.js"
 
 const baseController = new BaseController();
 // creating 24 hours from milliseconds
@@ -73,6 +74,7 @@ app.use("/feedback", feedback);
 app.use("/chat", chat);
 app.use("/calls", callsHitory);
 app.use("/init", initData);
+app.use("/agora", agoraBuilder)
 
 const server = http.createServer(app, {
     requestCert: true,

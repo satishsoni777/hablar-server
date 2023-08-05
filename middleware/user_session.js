@@ -6,7 +6,8 @@ const whiteListing = () => [
     "/authentication/validateToken",
     "/authentication/validate_token",
     "/init/init_data",
-    "/users/get_token"
+    "/users/get_token",
+    "/agora/rtc_token"
 ];
 
 function getUserId(req) {
