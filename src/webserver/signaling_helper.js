@@ -34,7 +34,7 @@ const joinRandomCall = async (io, message, socket) => {
                         users: result.joinedUsers,
                     }
                 }
-                // SocketIoHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
+                SocketIoHelper.sendAllExcludeSender(socket, MeetingPayloadEnum.CALL_STARTED, payload);
             }
         }
     });
