@@ -1,25 +1,23 @@
 
 
 import { Feedback } from '../../models/users/feedback.js';
+import { Users } from '../../models/users/users.js'
 
 const submitFeedback = async (params, callback) => {
-
     try {
-        const { otherUserId, userId, rating, message, like, follow } = params;
+        const { otherUserId, userId, rating, comment, like, follow, } = params;
         let feedback
         feedback = await Feedback.findOne({ userId: otherUserId })
-        if (feedback) {
-            feedback.feedbacks.push(params);
-            feedback.save();
-            return callback(null, params);
+        if (!feedback) {
+            feedback = await Feedback({ userId: otherUserId })
         }
-        feedback = await Feedback({ userId: otherUserId })
-        feedback.feedbacks.push(params);
-        feedback.save();
+        const user = await Users.findOne({ userId: userId });
+        params.name = user.name ?? "";
+        params.image = user.image ?? "";
+        const result = await Promise.all([feedback.feedbacks.push(params), feedback.save()]);
         return callback(null, params);
     } catch (error) {
         return callback(error, null);
-
     }
 }
 

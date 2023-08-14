@@ -16,9 +16,19 @@ const fdSch = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    message: {
+    comment: {
         type: String,
     },
+    name: {
+        type: String
+    },
+    image: {
+        type: String
+    },
+    createdAt: {
+        type: String,
+        default: new Date().toLocaleString("en-Us", { timeZone: 'Asia/Kolkata' })
+    }
 },
     {
         toJSON: {
