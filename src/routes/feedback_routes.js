@@ -4,6 +4,6 @@ const router = express.Router();
 
 router.post('/sub_feedback', FeedbackController.submitFeedbackController)
 router.get('/getFeedbacks', FeedbackController.getFeedbacksCntr)
-router.get('/get_feedbacks', FeedbackController.getFeedbacksCntr)
+router.get('/feedback_list', FeedbackController.getFeedbacksCntr)
 
 export default router;
