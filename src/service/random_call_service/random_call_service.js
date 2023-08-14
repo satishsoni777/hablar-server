@@ -9,7 +9,7 @@ const joinRoom = async function (socketId, params, callback) {
     const { userId } = params;
     let room;
     try {
-        const result = await Rooms.findOneAndDelete({ hostId: userId });
+        const result = await Rooms.findOneAndDelete({ hostId: userId },);
         if (result) {
             return createRoom(socketId, params, callback);
         }

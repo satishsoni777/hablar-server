@@ -15,7 +15,6 @@ const joinRandomCall = async (io, message, socket) => {
         }
         else {
             socket.join(result.roomId);
-
             const payload = {
                 roomId: result.roomId,
                 payload: result
@@ -33,6 +32,9 @@ const joinRandomCall = async (io, message, socket) => {
                     }
                 }
                 SocketIoHelper.ioToAllClinetsInARooom(socket, MeetingPayloadEnum.CALL_STARTED, payload);
+            }
+            else {
+                SocketIoHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
             }
         }
     });
