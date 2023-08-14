@@ -27,6 +27,7 @@ async function handleMessage(message, socket, io) {
     const userId = socket.handshake.query.userId;
     payload.userId = userId;
     payload.roomId = roomId;
+    console.log("payloada", payload)
     switch (payload.type) {
         case MeetingPayloadEnum.JOIN_RANDOM_CALL:
             SignalingHelper.joinRandomCall(io, payload, socket);

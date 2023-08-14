@@ -19,7 +19,7 @@ const joinRandomCall = async (io, message, socket) => {
                 roomId: result.roomId,
                 payload: result
             }
-
+            console.log("sadfgasdfgasd", result.joinedUserCount);
             if (result.joinedUserCount == 2) {
                 const payload = {
                     roomId: result.roomId,
@@ -34,7 +34,12 @@ const joinRandomCall = async (io, message, socket) => {
                 SocketIoHelper.ioToAllClinetsInARooom(socket, MeetingPayloadEnum.CALL_STARTED, payload);
             }
             else {
-                SocketIoHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
+                console.log("sadfgasdfgasd33", result.joinedUserCount, payload);
+                try {
+                    SocketIoHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
+                } catch (e) {
+                    console.log("sadfgasdfgasd333", e);
+                }
             }
         }
     });

@@ -6,14 +6,18 @@ import { AuthTokenMiddleware } from './middleware/auth_middleware.js'
 
 function connectSocketIo(httpServer) {
     try {
+
         const io = new Server(httpServer, {
             path: ""
         });
+
         io.use((socket, next) => {
             // Get the token from the query parameters sent by the client
             const token = socket.handshake.headers.authorization;
             // Validate the token (you can use your own authentication logic here)
+            console.log("### headers #### ", token)
             const result = AuthTokenMiddleware.authMiddleware(token);
+            console.log("### headers #### ", result)
             httpServer._events.request.userId = result.userId;
             if (result == null) {
                 return next(new Error('Authentication token not providen'));
@@ -36,7 +40,7 @@ function connectSocketIo(httpServer) {
 
 
             const userId = httpServer._events.request.userId;
-
+            socket.handshake.query.userId = userId;
             SocketService.listenMessage(socket, io)
 
             socket.on("close", async (_) => {

@@ -1,3 +1,4 @@
+
 /*
 * Send socket event.
 * send to all who joined room1 exlcude sender
@@ -23,8 +24,8 @@ function ioToAllClinetsInARooom(io, event, params) {
 * To individual socketid (private message)
 */
 function toASocketId(io, event, params) {
-    const { payload, socketId } = params;
-    io.to(socketId).emit(event, payload);
+    const { payload } = params;
+    io.to(payload.socketId).emit(event, payload);
 }
 
 export const SocketIoHelper = { sendAllExcludeSender, toASocketId, ioToAllClinetsInARooom }
