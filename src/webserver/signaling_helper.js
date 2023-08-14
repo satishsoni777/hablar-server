@@ -30,7 +30,7 @@ const joinRandomCall = async (io, message, socket) => {
                         users: result.joinedUsers,
                     }
                 }
-                SocketIoHelper.ioToAllClinetsInARooom(socket, MeetingPayloadEnum.CALL_STARTED, payload);
+                SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.CALL_STARTED, payload);
             }
             else {
                 try {
