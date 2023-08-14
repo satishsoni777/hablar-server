@@ -4,10 +4,12 @@ import { WaitingRoom } from "../models/voice_stream/waiting_room.js";
 import { SocketIoHelper } from "../webserver/socket_io_helper.js";
 
 const joinRandomCall = async (io, message, socket) => {
+    console.log("joinRandomCall ", message)
     const params = message;
     console.log(params);
     RandomCallService.joinRoom(socket.id, params, (error, result) => {
         if (error) {
+            console.log("joinRandomCall  error", error)
             socket.emit(MeetingPayloadEnum.USER_JOINED, {
                 success: false,
                 error: error
@@ -15,6 +17,8 @@ const joinRandomCall = async (io, message, socket) => {
         }
         else {
             socket.join(result.roomId);
+            socket.handshake.query.roomId = result.roomId;
+            console.log("adasdadadad", socket.handshake.query.roomId)
             const payload = {
                 roomId: result.roomId,
                 payload: result

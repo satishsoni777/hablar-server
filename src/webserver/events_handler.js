@@ -27,7 +27,6 @@ async function handleMessage(message, socket, io) {
     const userId = socket.handshake.query.userId;
     payload.userId = userId;
     payload.roomId = roomId;
-    console.log("payloada", payload)
     switch (payload.type) {
         case MeetingPayloadEnum.JOIN_RANDOM_CALL:
             SignalingHelper.joinRandomCall(io, payload, socket);
@@ -57,8 +56,8 @@ async function handleMessage(message, socket, io) {
 
 async function disconnect(socket, io) {
     const { userId, roomId } = socket.handshake.query;
-    // const payload = { userId: userId, roomId: roomId };
-    // SignalingHelper.leaveRoom(io, socket, payload);
+    const payload = { userId: userId, roomId: roomId };
+    SignalingHelper.leaveRoom(io, socket, payload);
 }
 
 async function close(socket, io) {

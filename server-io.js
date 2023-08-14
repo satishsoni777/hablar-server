@@ -54,7 +54,8 @@ function connectSocketIo(httpServer) {
             })
 
             socket.on("disconnect", async (_) => {
-                // SocketService.disconnect(socket, io);
+
+                SocketService.disconnect(socket, io);
                 // const userId = socket.handshake.query.userId;
                 console.log("User disconnect", userId)
                 // try {
