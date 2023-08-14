@@ -14,6 +14,7 @@ function sendAllExcludeSender(socket, event, params) {
 * To all clients in room1
 */
 function ioToAllClinetsInARooom(io, event, params) {
+    console.log("ioToAllClinetsInARooom", event, params)
     const { roomId, payload } = params;
     io.in(roomId).emit(event, payload);
 }
