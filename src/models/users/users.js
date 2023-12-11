@@ -99,9 +99,9 @@ const userScheme = new mongoose.Schema({
 }
 );
 userScheme.pre('save', function (next) {
-    this.followersCount = this.followers?.length ?? 0;
-    this.followingCount = this.following?.length ?? 0;
-    next();
+    // this.followersCount = this.followers?.length ?? 0;
+    // this.followingCount = this.following?.length ?? 0;
+    // next();
 });
 
 const db = mongoose.connection.useDb("users");
