@@ -5,7 +5,7 @@ import { BaseController } from "../webserver/base_controller.js";
 
 const baseController = new BaseController();
 
-const getAllUsers = async (req, res,) => {
+const getAllUsers = async (req, res) => {
     const pageNo = req.body.page_no;
     const pageSize = req.body.page_size;
     var lowerLimit, upperLimit;
