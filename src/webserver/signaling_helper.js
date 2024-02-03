@@ -18,7 +18,6 @@ const joinRandomCall = async (io, message, socket) => {
         else {
             socket.join(result.roomId);
             socket.handshake.query.roomId = result.roomId;
-            console.log("adasdadadad", socket.handshake.query.roomId)
             const payload = {
                 roomId: result.roomId,
                 payload: result
@@ -131,6 +130,7 @@ const broadcastUser = async (roomId, socket, payload) => {
 function sendMessage(socket, payload) {
     socket.send(JSON.stringify(payload));
 }
+
 function sendMessageP2P(socket, payload) {
     to(socket, payload);
 }

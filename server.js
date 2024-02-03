@@ -18,6 +18,7 @@ import { BaseController, HTTPFailureStatus } from "./src/webserver/base_controll
 import initData from "./src/routes/init_data_routes.js";
 import agoraBuilder from "./src/routes/agora_routes.js"
 
+
 const baseController = new BaseController();
 // creating 24 hours from milliseconds
 const oneDay = 1000 * 60 * 60 * 24;
@@ -33,6 +34,8 @@ app.use(bodyParser.json());
 // app.set('Cache-Control', 's-maxage=86400');
 app.use(express.json())
 
+
+
 app.use(session({
     secret: process.env.SERCET_KEY || Config.TOKEN_KEY,
     resave: false,
@@ -40,7 +43,11 @@ app.use(session({
     cookie: { maxAge: oneDay, secure: true },
 }));
 
+
 app.use((req, res, next) => {
+    console.log("### Api  ###", req.url);
+    console.log("### Requested Body  ###", req.body);
+    console.log("### Requested params  ###", req.params);
     if (UserSession.whiteListing().includes(req.path)) {
         next();
     }
