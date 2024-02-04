@@ -4,11 +4,9 @@ import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
 let pingTimeout;
 
 const listenMessage = (socket, io) => {
-    // timeOut(socket, "");
     socket.on(MeetingPayloadEnum.PING, (message) => {
         console.log("ping message", message)
         clearTimeout(pingTimeout);
-        // timeOut(socket, message);
     });
     socket.on("message", (message) => handleMessage(message, socket, io));
 }

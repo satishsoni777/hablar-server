@@ -1,15 +1,12 @@
-import { RandomCallService } from "../service/random_call_service/random_call_service.js";
+import { RandomCallService } from "../module/signalling/services/random_call_service.js";
 import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
-import { WaitingRoom } from "../models/voice_stream/waiting_room.js";
+import { WaitingRoom } from "../module/signalling/models/waiting_room.js";
 import { SocketIoHelper } from "../webserver/socket_io_helper.js";
 
 const joinRandomCall = async (io, message, socket) => {
-    console.log("joinRandomCall ", message)
     const params = message;
-    console.log(params);
     RandomCallService.joinRoom(socket.id, params, (error, result) => {
         if (error) {
-            console.log("joinRandomCall  error", error)
             socket.emit(MeetingPayloadEnum.USER_JOINED, {
                 success: false,
                 error: error

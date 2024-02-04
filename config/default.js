@@ -20,6 +20,7 @@ export class Flavor {
                 url = "mongodb://127.0.0.1:27017";
                 break;
         }
+        console.log("Mongo db url", url)
         return url;
     }
 }

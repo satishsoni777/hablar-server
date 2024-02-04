@@ -1,22 +1,22 @@
 import express from "express";
 import bodyParser from "body-parser"
 import { MongoDb } from './src/db/mongoose_db.js';
-import auth from './src/routes/authentication_routes.js'
+import auth from './src/module/auth/routes/authentication_routes.js'
 import http from 'http';
 import { SocketIO } from './server-io.js';
-import callController from "./src/routes/signaling_routes.js";
-import feedback from './src/routes/feedback_routes.js';
-import users from "./src/routes/users_routes.js";
-import chat from "./src/routes/chat_routes.js";
-import callsHitory from "./src/routes/call_history_routes.js";
+import callController from "./src/module/signalling/routes/signaling_routes.js";
+import feedback from './src/module/feedback/routes/feedback_routes.js';
+import users from "./src/module/users/routes/users_routes.js";
+import chat from "./src/module/chat/routes/chat_routes.js";
+import callsHitory from "./src/module/call_history/routes/call_history_routes.js";
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { AuthTokenMiddleware } from './middleware/auth_middleware.js';
 import { Config } from "./config/default.js";
 import { UserSession } from './middleware/user_session.js';
 import { BaseController, HTTPFailureStatus } from "./src/webserver/base_controller.js";
-import initData from "./src/routes/init_data_routes.js";
-import agoraBuilder from "./src/routes/agora_routes.js"
+import initData from "./src/init_data/routes/init_data_routes.js";
+import agoraBuilder from "./src/agora/routes/agora_routes.js"
 
 
 const baseController = new BaseController();
@@ -52,7 +52,7 @@ app.use((req, res, next) => {
         next();
     }
     else {
-        const result = AuthTokenMiddleware.authMiddleware(req.headers['authorization']);
+        const result = AuthTokenMiddleware.authMiddleware(req.query, req.headers);
         if (result == null) {
             return baseController.errorResponse('Authorization token not provided',
                 res,
