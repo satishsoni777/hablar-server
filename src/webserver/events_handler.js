@@ -38,14 +38,13 @@ async function handleMessage(message, socket, io) {
             SignalingHelper.forwardAnswerSDP(socket, SocketService, payload, io);
             break;
         case MeetingPayloadEnum.LEAVE_ROOM:
-            SignalingHelper.leaveRoom(io, socket, payload);
+            SignalingHelper.leaveRoom(io, payload);
             break;
         case MeetingPayloadEnum.VIDEO_TOOGLE:
         case MeetingPayloadEnum.AUDIO_TOOGLE:
             break;
         case MeetingPayloadEnum.CHAT_MESSAGE:
             SignalingHelper.sendMessageP2P(socket, payload,);
-            SignalingHelper.forE
             break;
         default:
             break;

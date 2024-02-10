@@ -1,14 +1,14 @@
-import { voiceCallsHistory } from "../../users/services/call_history.js";
+
 import { BaseController, HTTPFailureStatus } from '../../../webserver/base_controller.js';
-import { JwtUtil } from '../../../utils/jwt_util.js'
 import { UserSession } from "../../../../middleware/user_session.js";
+import { CallHistoryService } from '../services/call_history_service.js'
 
 const baseController = new BaseController();
 
 const getCallHistory = (req, res, next) => {
     try {
         const userId = UserSession.getUserId(req, res, next);
-        voiceCallsHistory.getCallHistory({ userId: userId }, (error, result) => {
+        CallHistoryService.getCallHistory({ userId: userId }, (error, result) => {
             if (error) {
                 return baseController.errorResponse(error, res);
             }
@@ -20,6 +20,20 @@ const getCallHistory = (req, res, next) => {
     }
 }
 
-export const VoiceCallController = { getCallHistory }
+const saveCallHistory = async (req, res) => {
+    try {
+        CallHistoryService.saveCallHistory(req.body, (error, result) => {
+            if (error) {
+                return res.status(501).send(error);
+            }
+            return baseController.successResponse(result, res);
+        })
+    }
+    catch (e) {
+        return res.status(501).send(e);
+    }
+}
+
+export const CallHistoryController = { getCallHistory, saveCallHistory }
 
 

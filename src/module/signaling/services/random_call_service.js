@@ -151,13 +151,6 @@ const leaveRoom = async function (params, callback) {
     }
 }
 
-const createCallHistory = async (params, callback) => {
-    const room = params;
-    for (var i = 0; i < room.joinedUsers.length; i++) {
-        const filter = { userId: room.joinedUsers[i].userId };
-        const call = await CallHistory.findOneAndUpdate(filter,);
-    }
-}
 
 const saveCallHistory = async (params) => {
     const { userId, otherUserId, roomId } = params;
@@ -203,7 +196,6 @@ const createPairFromWaitingRoom = async (waitingRoom) => {
 }
 
 const createPairs = async (params, callback) => {
-
     try {
         const waitingRoom = await WaitingRoom.slice(0, 10);
         if (waitingRoom && waitingRoom.length >= 2) {
@@ -263,7 +255,6 @@ const clearRooms = async (params, callback) => {
 
 const toggleOnline = async (params, callback) => {
     const { userId, online } = params;
-    console.log(params)
     try {
         await LiveUser.findOneAndUpdate({ userId: userId }, { online: online });
         return callback(null, { "message": "Status Changed" });
@@ -273,12 +264,42 @@ const toggleOnline = async (params, callback) => {
     }
 }
 
-const RandomCallService = {
+const joinWaitingRoom = async (userId, socketId, callback) => {
+    const filter = { userId: userId };
+    const update = { userId: userId, socketId: socketId, };
+    const options = { new: true, upsert: true };
+    try {
+        const wrs = await WaitingRoom.findOneAndUpdate(filter, update, options);
+        console.log(wrs);
+        if (wrs) {
+            return callback(wrs, null);
+        }
+        else {
+            return callback({ message: "Connection not fodun" }, null);
+        }
+    }
+    catch (e) {
+        return callback(null, e);
+    }
+}
+
+const joinAvailableRoom = async () => {
+    try {
+        const result = await Rooms.findOne({ joinedUsers: { $size: 1 } });
+        return result;
+    }
+    catch (err) {
+        throw err;
+    }
+}
+const SignalingService = {
     joinRoom,
     leaveRoom,
     clearRooms,
     callStared,
     saveCallHistory,
-    toggleOnline
+    toggleOnline,
+    joinWaitingRoom,
+    joinAvailableRoom,
 };
-export { RandomCallService }
+export { SignalingService }

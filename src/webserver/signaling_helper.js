@@ -1,48 +1,12 @@
-import { RandomCallService } from "../module/signalling/services/random_call_service.js";
+import { SignalingService } from "../module/signaling/services/random_call_service.js";
 import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
-import { WaitingRoom } from "../module/signalling/models/waiting_room.js";
+import { WaitingRoom } from "../module/signaling/models/waiting_room.js";
 import { SocketIoHelper } from "../webserver/socket_io_helper.js";
+import { SignalingController } from '../module/signaling/controller/signaling_controller.js'
 
 const joinRandomCall = async (io, message, socket) => {
-    const params = message;
-    RandomCallService.joinRoom(socket.id, params, (error, result) => {
-        if (error) {
-            socket.emit(MeetingPayloadEnum.USER_JOINED, {
-                success: false,
-                error: error
-            });
-        }
-        else {
-            socket.join(result.roomId);
-            socket.handshake.query.roomId = result.roomId;
-            const payload = {
-                roomId: result.roomId,
-                payload: result
-            }
-            if (result.joinedUserCount == 2) {
-                const payload = {
-                    roomId: result.roomId,
-                    payload: {
-                        hostId: result.hostId,
-                        roomId: result.roomId,
-                        createdAt: result.createdAt,
-                        socketId: result.socketId,
-                        users: result.joinedUsers,
-                    }
-                }
-                SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.CALL_STARTED, payload);
-            }
-            else {
-                try {
-                    SocketIoHelper.toASocketId(io, MeetingPayloadEnum.JOIN, payload);
-                } catch (e) {
-                    console.log("sadfgasdfgasd333", e);
-                }
-            }
-        }
-    });
+    const rms = await SignalingController.joinARoom(io, message.userId, socket.id);
 }
-
 
 const forwardConnectionRequest = (roomId, socket, payload) => {
     const { userId, otherUserId, name } = payload.data;
@@ -51,6 +15,7 @@ const forwardConnectionRequest = (roomId, socket, payload) => {
         userId: otherUserId,
     }
 }
+
 const forwardIcCanidate = (roomId, socket, payload) => {
     const { userId, otherUserId, canidate } = payload.data;
     var model = {
@@ -91,9 +56,9 @@ const forwardAnswerSDP = (roomId, socket, payload) => {
     }
 }
 
-const leaveRoom = (io, socket, payload) => {
+const leaveRoom = (io, payload) => {
     const { userId, roomId } = payload;
-    RandomCallService.leaveRoom(payload, (error, result) => {
+    SignalingService.leaveRoom(payload, (error, result) => {
         if (error) {
             const payload = {
                 payload: { userId: userId },
@@ -107,7 +72,6 @@ const leaveRoom = (io, socket, payload) => {
         }
     });
 }
-
 
 const forwardEvent = (roomId, socket, payload) => {
     const { userId } = payload.data;
@@ -135,6 +99,7 @@ function sendMessageP2P(socket, payload) {
 function to(socket, payload) {
     socket.to(socket.socketId).emit("message", payload);
 }
+
 const SignalingHelper = {
     joinRandomCall,
     sendMessageP2P,

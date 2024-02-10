@@ -1,4 +1,5 @@
 import { Rooms } from "../models/rooms";
+
 const joinRoomWithRoomId = function (params, callback) {
     var { roomId, data } = params;
     const { userId, countryCode } = data;

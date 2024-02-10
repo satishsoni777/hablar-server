@@ -6,7 +6,7 @@ const liveUser = new mongoose.Schema({
         type: Number,
         required: false
     },
-    startTime: {
+    timeStamp: {
         type: String,
         default: new Date().toISOString(),
     },
@@ -16,6 +16,10 @@ const liveUser = new mongoose.Schema({
     },
     online: {
         type: Boolean,
+        required: false
+    },
+    lastActive: {
+        type: String,
         required: false
     }
 },
@@ -31,7 +35,7 @@ const liveUser = new mongoose.Schema({
         }
     }
 );
-const db = mongoose.connection.useDb("signalling");
+const db = mongoose.connection.useDb("signaling");
 const LiveUser = db.model("liveuser", liveUser);
 export { LiveUser };
 

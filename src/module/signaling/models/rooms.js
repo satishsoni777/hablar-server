@@ -97,7 +97,7 @@ roomsSchema.set('toJSON', {
     },
 });
 roomsSchema.set('toJSON', { versionKey: false });
-const db = mongoose.connection.useDb("signalling");
+const db = mongoose.connection.useDb("signaling");
 export const Rooms = db.model("rooms", roomsSchema);
 
 

@@ -1,5 +1,5 @@
 import { CallHistory } from '../../call_history/models/call_history.js';
-import { Users } from '../models/users.js';
+import { Users } from '../../users/models/users.js';
 
 const getCallHistory = async (params, callback) => {
     try {
@@ -38,7 +38,37 @@ const getCallHistory = async (params, callback) => {
         }, null);
     }
 }
-// Return last 10 calls
+const saveCallHistory = async (params) => {
+    const { userId, otherUserId, roomId } = params;
+    console.log(params)
+    try {
+        const ch = await CallHistory.findOne({ userId: userId, "history.otherUserId": otherUserId, "history.roomId": roomId });
+        const ch2 = await CallHistory.findOne({ userId: otherUserId, "history.otherUserId": userId, "history.roomId": roomId });
+
+        ch.callEnd = true;
+        if (ch && ch2) {
+            ch.history.forEach((e) => {
+                e.endTime = Date.now();
+                e.duration = e.endTime.getTime() - e.startTime.getTime();
+            });
+            ch2.history.forEach((e) => {
+                e.endTime = Date.now();
+                e.duration = e.endTime.getTime() - e.startTime.getTime();
+            });
+            await ch.save();
+            await ch2.save();
+
+            return {
+                message: "History saved",
+                error: false
+            };
+        }
+        return { message: "Error something went wrong", error: true };
+    }
+    catch (e) {
+        return { message: "Error something went wrong", error: true, msg: e };
+    }
+}
 const getRecentCalls = async (params, callback) => {
     try {
         const { userId } = params;
@@ -50,8 +80,8 @@ const getRecentCalls = async (params, callback) => {
 
     }
 }
-
-const voiceCallsHistory = { getCallHistory };
-export {
-    voiceCallsHistory
+export const CallHistoryService = {
+    saveCallHistory,
+    getCallHistory,
+    getRecentCalls
 };

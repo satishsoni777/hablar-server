@@ -1,10 +1,11 @@
 import express from "express";
 import bodyParser from "body-parser"
 import { MongoDb } from './src/db/mongoose_db.js';
+import { MySqlConnection } from './src/db/mysql_db.js';
 import auth from './src/module/auth/routes/authentication_routes.js'
 import http from 'http';
 import { SocketIO } from './server-io.js';
-import callController from "./src/module/signalling/routes/signaling_routes.js";
+import callController from "./src/module/signaling/routes/signaling_routes.js";
 import feedback from './src/module/feedback/routes/feedback_routes.js';
 import users from "./src/module/users/routes/users_routes.js";
 import chat from "./src/module/chat/routes/chat_routes.js";
@@ -98,5 +99,6 @@ server.on('error', (error) => {
 server.listen(PORT, () => {
     SocketIO.connectSocketIo(server);
     MongoDb.instance.connectMd();
+    MySqlConnection.instance.createConnection();
     console.log(`Server listening on port ${PORT}`);
 });

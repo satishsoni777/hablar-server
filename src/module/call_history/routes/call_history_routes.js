@@ -1,7 +1,7 @@
 import express from "express";
-import { VoiceCallController } from "../controller/call_history_controller.js";
+import { CallHistoryController } from "../controller/call_history_controller.js";
 const router = express.Router();
 
-router.get("/call_history", VoiceCallController.getCallHistory);
+router.get("/call_history", CallHistoryController.getCallHistory);
 
 export default router;

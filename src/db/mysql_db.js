@@ -1,18 +1,30 @@
 import mysql from "mysql"
 // Create a MySQL connection pool
 
-const pool = mysql.createConnection({
-    host: 'localhost',
-    user: 'satish754ss',
-    password: 'Test@123',
-    database: 'Users'
-});
+class MySqlConnection {
+    static instance = new MySqlConnection();
+    constructor() {
 
-const connectMySql = async () => {
-    pool.connect(function (err) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
+    }
+    connectMySql(pool) {
+        pool.connect(function (err) {
+            if (err) throw err;
+            console.log("Connected!");
+        });
+    }
+    createConnection(params) {
+        // const pool = mysql.createConnection({
+        //     host: 'localhost',
+        //     user: 'satish754ss',
+        //     password: 'Test@123',
+        //     database: 'Users'
+        // });
+        // this.connectMySql(pool);
+    }
+
 }
 
-export { connectMySql }
+
+
+
+export { MySqlConnection }

@@ -5,7 +5,7 @@ const waitingroom = new mongoose.Schema({
     userId: {
         type: Number,
     },
-    startTime: {
+    timeStamp: {
         type: String,
         default: new Date().toISOString(),
     },
@@ -16,7 +16,7 @@ const waitingroom = new mongoose.Schema({
     online: {
         type: Boolean,
         required: false
-    }
+    },
 },
     {
         toJSON: {
@@ -28,5 +28,5 @@ const waitingroom = new mongoose.Schema({
         }
     }
 );
-const db = mongoose.connection.useDb("signalling");
+const db = mongoose.connection.useDb("signaling");
 export const WaitingRoom = db.model("waitingroom", waitingroom);
