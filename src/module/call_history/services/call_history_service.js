@@ -1,9 +1,8 @@
 import { CallHistory } from '../../call_history/models/call_history.js';
 import { Users } from '../../users/models/users.js';
 
-const getCallHistory = async (params, callback) => {
+const getCallHistory = async (userId, callback) => {
     try {
-        const { userId } = params;
         const data = await CallHistory.findOne({ userId: userId });
         if (data.history) {
             const userIds = data.history.map((e) => e.userId);
@@ -38,12 +37,12 @@ const getCallHistory = async (params, callback) => {
         }, null);
     }
 }
-const saveCallHistory = async (params) => {
-    const { userId, otherUserId, roomId } = params;
-    console.log(params)
+
+const saveCallHistory = async (userId, otherUserId, roomId) => {
     try {
-        const ch = await CallHistory.findOne({ userId: userId, "history.otherUserId": otherUserId, "history.roomId": roomId });
-        const ch2 = await CallHistory.findOne({ userId: otherUserId, "history.otherUserId": userId, "history.roomId": roomId });
+        const prms = await Promise.all([CallHistory.findOne({ userId: userId, "history.otherUserId": otherUserId, "history.roomId": roomId }), CallHistory.findOne({ userId: otherUserId, "history.otherUserId": userId, "history.roomId": roomId })]);
+        const ch = prms[0];
+        const ch2 = prms[1];
 
         ch.callEnd = true;
         if (ch && ch2) {
@@ -55,9 +54,7 @@ const saveCallHistory = async (params) => {
                 e.endTime = Date.now();
                 e.duration = e.endTime.getTime() - e.startTime.getTime();
             });
-            await ch.save();
-            await ch2.save();
-
+            await Promise.all([ch.save(), ch2.save()]);
             return {
                 message: "History saved",
                 error: false
@@ -69,6 +66,7 @@ const saveCallHistory = async (params) => {
         return { message: "Error something went wrong", error: true, msg: e };
     }
 }
+
 const getRecentCalls = async (params, callback) => {
     try {
         const { userId } = params;
@@ -80,6 +78,7 @@ const getRecentCalls = async (params, callback) => {
 
     }
 }
+
 export const CallHistoryService = {
     saveCallHistory,
     getCallHistory,

@@ -1,5 +1,6 @@
 
 import mongoose from "mongoose"
+import { getCurrentIstTime } from "../../../utils/date_util.js";
 
 const waitingroom = new mongoose.Schema({
     userId: {
@@ -7,7 +8,7 @@ const waitingroom = new mongoose.Schema({
     },
     timeStamp: {
         type: String,
-        default: new Date().toISOString(),
+        default: getCurrentIstTime
     },
     socketId: {
         type: String,

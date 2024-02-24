@@ -7,7 +7,6 @@ const getInitData = async (params, callback) => {
     fs.readFile(filePath, 'utf8', function (err, data) {
         if (err) return callback(err, null);
         var obj = JSON.parse(data);
-        console.log("obj", obj)
         return callback(null, obj);
     });
 }

@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose"
-
+import { getCurrentIstTime } from '../../../utils/date_util.js'
 const liveUser = new mongoose.Schema({
     userId: {
         type: Number,
@@ -8,7 +8,7 @@ const liveUser = new mongoose.Schema({
     },
     timeStamp: {
         type: String,
-        default: new Date().toISOString(),
+        default: getCurrentIstTime
     },
     socketId: {
         type: String,

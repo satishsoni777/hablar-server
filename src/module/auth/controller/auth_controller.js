@@ -5,6 +5,7 @@ import { v4 as uuidv4, } from 'uuid';
 import { JwtUtil } from "../../../utils/jwt_util.js";
 import { EmailSendUtil } from '../../../utils/mail_sender.js'
 import { BaseController, HTTPFailureStatus } from '../../../webserver/base_controller.js';
+import { getCurrentIstTime } from '../../../utils/date_util.js';
 
 const baseController = new BaseController();
 
@@ -104,7 +105,7 @@ const SignIn = async (req, res) => {
             case AuthType.GMAIL:
                 var isNewUser = false;
                 const filter = { emailId: emailId };
-                const update = { created: new Date().toISOString(), uid: uuidv4() };
+                const update = { created: getCurrentIstTime, uid: uuidv4() };
                 let user = await Users.findOneAndUpdate(filter, update);
                 if (!user) {
                     isNewUser = true;

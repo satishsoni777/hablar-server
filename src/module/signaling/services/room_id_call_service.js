@@ -15,6 +15,7 @@ const joinRoomWithRoomId = function (params, callback) {
                     }
                 }
                 r.joinedUsers.push(data)
+                r.size.push(1);
                 r.save().then((r) => {
                     return callback(null, r);
                 }).catch((e) => {

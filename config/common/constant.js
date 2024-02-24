@@ -4,3 +4,8 @@ export const AuthType = {
     MOBILE_OTP: "MOBILE-OTP",
     MOBILE_OTP_FB: "MOBILE-OTP-FB",
 }
+
+export const DbName = {
+    USER: "user",
+    SIGNALING: "signaling",
+}

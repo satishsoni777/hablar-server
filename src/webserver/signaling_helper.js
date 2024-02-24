@@ -1,11 +1,9 @@
-import { SignalingService } from "../module/signaling/services/random_call_service.js";
 import { MeetingPayloadEnum } from "../utils/meeting_payload_enums.js"
 import { WaitingRoom } from "../module/signaling/models/waiting_room.js";
-import { SocketIoHelper } from "../webserver/socket_io_helper.js";
 import { SignalingController } from '../module/signaling/controller/signaling_controller.js'
 
-const joinRandomCall = async (io, message, socket) => {
-    const rms = await SignalingController.joinARoom(io, message.userId, socket.id);
+const joinRandomCall = async (io, payload, socket) => {
+    const rms = await SignalingController.joinARoom(io, payload.userId, socket);
 }
 
 const forwardConnectionRequest = (roomId, socket, payload) => {
@@ -56,23 +54,6 @@ const forwardAnswerSDP = (roomId, socket, payload) => {
     }
 }
 
-const leaveRoom = (io, payload) => {
-    const { userId, roomId } = payload;
-    SignalingService.leaveRoom(payload, (error, result) => {
-        if (error) {
-            const payload = {
-                payload: { userId: userId },
-                roomId: roomId
-            }
-            SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.ERROR, payload)
-        }
-        else {
-            const payload = { payload: userId, roomId: roomId }
-            SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.USER_LEFTL, payload)
-        }
-    });
-}
-
 const forwardEvent = (roomId, socket, payload) => {
     const { userId } = payload.data;
     broadcastUser(roomId, socket, {
@@ -106,7 +87,6 @@ const SignalingHelper = {
     forwardConnectionRequest,
     forwardAnswerSDP,
     forwardIcCanidate,
-    leaveRoom,
     forwardOfferSdp,
     forwardEvent,
 }

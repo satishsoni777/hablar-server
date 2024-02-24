@@ -1,3 +1,4 @@
+import moment from "moment-timezone";
 function printDateTime() {
   let date_ob = new Date();
 
@@ -17,11 +18,17 @@ function printDateTime() {
   // current minutes
   let minutes = date_ob.getMinutes();
 
+  const second = date_ob.getSeconds();
+
   // current seconds
   // let seconds = date_ob.getSeconds();
 
   // prints date in YYYY-MM-DD format
   console.log(year + "-" + month + "-" + date);
-  return hours + ":" + minutes + " : " + year + "-" + month + "-" + date;
+  return hours + ":" + minutes + ":" + second + " : " + year + "-" + month + "-" + date;
 }
-export { printDateTime }
+function getCurrentIstTime() {
+  return moment().tz('Asia/Kolkata').format();
+
+}
+export { printDateTime, getCurrentIstTime }

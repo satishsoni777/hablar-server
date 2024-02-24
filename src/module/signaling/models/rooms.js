@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { nanoid } from 'nanoid';
-
+import { getCurrentIstTime } from "../../../utils/date_util.js";
 
 export const JoinedUserModel = new mongoose.Schema({
     userId: {
@@ -21,7 +21,7 @@ export const JoinedUserModel = new mongoose.Schema({
     },
     joinedAt: {
         type: String,
-        default: new Date().toISOString()
+        default: getCurrentIstTime
     },
     sdp: {
         type: String
@@ -34,7 +34,6 @@ export const JoinedUserModel = new mongoose.Schema({
     }
 });
 
-
 const roomsSchema = new mongoose.Schema({
     roomId: {
         type: String,
@@ -44,60 +43,35 @@ const roomsSchema = new mongoose.Schema({
     socketId: {
         type: String
     },
-    hostId: {
+    userId: {
         type: Number,
-    },
-    emailId: {
-        type: String,
-        match: /.+\@.+\..+/,
-    },
-    joinedUserCount: {
-        type: Number,
-        default: 0,
     },
     pinCode: {
         type: Number,
     },
-    state: {
-        type: String,
-    },
-    createdAt: {
-        type: String,
-        default: new Date().toISOString()
-    },
-    stateCode: {
-        type: String,
-        required: false
-    },
-    countryCode: {
-        type: String,
-        required: false
+    joinSize: {
+        type: Number,
+        default: 0
     },
     joinedUsers: [JoinedUserModel],
-
 }, {
-    timestaps: true
-}, {
+    timestamps: true, // Corrected typo
     toJSON: {
         transform: function (doc, obj) {
             delete obj.__v;
             return obj._v;
         }
-    },
-},
-)
-roomsSchema.pre('save', function (next) {
-    this.joinedUserCount = this.joinedUsers.length;
-    next();
+    }
 });
+
+// Remove duplicate toJSON setter
 roomsSchema.set('toJSON', {
     transform: (doc, ret) => {
         delete ret.__v;
         return ret;
     },
+    versionKey: false
 });
-roomsSchema.set('toJSON', { versionKey: false });
+
 const db = mongoose.connection.useDb("signaling");
 export const Rooms = db.model("rooms", roomsSchema);
-
-

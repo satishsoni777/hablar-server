@@ -3,7 +3,6 @@ import { Users } from "../models/users.js";
 
 const updateUserData = async (params, callback) => {
     const { userId, gender } = params;
-    console.log("User user service", params)
     const filter = { userId: userId };
     const update = { gender: gender };
     try {

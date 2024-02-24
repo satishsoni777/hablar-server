@@ -1,4 +1,5 @@
 import { mongoose } from "mongoose";
+import { getCurrentIstTime } from "../../../utils/date_util.js";
 
 const fdSch = new mongoose.Schema({
     userId: {
@@ -27,7 +28,7 @@ const fdSch = new mongoose.Schema({
     },
     createdAt: {
         type: String,
-        default: new Date().toLocaleString("en-Us", { timeZone: 'Asia/Kolkata' })
+        default: getCurrentIstTime
     }
 },
     {
