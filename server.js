@@ -46,9 +46,6 @@ app.use(session({
 
 
 app.use((req, res, next) => {
-    console.log("### Api  ###", req.url);
-    console.log("### Requested Body  ###", req.body);
-    console.log("### Requested params  ###", req.params);
     if (UserSession.whiteListing().includes(req.path)) {
         next();
     }
@@ -75,14 +72,14 @@ app.use((req, res, next) => {
 })
 
 //Routes
-app.use('/users', users);
-app.use('/authentication', auth);
-app.use("/signaling", callController);
-app.use("/feedback", feedback);
-app.use("/chat", chat);
-app.use("/calls", callsHitory);
-app.use("/init", initData);
-app.use("/agora", agoraBuilder)
+app.use('v1/users', users)
+    .use('v1/authentication', auth)
+    .use("v1/signaling", callController)
+    .use("v1/feedback", feedback)
+    .use("v1/chat", chat)
+    .use("v1/calls", callsHitory)
+    .use("v1/init", initData)
+    .use("v1/agora", agoraBuilder)
 
 const server = http.createServer(app, {
     requestCert: true,

@@ -62,4 +62,4 @@ const testServer = (req, res, next) => {
     return res.send({ success: true })
 }
 
-export const UserController = { getAllUsers, getUserDetails, testServer, updateUserData, getToken }
+export const UserController = { getAllUsers, getUserDetails, testServer, updateUserData, getToken, }

@@ -3,7 +3,7 @@ import { WaitingRoom } from "../module/signaling/models/waiting_room.js";
 import { SignalingController } from '../module/signaling/controller/signaling_controller.js'
 
 const joinRandomCall = async (io, payload, socket) => {
-    const rms = await SignalingController.joinARoom(io, payload.userId, socket);
+    await SignalingController.joinARoom(io, payload.userId, socket);
 }
 
 const forwardConnectionRequest = (roomId, socket, payload) => {

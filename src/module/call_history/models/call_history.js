@@ -32,6 +32,9 @@ const callHistorySchema = new mongoose.Schema({
         type: String,
         default: new Date().toISOString()
     },
+    roomId: {
+        type: Number,
+    }
 }, {
     toJSON: {
         transform: function (doc, ret) {

@@ -72,18 +72,15 @@ async function connection(userId) {
 async function leaveRoom(socket, io) {
     const userId = socket.handshake.query.userId;
     var roomId;
-    console.log("socket.handshake.query.userId", socket.handshake.query.userId)
     const prms = await Promise.all([SignalingController.toggleOnline(false, userId), SignalingController.getRoomIdByUserId(userId)]);
-    console.log("promise result leave room", prms)
     if (prms)
         roomId = prms[1];
     if (roomId) {
-        const result = await Promise.all([
+        await Promise.all([
             SignalingController.leaveRoom(io, userId, roomId),
             SignalingController.leaveWaitingRoom(io, userId),
         ]);
     }
-
 }
 
 function close(socket, io) {

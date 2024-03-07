@@ -1,11 +1,10 @@
 import { Rooms } from "../models/rooms.js";
-import { RoomsIds } from "../models/roomd_ids.js";
 import { SignalingService } from "../services/random_call_service.js";
 import { nanoid } from 'nanoid';
 import { BaseController } from '../../../webserver/base_controller.js';
 import { WaitingRoom } from "../models/waiting_room.js";
 import { MeetingPayloadEnum } from "../../../utils/meeting_payload_enums.js";
-import { SocketIoHelper } from "../../../webserver/socket_io_helper.js";
+import { SocketIoHelper } from "../../../webserver/base_socket_helper.js";
 
 const baseController = new BaseController();
 
@@ -35,7 +34,7 @@ const clearRooms = (req, res) => {
         })
     }
     catch (e) {
-        res.status(501).send(e);
+        return baseController.errorResponse(e, res);
     }
 }
 
@@ -49,7 +48,7 @@ const callStarted = (req, res) => {
         })
     }
     catch (e) {
-        res.status(501).send(e);
+        return baseController.errorResponse(e, res);
     }
 }
 
@@ -168,6 +167,9 @@ function shuffleArray(array) {
     return array;
 }
 
+function saveCallHistory() {
+    return SignalingService.getRoomIdBySocketId(socketId);
+}
 
 
 const SignalingController = {
@@ -181,6 +183,7 @@ const SignalingController = {
     leaveWaitingRoom,
     getRoomIdByUserId,
     getRoomIdBySocketId,
+    saveCallHistory
 }
 
 export { SignalingController }

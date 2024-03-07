@@ -2,7 +2,6 @@ import { WaitingRoom } from '../models/waiting_room.js';
 import { Rooms } from '../models/rooms.js';
 import { CallHistory } from '../../call_history/models/call_history.js';
 import { LiveUser } from '../models/live_users.js';
-import { RoomsIds } from '../models/roomd_ids.js';
 
 
 const createRoom = async function (userId, socketId) {
@@ -11,8 +10,8 @@ const createRoom = async function (userId, socketId) {
         const room = new Rooms(params);
         room.joinedUsers.push({ userId: userId, socketId: socketId, roomId: room.roomId });
         room.joinSize = room.joinedUsers.length;
-        const proRes = await Promise.all([saveRooomId(userId, socketId, room.roomId), room.save()])
-        return proRes[1];
+        await room.save();
+        return room;
     }
     catch (err) {
         throw err;
@@ -192,8 +191,8 @@ const joinAvailableRoom = async (socketId, userId) => {
         if (roomRes != null) {
             roomRes.joinedUsers.push({ userId: userId, roomId: roomRes.roomId, socketId: socketId });
             roomRes.joinSize = roomRes.joinedUsers.length;
-            const proRes = await Promise.all([roomRes.save(), saveRooomId(userId, socketId, roomRes.roomId)]);
-            return proRes[0];
+            await roomRes.save();
+            return roomRes
         }
         else return null;
     }
@@ -215,25 +214,31 @@ const leaveWaitingRoom = async (userId, callback) => {
 
 const getRoomIdByUserId = async (userId) => {
     if (userId) {
-        const ids = await RoomsIds.findOneAndDelete({ userId: userId });
-        if (ids)
-            return ids.roomId;
-        return null;
+        try {
+            const room = await Rooms.findOne({
+                "joinedUsers.userId": userId
+            }).select("-__v");
+            if (room)
+                return room.roomId;
+            return null
+        } catch (error) {
+            console.error("Error finding room by user ID:", error);
+            throw error;
+        }
     }
     return null;
 }
 
 const getRoomIdBySocketId = async (socketId) => {
     if (socketId) {
-        const ids = await RoomsIds.findOneAndRemove({ socketId: socketId });
-        ids.roomId;
+        const room = await Rooms.findOne({
+            "joinedUsers.socketId": socketId
+        }).select("-__v"); // Exclude the __v field from the result
+        return room.roomId;
     }
     return null;
 }
-const saveRooomId = async (userId, socketId, roomId) => {
-    const result = new RoomsIds({ userId: userId, socketId: socketId, roomId: roomId });
-    return await result.save();
-}
+
 
 const SignalingService = {
     leaveRoom,
@@ -246,7 +251,6 @@ const SignalingService = {
     leaveWaitingRoom,
     getRoomIdByUserId,
     getRoomIdBySocketId,
-    saveRooomId,
-    createRoom
+    createRoom,
 };
 export { SignalingService }
