@@ -72,14 +72,14 @@ app.use((req, res, next) => {
 })
 
 //Routes
-app.use('v1/users', users)
-    .use('v1/authentication', auth)
-    .use("v1/signaling", callController)
-    .use("v1/feedback", feedback)
-    .use("v1/chat", chat)
-    .use("v1/calls", callsHitory)
-    .use("v1/init", initData)
-    .use("v1/agora", agoraBuilder)
+app.use('/users', users)
+    .use('/authentication', auth)
+    .use("/signaling", callController)
+    .use("/feedback", feedback)
+    .use("/chat", chat)
+    .use("/calls", callsHitory)
+    .use("/init", initData)
+    .use("/agora", agoraBuilder)
 
 const server = http.createServer(app, {
     requestCert: true,

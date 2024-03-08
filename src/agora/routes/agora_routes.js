@@ -7,7 +7,7 @@ const router = express.Router();
 var APP_ID = "79e511b7bd03496ea13674e4409ca220";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-router.get("/rtc_token", AgoraController.getAgoraToken);
+router.get("/v1/rtc_token", AgoraController.getAgoraToken);
 
 
 // eslint-disable-next-line no-undef
