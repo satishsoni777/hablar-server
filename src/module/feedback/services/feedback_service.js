@@ -15,6 +15,8 @@ const submitFeedback = async (params, callback) => {
         params.name = user.name ?? "";
         params.image = user.image ?? "";
         const result = await Promise.all([feedback.feedbacks.push(params), feedback.save()]);
+        feedback.avgRating = (feedback.avgRating + rating) / feedback.feedbacks.length;
+        await feedback.save();
         return callback(null, params);
     } catch (error) {
         return callback(error, null);

@@ -49,6 +49,7 @@ const fs = new mongoose.Schema({
     },
     avgRating: {
         type: Number,
+        default: 0
     },
     feedbacks: [fdSch]
 });
