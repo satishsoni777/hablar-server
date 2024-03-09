@@ -10,6 +10,8 @@ const whiteListing = () => [
 ];
 
 function getUserId(req) {
+    if (process.env.NODE_ENV == "local")
+        return 100;
     return req.session.userId
 }
 

@@ -5,11 +5,11 @@ import { Users } from '../../users/models/users.js'
 
 const submitFeedback = async (params, callback) => {
     try {
-        const { otherUserId, userId, rating, comment, like, follow, } = params;
+        const { userId, toUser, rating, comment, like, follow } = params;
         let feedback
-        feedback = await Feedback.findOne({ userId: otherUserId })
+        feedback = await Feedback.findOne({ userId: toUser })
         if (!feedback) {
-            feedback = await Feedback({ userId: otherUserId })
+            feedback = await Feedback({ userId: toUser })
         }
         const user = await Users.findOne({ userId: userId });
         params.name = user.name ?? "";

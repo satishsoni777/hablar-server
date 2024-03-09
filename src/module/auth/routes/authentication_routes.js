@@ -6,15 +6,9 @@ const router = express.Router();
 
 router.post("/v1/signup", AuthController.SignUp);
 
-router.post("/v1/signIn", AuthController.SignIn);
-
 router.post("/v1/signin", AuthController.SignIn);
 
-router.post("/v1/validateToken", AuthController.validatedToken)
-
 router.post("/v1/validate_token", AuthController.validatedToken)
-
-router.post("/v1/sendOtp", AuthController.sendMail)
 
 router.post("/v1/send_otp", AuthController.sendMail)
 

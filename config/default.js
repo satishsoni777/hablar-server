@@ -12,13 +12,15 @@ export class Flavor {
 
     static getMongoBaseUrl = () => {
         let url;
-        //  url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
         switch (process.env.NODE_ENV) {
             case Environment.qa:
                 url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
                 break;
             case Environment.local:
                 url = "mongodb://127.0.0.1:27017";
+                break;
+            case Environment.prod:
+                url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
                 break;
         }
         console.log("Mongo url", url, process.env.NODE_ENV)
@@ -28,5 +30,6 @@ export class Flavor {
 class Environment {
     constructor() { }
     static qa = "qa";
-    static local = "local"
+    static local = "local";
+    static prod = "prod"
 }
