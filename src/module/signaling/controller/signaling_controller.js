@@ -121,18 +121,16 @@ const joinWaitingRoom = async (io, userId, socketId) => {
 
 
 const joinARoom = async (io, userId, socket) => {
-    // check if rooms available 
     const joinAvailableRoomRes = await SignalingService.joinAvailableRoom(socket.id, userId);
     if (joinAvailableRoomRes) {
+        socket.join(joinAvailableRoomRes.roomId)
         if (joinAvailableRoomRes.joinedUsers.length >= 2) {
-            socket.join(joinAvailableRoomRes.roomId)
             SocketIoHelper.ioToAllClinetsInARooom(io, MeetingPayloadEnum.CALL_STARTED, { roomId: joinAvailableRoomRes.roomId, payload: joinAvailableRoomRes.joinedUsers })
         }
         return joinAvailableRoomRes;
     }
     if (joinAvailableRoomRes == null) {
         try {
-            //if no rooms available 
             const createRoomRes = await SignalingService.createRoom(userId, socket.id)
             if (createRoomRes == null)
                 return null;
