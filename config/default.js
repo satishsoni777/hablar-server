@@ -11,20 +11,22 @@ export class Flavor {
     }
 
     static getMongoBaseUrl = () => {
-        let url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
+        let url;
+        //  url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
         switch (process.env.NODE_ENV) {
-            case Environment.stg:
+            case Environment.qa:
                 url = "mongodb+srv://Test123:Test123@cluster0.kidai.mongodb.net?retryWrites=true&w=majority";
                 break;
             case Environment.local:
                 url = "mongodb://127.0.0.1:27017";
                 break;
         }
+        console.log("Mongo url", url, process.env.NODE_ENV)
         return url;
     }
 }
 class Environment {
     constructor() { }
-    static stg = "stg";
+    static qa = "qa";
     static local = "local"
 }

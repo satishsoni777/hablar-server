@@ -12,9 +12,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --experimental-modules server.js",
-    "local": "NODE_ENV=local nodemon server.js",
-    "stg": "NODE_ENV=stg nodemon server.js",
+    "qa": "NODE_ENV=qa nodemon --experimental-modules server.js",
+    "local": "NODE_ENV=local node server.js",
     "build": "npm run build",
     "build:local": "NODE_ENV=local nodemon server.js",
     "build:stg": "NODE_ENV=stg npm run build",

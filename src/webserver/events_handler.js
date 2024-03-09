@@ -66,7 +66,7 @@ async function handleMessage(message, socket, io) {
 }
 
 async function connection(userId) {
-    SignalingController.toggleOnline(null, true, userId);
+    SignalingController.toggleOnline(true, true, userId);
 }
 
 async function leaveRoom(socket, io) {
