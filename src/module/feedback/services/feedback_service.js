@@ -30,7 +30,7 @@ const getFeedbacks = async (params, callback) => {
     if (feedback)
         return callback(null, feedback.feedbacks);
     else callback(null, {
-        message: "No feedback yet given"
+        message: "No feedback yet given",
     });
 }
 
