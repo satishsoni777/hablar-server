@@ -187,8 +187,8 @@ const joinWaitingRoom = async (userId, socketId, callback) => {
 
 const joinAvailableRoom = async (socketId, userId) => {
 
-    const lockKey = `joinARoomLock:${userId}`;
-    const lock = await acquireLock(lockKey);
+    // const lockKey = `joinARoomLock:${userId}`;
+    // const lock = await acquireLock(lockKey);
     try {
         const roomRes = await Rooms.findOne({ joinSize: { $lt: 2 } });
         if (roomRes != null) {
@@ -203,7 +203,7 @@ const joinAvailableRoom = async (socketId, userId) => {
         throw err;
     }
     finally {
-        await releaseLock(lock);
+        // await releaseLock(lock);
     }
 }
 
